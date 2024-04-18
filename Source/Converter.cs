@@ -11,13 +11,20 @@ namespace LibreSplit.Convert;
 public class TimeSpanToStringConverter : IValueConverter {
   public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is TimeSpan timeSpan) {
-      double totalSeconds = Math.Floor(timeSpan.TotalSeconds);
-      TimeSpan flooredTimeSpan = TimeSpan.FromSeconds(totalSeconds);
-      return flooredTimeSpan.ToString(@"hh\:mm\:ss");
+      double totalSeconds = Math.Floor(timeSpan.TotalMilliseconds);
+      TimeSpan flooredTimeSpan = TimeSpan.FromMilliseconds(totalSeconds);
+
+      if (flooredTimeSpan.TotalMinutes < 1) {
+        return flooredTimeSpan.ToString(@"mm\:ss\:ff");
+      } else if (flooredTimeSpan.TotalHours < 1) {
+        return flooredTimeSpan.ToString(@"mm\:ss");
+      } else {
+        return flooredTimeSpan.ToString(@"hh\:mm\:ss");
+      }
     }
     return string.Empty;
   }
-
+  
   public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is string str) {
       if (TimeSpan.TryParse(str, out var timeSpan)) {
