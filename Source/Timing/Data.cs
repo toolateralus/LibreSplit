@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Avalonia.Markup.Xaml;
 using Newtonsoft.Json;
 
@@ -10,16 +12,49 @@ public class RunData {
   public ObservableCollection<SegmentData> Segments { get; } = [];
   public TimeSpan PersonalBest { get; set; }
   public uint AttemptCount { get; set; } = 0;
-  
+
+
   [JsonIgnore]
   public int SegmentIndex { get; private set; } = 0;
-  public void Split(Timer timer) {
+  public bool Split(Timer timer) {
+    if (SegmentIndex >= Segments.Count) {
+      return false;
+    }
     Segments[SegmentIndex].AddSegmentTime(timer.Delta);
     Segments[SegmentIndex].AddSplitTime(timer.Elapsed);
+    timer.LastSplitTime = timer.Elapsed;
     SegmentIndex++;
+    return true;
   }
 }
-public class SegmentData(string label, TimeSpan personalBest) {
+public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyChanged {
+
+  private TimeSpan _currentDelta;
+  public TimeSpan CurrentDelta {
+    get { return _currentDelta; }
+    set {
+      if (_currentDelta != value) {
+        _currentDelta = value;
+        OnPropertyChanged();
+      }
+    }
+  }
+
+  private TimeSpan _currentSplitTime;
+  public TimeSpan CurrentSplitTime {
+    get { return _currentSplitTime; }
+    set {
+      if (_currentSplitTime != value) {
+        _currentSplitTime = value;
+        OnPropertyChanged();
+      }
+    }
+  }
+  public event PropertyChangedEventHandler? PropertyChanged;
+  
+  protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+  }
   private readonly List<TimeSpan> SegmentTimeHistory = [];
   private readonly List<TimeSpan> SplitTimeHistory = [];
   public string Label { get; set; } = label;
@@ -32,7 +67,7 @@ public class SegmentData(string label, TimeSpan personalBest) {
   public void AddSplitTime(TimeSpan time) {
     SplitTimeHistory.Add(time);
   }
-  
+
   public TimeSpan BestSegmentTime() {
     return SegmentTimeHistory.Min();
   }

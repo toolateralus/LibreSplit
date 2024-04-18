@@ -2,9 +2,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:LibreSplit.Timing"
+        xmlns:root="clr-namespace:LibreSplit"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="LibreSplit.MainWindow"
         xmlns:controls="clr-namespace:LibreSplit.Controls;assembly=LibreSplit"
+        x:DataType="root:MainWindow"
         Title="LibreSplit">
     <DockPanel>
     <Menu DockPanel.Dock="Top">
@@ -21,8 +24,25 @@
         <MenuItem Header="Themes" Click="ThemesMethod"/>
     </MenuItem>
     </Menu>
-    <StackPanel x:Name="segmentStackPanel" Orientation="Vertical"> 
-        <!-- <controls:Segment/> -->
+    <StackPanel>
+        <TextBlock Foreground="Black" Background="White" Text="{Binding CurrentTime, Converter={StaticResource TimeSpanToStringConverter}}"/>
+        <ListBox x:Name="splitListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="local:SegmentData">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="1"/>
+                    <TextBlock Grid.Column="1" Text="{Binding CurrentDelta, Converter={StaticResource TimeSpanToStringConverter}}" Margin="1"/>
+                    <TextBlock Grid.Column="2" Text="{Binding CurrentSplitTime, Converter={StaticResource TimeSpanToStringConverter}}" Margin="1"/>
+                </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
     </DockPanel>
 </Window>

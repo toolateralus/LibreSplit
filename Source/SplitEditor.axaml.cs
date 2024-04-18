@@ -21,7 +21,7 @@ public partial class SplitEditor : Window {
     splitListBox.ItemsSource = run.Segments;
     
     KeyDown += delegate(object? o, KeyEventArgs e) {
-      if (!e.KeyModifiers.HasFlag(KeyModifiers.Control)) {
+      if (!e.KeyModifiers.HasFlag(KeyModifiers.Control | KeyModifiers.Shift)) {
         return;        
       }
       
@@ -56,5 +56,9 @@ public partial class SplitEditor : Window {
     } else {
       run.Segments.Remove(run.Segments.Last());
     }
+  }
+
+  internal RunData? GetRun() {
+    return run;
   }
 }
