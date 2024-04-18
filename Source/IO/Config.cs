@@ -3,7 +3,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace LibreSplit.Config;
+namespace LibreSplit.IO.Config;
 public static class ConfigKeys {
   public const string LastLoadedSplits = "lastLoadedSplits";
 }
