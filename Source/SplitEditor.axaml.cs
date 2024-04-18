@@ -12,6 +12,7 @@ public partial class SplitEditor : Window {
     // It is just here to get the compiler to stop complaining
     // with a warning.
     run = null!;
+    this.DataContext = run;
     throw new NotImplementedException("Do not use SplitEditor in your axaml code.");
   }
   public SplitEditor(RunData? run) {

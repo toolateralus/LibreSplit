@@ -7,6 +7,10 @@
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
       <Button Content="Add Split" Click="OnAddSplitClicked"/>
       <Button Content="Remove Split" Click="OnRemoveSplitClicked"/>
+      <StackPanel Orientation="Horizontal">
+        <Label>Start Time:</Label>
+        <TextBox x:DataType="local:RunData" Text="{Binding StartTime, Mode=TwoWay, Converter={StaticResource TimeSpanToStringConverter}}" />
+      </StackPanel> 
     </StackPanel>
     <Grid DockPanel.Dock="Top">
       <Grid.ColumnDefinitions>

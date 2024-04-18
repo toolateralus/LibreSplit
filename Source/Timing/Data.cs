@@ -11,7 +11,7 @@ namespace LibreSplit.Timing;
 /// <summary>
 /// This class represents a group of segments which make up a splittable timeable 'Run'.
 /// </summary>
-public class RunData {
+public class RunData(TimeSpan? startTime = null) {
   /// <summary>
   /// The collection of segment data that defines this run.
   /// </summary>
@@ -20,6 +20,14 @@ public class RunData {
   /// The best time achieved of an RTA attempt at these segments.
   /// </summary>
   public TimeSpan PersonalBest { get; set; }
+  
+  
+  // for binding.
+  public TimeSpan StartTime {
+    get;
+    set;
+  } = startTime ?? TimeSpan.MaxValue;
+  
   /// <summary>
   /// The total count of attempts made at this run.
   /// </summary>
@@ -30,6 +38,10 @@ public class RunData {
   /// </summary>
   [JsonIgnore]
   public int SegmentIndex { get; private set; } = 0;
+  
+  public void Start(Timer timer) {
+    timer.Start(startTime);
+  }
   
   /// <summary>
   /// Advance to the next segment in the run and save current time data,
@@ -73,6 +85,7 @@ public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyC
       }
     }
   }
+  
   
   private TimeSpan _currentSplitTime;
   public TimeSpan CurrentSplitTime {

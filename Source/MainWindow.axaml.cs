@@ -66,7 +66,7 @@ public partial class MainWindow : Window {
             }
           }
           else {
-            timer.Start();
+            Run.Start(timer);
           }
 
         }

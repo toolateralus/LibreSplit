@@ -21,12 +21,13 @@ public class Timer {
   /// The elapsed time at which the timer was paused.
   /// </summary>
   private TimeSpan pauseTime = TimeSpan.Zero;
+  private TimeSpan startTime = TimeSpan.Zero;
   
   /// <summary>
   /// The time since this run began.
   /// </summary>
   public TimeSpan Elapsed {
-    get { return stopwatch.Elapsed - pauseTime; }
+    get { return stopwatch.Elapsed - pauseTime + startTime; }
   }
   /// <summary>
   /// The time since the last split time.
@@ -42,6 +43,7 @@ public class Timer {
   
   private System.Threading.Timer? updaterTimer;
   
+
   /// <summary>
   /// This starts a System.Threading.Timer and sets up the Elapsed event
   /// so that your Action<TimeSpan> is invoked once every 16 milliseconds
@@ -74,11 +76,12 @@ public class Timer {
   /// <summary>
   /// Start the timer.
   /// </summary>
-  public void Start() {
+  public void Start(TimeSpan? startTime = null) {
     if (!Running) {
       Running = true;
       stopwatch.Start();
       LastSplitTime = Elapsed;
+      this.startTime = startTime ?? TimeSpan.Zero;
     }
   }
   
@@ -96,8 +99,8 @@ public class Timer {
   public void Reset() {
     Running = false;
     stopwatch.Reset();
+    startTime = TimeSpan.Zero; 
     LastSplitTime = TimeSpan.Zero;
     pauseTime = TimeSpan.Zero;
   }
-
 }
