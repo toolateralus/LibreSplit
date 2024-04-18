@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Avalonia.Markup.Xaml;
+using Newtonsoft.Json;
 
 namespace LibreSplit.Timing;
 public class RunData {
-  public List<SegmentData> Segments { get; } = [];
+  public ObservableCollection<SegmentData> Segments { get; } = [];
   public TimeSpan PersonalBest { get; set; }
-  public uint AttemptCount { get; set; }
-  public int SegmentIndex { get; internal set; } = 0;
+  public uint AttemptCount { get; set; } = 0;
+  
+  [JsonIgnore]
+  public int SegmentIndex { get; private set; } = 0;
   public void Split(Timer timer) {
     Segments[SegmentIndex].AddSegmentTime(timer.Delta);
     Segments[SegmentIndex].AddSplitTime(timer.Elapsed);
@@ -18,11 +22,10 @@ public class RunData {
 public class SegmentData(string label, TimeSpan personalBest) {
   private readonly List<TimeSpan> SegmentTimeHistory = [];
   private readonly List<TimeSpan> SplitTimeHistory = [];
-  public string Label { get; } = label;
+  public string Label { get; set; } = label;
   public TimeSpan PersonalBest {
     get;
   } = personalBest;
-
   public void AddSegmentTime(TimeSpan delta) {
     SplitTimeHistory.Add(delta);
   }

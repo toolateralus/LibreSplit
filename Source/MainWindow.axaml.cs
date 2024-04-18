@@ -5,6 +5,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using LibreSplit.Controls;
 using LibreSplit.Timing;
 using Newtonsoft.Json;
 
@@ -68,8 +69,9 @@ public partial class MainWindow : Window {
             return;
         }
         loadedFile = list[0];
+        ReadRunData(loadedFile.Path.AbsolutePath);
     }
-
+    
     public async void SaveFileMethod(object sender, RoutedEventArgs e) {
         if (loadedFile == null) {
             Console.WriteLine("You must select a file to 'Save'");
@@ -94,16 +96,36 @@ public partial class MainWindow : Window {
         path = Uri.UnescapeDataString(path);
         using var stream = new StreamWriter(path);
         try {
-            await stream.WriteAsync(JsonConvert.SerializeObject(Run));
+            await stream.WriteAsync(JsonConvert.SerializeObject(Run, Formatting.Indented));
         }
-        catch {
-            Console.WriteLine("An error has occured while serializing segment data.");
+        catch (JsonSerializationException e ){
+            Console.WriteLine($"An error has occured while serializing segment data. {e}");
         }
         stream.Close();
     }
-
-    public void EditSplitsMethod(object sender, RoutedEventArgs e) {
-        throw new NotImplementedException();
+    
+    public void ReadRunData(string path) {
+        path = Uri.UnescapeDataString(path);
+        if (!File.Exists(path)) {
+            throw new FileNotFoundException($"Couldn't find file {path}");
+        }
+        var text = File.ReadAllText(path);
+        Run = JsonConvert.DeserializeObject<RunData>(text) ?? throw new Exception("Failed to deserialize run data.");
+    }
+    public async void EditSplitsMethod(object sender, RoutedEventArgs e) {
+        if (Run == null) {
+            NewFileMethod(sender, e);
+        }
+        
+        var window = new SplitEditor(Run);
+        void onClosing(object? sender, EventArgs args) {
+            window.Close();
+        };
+        Closing += onClosing;
+        window.Closing += delegate {
+            Closing -= onClosing;
+        };
+        await window.ShowDialog(this);
     }
 
     public void ThemesMethod(object sender, RoutedEventArgs e) {

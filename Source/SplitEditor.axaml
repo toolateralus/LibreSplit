@@ -1,0 +1,34 @@
+<Window xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="clr-namespace:LibreSplit.Timing"
+  x:Class="LibreSplit.Controls.SplitEditor"
+  Title="Split Editor" Width="800" Height="600">
+  <DockPanel LastChildFill="True">
+    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+      <Button Content="Add Split" Click="OnAddSplitClicked"/>
+      <Button Content="Remove Split" Click="OnRemoveSplitClicked"/>
+    </StackPanel>
+    <Grid DockPanel.Dock="Top">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Grid.Column="0" Text="Label" Margin="2"/>
+      <TextBlock Grid.Column="1" Text="Personal Best" Margin="2"/>
+    </Grid>
+    <ListBox x:Name="splitListBox">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="local:SegmentData">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding Label, Mode=TwoWay}" Margin="1"/>
+            <TextBox Grid.Column="1" Text="{Binding PersonalBest, Mode=TwoWay, Converter={StaticResource TimeSpanToStringConverter}}" Margin="1"/>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</Window>
