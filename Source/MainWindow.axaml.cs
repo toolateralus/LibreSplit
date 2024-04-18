@@ -9,9 +9,11 @@ using Avalonia.Styling;
 using Avalonia.Themes.Fluent;
 using Avalonia.Themes.Simple;
 using Avalonia.Threading;
+using LibreSplit.Config;
 using LibreSplit.Controls;
 using LibreSplit.Timing;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace LibreSplit;
 
@@ -22,25 +24,63 @@ public partial class MainWindow : Window {
   };
   private readonly Timer timer = new();
   private RunData? Run { get; set; }
-  private IStorageFile? loadedFile;
-  
+  private string? loadedFile;
+  private readonly ConfigLoader configLoader = new();
+
   public TimeSpan CurrentTime {
     get;
     set;
   } = TimeSpan.Zero;
+
+
   public MainWindow() {
     InitializeComponent();
     KeyDown += HandleInput;
+
+    configLoader.LoadOrCreate();
+    configLoader.TryLoadSplits(out loadedFile);
+
+    if (loadedFile != null) {
+      ReadRunData(loadedFile);
+    }
     
     timer.AttachUpdateHook(elapsedSpan => {
       CurrentTime = elapsedSpan;
-      if (Run != null) {
+      if (Run?.SegmentIndex < Run?.Segments.Count) {
         Run.Segments[Run.SegmentIndex].CurrentDelta = timer.Delta;
-        Run.Segments[Run.SegmentIndex].CurrentSplitTime = timer.Elapsed;  
+        Run.Segments[Run.SegmentIndex].CurrentSplitTime = timer.Elapsed;
       }
     });
   }
-  
+  private void ReadRunData(string path) {
+    configLoader.Set(ConfigKeys.LastLoadedSplits, path);
+    
+    path = Uri.UnescapeDataString(path);
+    
+    if (!File.Exists(path)) {
+      throw new FileNotFoundException($"Couldn't find file {path}");
+    }
+    var text = File.ReadAllText(path);
+    Run = JsonConvert.DeserializeObject<RunData>(text) ?? throw new Exception("Failed to deserialize run data.");
+    splitListBox.ItemsSource = Run.Segments;
+  }
+  private async Task WriteRunData(string path) {
+    configLoader.Set(ConfigKeys.LastLoadedSplits, path);
+    
+    path = Uri.UnescapeDataString(path);
+    
+    using var stream = new StreamWriter(path);
+    
+    try {
+      await stream.WriteAsync(JsonConvert.SerializeObject(Run, Formatting.Indented));
+    }
+    catch (JsonSerializationException e) {
+      Console.WriteLine($"An error has occured while serializing segment data. {e}");
+    }
+    stream.Close();
+  }
+
+  #region Events
   private void HandleInput(object? sender, KeyEventArgs e) {
     if (Run == null) {
       return;
@@ -56,7 +96,7 @@ public partial class MainWindow : Window {
           else {
             timer.Start();
           }
-        
+
         }
         break;
       case Key.D2: {
@@ -73,6 +113,8 @@ public partial class MainWindow : Window {
         break;
       case Key.D5: {
           timer.Reset();
+          Run.Reset();
+
         }
         break;
     }
@@ -93,29 +135,27 @@ public partial class MainWindow : Window {
     }
 
     var path = newFilePath.Path.AbsolutePath;
-    loadedFile = newFilePath;
+    loadedFile = path;
     await WriteRunData(path);
   }
-
   public async void OpenFileMethod(object sender, RoutedEventArgs e) {
     var list = await StorageProvider.OpenFilePickerAsync(openOptions);
     if (list.Count == 0) {
       return;
     }
-    loadedFile = list[0];
-    ReadRunData(loadedFile.Path.AbsolutePath);
-  }
+    loadedFile = list[0].Path?.AbsolutePath!;
 
+    if (loadedFile != null)
+      ReadRunData(loadedFile);
+  }
   public async void SaveFileMethod(object sender, RoutedEventArgs e) {
     if (loadedFile == null) {
       Console.WriteLine("You must select a file to 'Save'");
       return;
     }
-    var path = loadedFile.Path.AbsolutePath;
-    await WriteRunData(path);
+    await WriteRunData(loadedFile);
 
   }
-
   public async void SaveAsFileMethod(object sender, RoutedEventArgs e) {
     var file = await StorageProvider.SaveFilePickerAsync(saveOptions);
     if (file == null) {
@@ -124,28 +164,6 @@ public partial class MainWindow : Window {
     }
     var path = file.Path.AbsolutePath;
     await WriteRunData(path);
-  }
-
-  private async Task WriteRunData(string path) {
-    path = Uri.UnescapeDataString(path);
-    using var stream = new StreamWriter(path);
-    try {
-      await stream.WriteAsync(JsonConvert.SerializeObject(Run, Formatting.Indented));
-    }
-    catch (JsonSerializationException e) {
-      Console.WriteLine($"An error has occured while serializing segment data. {e}");
-    }
-    stream.Close();
-  }
-
-  public void ReadRunData(string path) {
-    path = Uri.UnescapeDataString(path);
-    if (!File.Exists(path)) {
-      throw new FileNotFoundException($"Couldn't find file {path}");
-    }
-    var text = File.ReadAllText(path);
-    Run = JsonConvert.DeserializeObject<RunData>(text) ?? throw new Exception("Failed to deserialize run data.");
-    splitListBox.ItemsSource = Run.Segments;
   }
   public async void EditSplitsMethod(object sender, RoutedEventArgs e) {
     if (Run == null) {
@@ -161,11 +179,11 @@ public partial class MainWindow : Window {
       Closing -= onClosing;
     };
     await window.ShowDialog(this);
-    
+
     Run = window.GetRun();
   }
-
   public void ThemesMethod(object sender, RoutedEventArgs e) {
-    
+
   }
+  #endregion
 }

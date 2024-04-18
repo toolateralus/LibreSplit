@@ -46,6 +46,15 @@ public class RunData {
     SegmentIndex++;
     return true;
   }
+  
+  internal void Reset() {
+    SegmentIndex = 0;
+    foreach (var seg in Segments) {
+      seg.CurrentDelta = seg.PersonalBest;
+      seg.CurrentSplitTime = seg.BestSplitTime();
+    }
+    AttemptCount++;
+  }
 }
 /// <summary>
 /// This class defines a single segment of a greater run and holds display information and timing data.
@@ -53,7 +62,7 @@ public class RunData {
 /// <param name="label"></param>
 /// <param name="personalBest"></param>
 public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyChanged {
-
+  #region UI Stuff
   private TimeSpan _currentDelta;
   public TimeSpan CurrentDelta {
     get { return _currentDelta; }
@@ -64,7 +73,7 @@ public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyC
       }
     }
   }
-
+  
   private TimeSpan _currentSplitTime;
   public TimeSpan CurrentSplitTime {
     get { return _currentSplitTime; }
@@ -80,9 +89,12 @@ public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyC
   protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
   }
-  private readonly List<TimeSpan> SegmentTimeHistory = [];
-  private readonly List<TimeSpan> SplitTimeHistory = [];
+  #endregion
+  
+  public List<TimeSpan> SegmentTimeHistory {get;set;}= [];
+  public List<TimeSpan> SplitTimeHistory {get;set;} = [];
   public string Label { get; set; } = label;
+  
   public TimeSpan PersonalBest {
     get;
   } = personalBest;
