@@ -4,6 +4,10 @@ using Avalonia;
 using Avalonia.Data.Converters;
 
 namespace LibreSplit.Convert;
+/// <summary>
+/// Converts a System.TimeSpan to a string and back.
+/// used for Binding to UI elements.
+/// </summary>
 public class TimeSpanToStringConverter : IValueConverter {
   public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is TimeSpan timeSpan) {

@@ -5,6 +5,9 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using Avalonia.Styling;
+using Avalonia.Themes.Fluent;
+using Avalonia.Themes.Simple;
 using Avalonia.Threading;
 using LibreSplit.Controls;
 using LibreSplit.Timing;
@@ -29,35 +32,31 @@ public partial class MainWindow : Window {
     InitializeComponent();
     KeyDown += HandleInput;
     
-    timer.Updater(elapsedSpan => {
+    timer.AttachUpdateHook(elapsedSpan => {
       CurrentTime = elapsedSpan;
       if (Run != null) {
-        Dispatcher.UIThread.Invoke(()=> {
-          Run.Segments[Run.SegmentIndex].CurrentDelta = timer.Delta;
-          Run.Segments[Run.SegmentIndex].CurrentSplitTime = timer.Elapsed;  
-        });
+        Run.Segments[Run.SegmentIndex].CurrentDelta = timer.Delta;
+        Run.Segments[Run.SegmentIndex].CurrentSplitTime = timer.Elapsed;  
       }
     });
   }
-
+  
   private void HandleInput(object? sender, KeyEventArgs e) {
+    if (Run == null) {
+      return;
+    }
     switch (e.Key) {
       case Key.D1: {
           if (timer.Running) {
-            if (Run == null) {
-              OpenFileMethod(sender ?? new(), e);
-            }
-            else {
-              // this returns false at the end of the run.
-              if (!Run.Split(timer)) {
-                timer.Stop();
-              }
+            // this returns false at the end of the run.
+            if (!Run.Split(timer)) {
+              timer.Stop();
             }
           }
           else {
             timer.Start();
           }
-
+        
         }
         break;
       case Key.D2: {
@@ -167,6 +166,6 @@ public partial class MainWindow : Window {
   }
 
   public void ThemesMethod(object sender, RoutedEventArgs e) {
-    throw new NotImplementedException();
+    
   }
 }

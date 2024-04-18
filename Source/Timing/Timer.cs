@@ -4,42 +4,62 @@ using System.Reflection;
 using Avalonia.Threading;
 namespace LibreSplit.Timing;
 
+
+/// <summary>
+/// This is a class that encapsulates a speedrun timer used for RunData and fetching
+/// relevant timing information.
+/// </summary>
 public class Timer {
   private readonly Stopwatch stopwatch = new();
+  /// <summary>
+  /// The last time a split was made, either at the start of the run
+  /// or the end of the last segment
+  /// </summary>
   public TimeSpan LastSplitTime { get; set; }
    = TimeSpan.Zero;
+  /// <summary>
+  /// The elapsed time at which the timer was paused.
+  /// </summary>
   private TimeSpan pauseTime = TimeSpan.Zero;
-
+  
+  /// <summary>
+  /// The time since this run began.
+  /// </summary>
   public TimeSpan Elapsed {
     get { return stopwatch.Elapsed - pauseTime; }
   }
+  /// <summary>
+  /// The time since the last split time.
+  /// </summary>
   public TimeSpan Delta {
     get { return Elapsed - LastSplitTime; }
   }
-
-  public bool Running { get; internal set; }
-
-  private System.Threading.Timer? dispatcherTimer;
-
+  
   /// <summary>
-  /// NOTE: This has a rather unconventional implementation.
-  /// This starts a DispatcherTimer and sets up the Tick event
-  /// so that your Func<TimeSpan> is invoked once every 16 milliseconds
-  /// with the current elapsed time.
-  /// 
-  /// This should probably be replaced with a method.
+  /// Is the timer running?
   /// </summary>
-  public void Updater(Action<TimeSpan> action) {
-    if (dispatcherTimer != null) {
+  public bool Running { get; internal set; }
+  
+  private System.Threading.Timer? updaterTimer;
+  
+  /// <summary>
+  /// This starts a System.Threading.Timer and sets up the Elapsed event
+  /// so that your Action<TimeSpan> is invoked once every 16 milliseconds
+  /// with the current elapsed time.
+  /// </summary>
+  public void AttachUpdateHook(Action<TimeSpan> action) {
+    if (updaterTimer != null) {
       throw new InvalidOperationException("Cannot subscribe several events to the Timing.Timer.Updater hook");
     }
-    dispatcherTimer = new(delegate {
+    updaterTimer = new(delegate {
       if (Running) action(Elapsed);
     });
-    dispatcherTimer.Change(0, 16);
+    updaterTimer.Change(0, 16);
   }
 
-
+  /// <summary>
+  /// Pause the current timer and store the total elapsed time up to this point.
+  /// </summary>
   public void Pause() {
     if (Running) {
       Running = false;
@@ -51,6 +71,9 @@ public class Timer {
       stopwatch.Start();
     }
   }
+  /// <summary>
+  /// Start the timer.
+  /// </summary>
   public void Start() {
     if (!Running) {
       Running = true;
@@ -58,15 +81,22 @@ public class Timer {
       LastSplitTime = Elapsed;
     }
   }
-
+  
+  /// <summary>
+  /// Stop the timer.
+  /// </summary>
   public void Stop() {
     Running = false;
     stopwatch.Stop();
   }
-
+  
+  /// <summary>
+  /// Reset the timer and clear the pauseTime and lastSplitTime.
+  /// </summary>
   public void Reset() {
     Running = false;
     stopwatch.Reset();
+    LastSplitTime = TimeSpan.Zero;
     pauseTime = TimeSpan.Zero;
   }
 

@@ -8,14 +8,34 @@ using Avalonia.Markup.Xaml;
 using Newtonsoft.Json;
 
 namespace LibreSplit.Timing;
+/// <summary>
+/// This class represents a group of segments which make up a splittable timeable 'Run'.
+/// </summary>
 public class RunData {
+  /// <summary>
+  /// The collection of segment data that defines this run.
+  /// </summary>
   public ObservableCollection<SegmentData> Segments { get; } = [];
+  /// <summary>
+  /// The best time achieved of an RTA attempt at these segments.
+  /// </summary>
   public TimeSpan PersonalBest { get; set; }
+  /// <summary>
+  /// The total count of attempts made at this run.
+  /// </summary>
   public uint AttemptCount { get; set; } = 0;
-
-
+  
+  /// <summary>
+  /// The current segment index of an in-progress run.
+  /// </summary>
   [JsonIgnore]
   public int SegmentIndex { get; private set; } = 0;
+  
+  /// <summary>
+  /// Advance to the next segment in the run and save current time data,
+  /// </summary>
+  /// <param name="timer"></param>
+  /// <returns>True if the run still has remaining segments, false if the run is complete.</returns>
   public bool Split(Timer timer) {
     if (SegmentIndex >= Segments.Count) {
       return false;
@@ -27,6 +47,11 @@ public class RunData {
     return true;
   }
 }
+/// <summary>
+/// This class defines a single segment of a greater run and holds display information and timing data.
+/// </summary>
+/// <param name="label"></param>
+/// <param name="personalBest"></param>
 public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyChanged {
 
   private TimeSpan _currentDelta;
