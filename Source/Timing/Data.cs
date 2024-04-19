@@ -26,7 +26,7 @@ public class RunData(TimeSpan? startTime = null) {
   public TimeSpan StartTime {
     get;
     set;
-  } = startTime ?? TimeSpan.MaxValue;
+  } = startTime ?? TimeSpan.Zero;
   
   /// <summary>
   /// The total count of attempts made at this run.
@@ -117,24 +117,42 @@ public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyC
   public void AddSplitTime(TimeSpan time) {
     SplitTimeHistory.Add(time);
   }
-
+  
   public TimeSpan BestSegmentTime() {
+    if (SegmentTimeHistory.Count == 0) {
+      return TimeSpan.Zero;
+    }
     return SegmentTimeHistory.Min();
   }
   public TimeSpan WorstSegmentTime() {
+    if (SegmentTimeHistory.Count == 0) {
+      return TimeSpan.Zero;
+    }
     return SegmentTimeHistory.Max();
   }
   public TimeSpan AverageSegmentTime() {
+    if (SegmentTimeHistory.Count == 0) {
+      return TimeSpan.Zero;
+    }
     long averageTicks = (long)SegmentTimeHistory.Average(timeSpan => timeSpan.Ticks);
     return new TimeSpan(averageTicks);
   }
   public TimeSpan BestSplitTime() {
+    if (SplitTimeHistory.Count == 0) {
+      return TimeSpan.Zero;
+    }
     return SplitTimeHistory.Min();
   }
   public TimeSpan WorstSplitTime() {
+        if (SplitTimeHistory.Count == 0) {
+      return TimeSpan.Zero;
+    }
     return SplitTimeHistory.Max();
   }
   public TimeSpan AverageSplitTime() {
+    if (SplitTimeHistory.Count == 0) {
+      return TimeSpan.Zero;
+    }
     long averageTicks = (long)SplitTimeHistory.Average(timeSpan => timeSpan.Ticks);
     return new TimeSpan(averageTicks);
   }

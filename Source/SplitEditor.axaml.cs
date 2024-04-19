@@ -12,7 +12,7 @@ public partial class SplitEditor : Window {
     // It is just here to get the compiler to stop complaining
     // with a warning.
     run = null!;
-    this.DataContext = run;
+    DataContext = run;
     throw new NotImplementedException("Do not use SplitEditor in your axaml code.");
   }
   public SplitEditor(RunData? run) {
@@ -20,7 +20,7 @@ public partial class SplitEditor : Window {
     run ??= new();
     this.run = run;
     splitListBox.ItemsSource = run.Segments;
-    
+    startTimeBox.Text = run.StartTime.ToString();
     KeyDown += delegate(object? o, KeyEventArgs e) {
       if (!e.KeyModifiers.HasFlag(KeyModifiers.Control | KeyModifiers.Shift)) {
         return;        

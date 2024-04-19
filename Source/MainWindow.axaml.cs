@@ -116,7 +116,7 @@ public partial class MainWindow : Window {
       return;
     }
     loadedFile = list[0].Path?.AbsolutePath!;
-
+    
     if (loadedFile != null)
       serializer.ReadRunData(loadedFile, configLoader);
   }
