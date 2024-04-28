@@ -61,9 +61,23 @@ public class RunData(TimeSpan? startTime = null) {
   
   internal void Reset() {
     SegmentIndex = 0;
+    var lastSplitTime = Segments[^1].SplitTime;
+    bool isPB = false;
+    if (lastSplitTime != TimeSpan.Zero &&
+    (lastSplitTime < PersonalBest || PersonalBest == TimeSpan.Zero)) {
+      isPB = true;
+      PersonalBest = lastSplitTime;
+    }
     foreach (var seg in Segments) {
-      seg.CurrentDelta = seg.PersonalBest;
-      seg.CurrentSplitTime = seg.BestSplitTime();
+      if (seg.SplitTime == TimeSpan.Zero) {
+        continue;
+      }
+      if (isPB) {
+        seg.PBSegmentTime = seg.SegmentTime;
+        seg.PBSplitTime = seg.SplitTime;
+      }
+      seg.SegmentTime = seg.PBSegmentTime;
+      seg.SplitTime = seg.PBSplitTime;
     }
     AttemptCount++;
   }
@@ -72,27 +86,27 @@ public class RunData(TimeSpan? startTime = null) {
 /// This class defines a single segment of a greater run and holds display information and timing data.
 /// </summary>
 /// <param name="label"></param>
-/// <param name="personalBest"></param>
-public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyChanged {
+/// <param name="pbSegmentTime"></param>
+public class SegmentData(string label) : INotifyPropertyChanged {
   #region UI Stuff
-  private TimeSpan _currentDelta;
-  public TimeSpan CurrentDelta {
-    get { return _currentDelta; }
+  private TimeSpan _segmentTime;
+  public TimeSpan SegmentTime {
+    get { return _segmentTime; }
     set {
-      if (_currentDelta != value) {
-        _currentDelta = value;
+      if (_segmentTime != value) {
+        _segmentTime = value;
         OnPropertyChanged();
       }
     }
   }
   
   
-  private TimeSpan _currentSplitTime;
-  public TimeSpan CurrentSplitTime {
-    get { return _currentSplitTime; }
+  private TimeSpan _splitTime;
+  public TimeSpan SplitTime {
+    get { return _splitTime; }
     set {
-      if (_currentSplitTime != value) {
-        _currentSplitTime = value;
+      if (_splitTime != value) {
+        _splitTime = value;
         OnPropertyChanged();
       }
     }
@@ -108,11 +122,10 @@ public class SegmentData(string label, TimeSpan personalBest) : INotifyPropertyC
   public List<TimeSpan> SplitTimeHistory {get;set;} = [];
   public string Label { get; set; } = label;
   
-  public TimeSpan PersonalBest {
-    get;
-  } = personalBest;
+  public TimeSpan PBSegmentTime { get; set; } = TimeSpan.Zero;
+  public TimeSpan PBSplitTime { get; set; } = TimeSpan.Zero;
   public void AddSegmentTime(TimeSpan delta) {
-    SplitTimeHistory.Add(delta);
+    SegmentTimeHistory.Add(delta);
   }
   public void AddSplitTime(TimeSpan time) {
     SplitTimeHistory.Add(time);

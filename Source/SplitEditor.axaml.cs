@@ -43,7 +43,7 @@ public partial class SplitEditor : Window {
   }
   
   private void AddSplit() {
-    run.Segments.Add(new SegmentData("New Split", TimeSpan.Zero));
+    run.Segments.Add(new SegmentData("New Split"));
   }
   
   public void OnRemoveSplitClicked(object sender, RoutedEventArgs e) {

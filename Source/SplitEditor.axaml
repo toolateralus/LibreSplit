@@ -27,9 +27,11 @@
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*"/>
               <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBox Grid.Column="0" Text="{Binding Label, Mode=TwoWay}" Margin="1"/>
-            <TextBox Grid.Column="1" Text="{Binding PersonalBest, Mode=TwoWay, Converter={StaticResource TimeSpanToStringConverter}}" Margin="1"/>
+            <TextBox Grid.Column="1" Text="{Binding PBSplitTime, Mode=TwoWay, Converter={StaticResource TimeSpanToStringConverter}}" Margin="1"/>
+            <TextBox Grid.Column="2" Text="{Binding PBSegmentTime, Mode=TwoWay, Converter={StaticResource TimeSpanToStringConverter}}" Margin="1"/>
           </Grid>
         </DataTemplate>
       </ListBox.ItemTemplate>

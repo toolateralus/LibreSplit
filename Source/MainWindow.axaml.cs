@@ -45,8 +45,8 @@ public partial class MainWindow : Window {
     timer.AttachUpdateHook(elapsedSpan => {
       CurrentTime = elapsedSpan;
       if (Run?.SegmentIndex < Run?.Segments.Count) {
-        Run.Segments[Run.SegmentIndex].CurrentDelta = timer.Delta;
-        Run.Segments[Run.SegmentIndex].CurrentSplitTime = timer.Elapsed;
+        Run.Segments[Run.SegmentIndex].SegmentTime = timer.Delta;
+        Run.Segments[Run.SegmentIndex].SplitTime = timer.Elapsed;
       }
     });
   }

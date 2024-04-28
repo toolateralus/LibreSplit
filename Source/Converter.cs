@@ -11,15 +11,15 @@ namespace LibreSplit.Convert;
 public class TimeSpanToStringConverter : IValueConverter {
   public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is TimeSpan timeSpan) {
-      double totalSeconds = Math.Floor(timeSpan.TotalMilliseconds);
-      TimeSpan flooredTimeSpan = TimeSpan.FromMilliseconds(totalSeconds);
+      double totalms = Math.Floor(timeSpan.TotalMilliseconds);
+      TimeSpan flooredTimeSpan = TimeSpan.FromMilliseconds(totalms);
 
       if (flooredTimeSpan.TotalMinutes < 1) {
-        return flooredTimeSpan.ToString(@"mm\:ss\:ff");
+        return flooredTimeSpan.ToString(@"s\.ff");
       } else if (flooredTimeSpan.TotalHours < 1) {
-        return flooredTimeSpan.ToString(@"mm\:ss");
+        return flooredTimeSpan.ToString(@"m\:ss\.ff");
       } else {
-        return flooredTimeSpan.ToString(@"hh\:mm\:ss");
+        return flooredTimeSpan.ToString(@"h\:mm\:ss\.ff");
       }
     }
     return string.Empty;
