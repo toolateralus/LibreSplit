@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -8,29 +6,27 @@ using Avalonia.Platform.Storage;
 using LibreSplit.IO.Config;
 using LibreSplit.Controls;
 using LibreSplit.Timing;
-using Newtonsoft.Json;
 using LibreSplit.IO.Serialization;
+using System.Collections.ObjectModel;
 
 namespace LibreSplit;
 
 public partial class MainWindow : Window {
-  static FilePickerOpenOptions openOptions = new() {
-  };
-  static FilePickerSaveOptions saveOptions = new() {
-  };
+  static FilePickerOpenOptions openOptions = new();
+  static FilePickerSaveOptions saveOptions = new();
   private readonly Timer timer = new();
   private RunData? Run { get; set; }
   private string? loadedFile;
   private readonly ConfigLoader configLoader = new();
   private readonly Serializer serializer = new();
+  MainWindowVM viewModel = new();
 
   public TimeSpan CurrentTime {
     get;
     set;
   } = TimeSpan.Zero;
-
-
   public MainWindow() {
+    DataContext = viewModel;
     InitializeComponent();
     KeyDown += HandleInput;
 
@@ -39,7 +35,9 @@ public partial class MainWindow : Window {
 
     if (loadedFile != null) {
       Run = serializer.ReadRunData(loadedFile, configLoader);
-      splitListBox.ItemsSource = Run.Segments;
+      viewModel.Layout.Add(new SplitsControl(viewModel));
+      viewModel.Layout.Add(new TimerControl(viewModel));
+      viewModel.Segments = Run.Segments;
     }
     
     timer.AttachUpdateHook(elapsedSpan => {
@@ -47,6 +45,7 @@ public partial class MainWindow : Window {
       if (Run?.SegmentIndex < Run?.Segments.Count) {
         Run.Segments[Run.SegmentIndex].SegmentTime = timer.Delta;
         Run.Segments[Run.SegmentIndex].SplitTime = timer.Elapsed;
+        viewModel.Elapsed = timer.Elapsed;
       }
     });
   }
@@ -63,10 +62,14 @@ public partial class MainWindow : Window {
             // this returns false at the end of the run.
             if (!Run.Split(timer)) {
               timer.Stop();
+              viewModel.ClearActiveSegment();
+            } else {
+              viewModel.SetActiveSegment(Run.Segments[Run.SegmentIndex]);
             }
           }
           else {
             Run.Start(timer);
+            viewModel.SetActiveSegment(Run.Segments[Run.SegmentIndex]);
           }
 
         }
@@ -86,6 +89,8 @@ public partial class MainWindow : Window {
       case Key.D5: {
           timer.Reset();
           Run.Reset();
+          viewModel.ClearActiveSegment();
+          viewModel.Elapsed = TimeSpan.Zero;
 
         }
         break;

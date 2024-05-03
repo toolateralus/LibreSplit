@@ -2,16 +2,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:LibreSplit.Timing"
+    xmlns:local="clr-namespace:LibreSplit"
     xmlns:root="clr-namespace:LibreSplit"
     mc:Ignorable="d" Width="300" Height="800"
     x:Class="LibreSplit.MainWindow"
     xmlns:controls="clr-namespace:LibreSplit.Controls;assembly=LibreSplit"
-    x:DataType="root:MainWindow"
+    x:DataType="root:MainWindowVM"
     SystemDecorations="None"
     Title="LibreSplit">
-    <DockPanel>
-        <Menu DockPanel.Dock="Top">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="New" Click="NewFileMethod" />
                 <MenuItem Header="Open" Click="OpenFileMethod" />
@@ -27,28 +31,6 @@
             </MenuItem>
             <MenuItem Header="Close" Click="CloseWindow" />
         </Menu>
-        <DockPanel>
-            <ListBox x:Name="splitListBox">
-                <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="local:SegmentData">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="2*" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="1"
-                                HorizontalAlignment="Left" />
-                            <TextBlock Grid.Column="1"
-                                Text="{Binding SegmentTime, Converter={StaticResource TimeSpanToStringConverter}}"
-                                Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"/>
-                            <TextBlock Grid.Column="2"
-                                Text="{Binding SplitTime, Converter={StaticResource TimeSpanToStringConverter}}"
-                                Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"/>
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </DockPanel>
-    </DockPanel>
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}" />
+    </Grid>
 </Window>

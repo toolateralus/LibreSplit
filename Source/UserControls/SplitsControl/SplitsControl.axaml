@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:timing="clr-namespace:LibreSplit.Timing"
+  xmlns:local="clr-namespace:LibreSplit"
+  x:Class="LibreSplit.SplitsControl"
+  x:DataType="local:MainWindowVM">
+  <ItemsControl ItemsSource="{Binding Segments}">
+    <ItemsControl.ItemTemplate>
+      <DataTemplate x:DataType="timing:SegmentData">
+        <Grid Background="{Binding BackgroundColor}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="{Binding Label}" Margin="1"
+            HorizontalAlignment="Left" />
+          <TextBlock Grid.Column="1"
+            Text="{Binding PBSegmentTime, Converter={StaticResource TimeSpanToStringConverter}}"
+            Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"/>
+          <TextBlock Grid.Column="2"
+            Text="{Binding PBSplitTime, Converter={StaticResource TimeSpanToStringConverter}}"
+            Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"/>
+        </Grid>
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

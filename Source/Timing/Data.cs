@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Avalonia.Markup.Xaml;
+using Avalonia.Media;
 using Newtonsoft.Json;
 
 namespace LibreSplit.Timing;
@@ -89,6 +90,18 @@ public class RunData(TimeSpan? startTime = null) {
 /// <param name="pbSegmentTime"></param>
 public class SegmentData(string label) : INotifyPropertyChanged {
   #region UI Stuff
+  [JsonIgnore]
+  private SolidColorBrush backgroundColor = new(Colors.Transparent); // Default color
+  [JsonIgnore]
+  public SolidColorBrush BackgroundColor
+  {
+    get => backgroundColor;
+    set
+    {
+      backgroundColor = value;
+      OnPropertyChanged();
+    }
+  }
   private TimeSpan _segmentTime;
   public TimeSpan SegmentTime {
     get { return _segmentTime; }
@@ -99,9 +112,20 @@ public class SegmentData(string label) : INotifyPropertyChanged {
       }
     }
   }
-  
-  
+  private string label = label;
+  public string Label {
+    get => label;
+    set {
+      label = value;
+      OnPropertyChanged();
+    }
+  }
+
+
   private TimeSpan _splitTime;
+  private TimeSpan pBSegmentTime = TimeSpan.Zero;
+  private TimeSpan pBSplitTime = TimeSpan.Zero;
+
   public TimeSpan SplitTime {
     get { return _splitTime; }
     set {
@@ -120,10 +144,21 @@ public class SegmentData(string label) : INotifyPropertyChanged {
   
   public List<TimeSpan> SegmentTimeHistory {get;set;}= [];
   public List<TimeSpan> SplitTimeHistory {get;set;} = [];
-  public string Label { get; set; } = label;
-  
-  public TimeSpan PBSegmentTime { get; set; } = TimeSpan.Zero;
-  public TimeSpan PBSplitTime { get; set; } = TimeSpan.Zero;
+
+  public TimeSpan PBSegmentTime {
+    get => pBSegmentTime;
+    set {
+      pBSegmentTime = value;
+      OnPropertyChanged();
+    }
+  }
+  public TimeSpan PBSplitTime {
+    get => pBSplitTime;
+    set {
+      pBSplitTime = value;
+      OnPropertyChanged();
+    }
+  }
   public void AddSegmentTime(TimeSpan delta) {
     SegmentTimeHistory.Add(delta);
   }
