@@ -90,18 +90,6 @@ public class RunData(TimeSpan? startTime = null) {
 /// <param name="pbSegmentTime"></param>
 public class SegmentData(string label) : INotifyPropertyChanged {
   #region UI Stuff
-  [JsonIgnore]
-  private SolidColorBrush backgroundColor = new(Colors.Transparent); // Default color
-  [JsonIgnore]
-  public SolidColorBrush BackgroundColor
-  {
-    get => backgroundColor;
-    set
-    {
-      backgroundColor = value;
-      OnPropertyChanged();
-    }
-  }
   private TimeSpan _segmentTime;
   public TimeSpan SegmentTime {
     get { return _segmentTime; }

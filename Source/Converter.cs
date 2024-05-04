@@ -16,20 +16,23 @@ public class TimeSpanToStringConverter : IValueConverter {
 
       if (flooredTimeSpan.TotalMinutes < 1) {
         return flooredTimeSpan.ToString(@"s\.ff");
-      } else if (flooredTimeSpan.TotalHours < 1) {
+      }
+      else if (flooredTimeSpan.TotalHours < 1) {
         return flooredTimeSpan.ToString(@"m\:ss\.ff");
-      } else {
+      }
+      else {
         return flooredTimeSpan.ToString(@"h\:mm\:ss\.ff");
       }
     }
     return string.Empty;
   }
-  
+
   public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is string str) {
       if (TimeSpan.TryParse(str, out var timeSpan)) {
         return timeSpan;
-      } else {
+      }
+      else {
         Console.WriteLine("Unable to parse TimeSpan from given parameter : Likely the splits editor.");
       }
     }

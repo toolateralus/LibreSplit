@@ -2,12 +2,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:local="clr-namespace:LibreSplit"
     xmlns:root="clr-namespace:LibreSplit"
     mc:Ignorable="d" Width="300" Height="800"
     x:Class="LibreSplit.MainWindow"
     xmlns:controls="clr-namespace:LibreSplit.Controls;assembly=LibreSplit"
-    x:DataType="root:MainWindowVM"
+    x:DataType="root:LibreSplitContext"
     SystemDecorations="None"
     Title="LibreSplit">
     <Grid>
@@ -16,21 +15,32 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
-            <MenuItem Header="File">
-                <MenuItem Header="New" Click="NewFileMethod" />
-                <MenuItem Header="Open" Click="OpenFileMethod" />
-                <MenuItem Header="Save" Click="SaveFileMethod" />
-                <MenuItem Header="Save As" Click="SaveAsFileMethod" />
+            <MenuItem Header="Splits">
+                <MenuItem Header="New" Click="NewSplits" />
+                <MenuItem Header="Open" Click="OpenSplits" />
+                <MenuItem Header="Save" Click="SaveSplits" />
+                <MenuItem Header="Save As" Click="SaveSplitsAs" />
+                <MenuItem Header="Edit" Click="EditSplits" />
             </MenuItem>
 
-            <MenuItem Header="Edit">
-                <MenuItem Header="Edit Splits" Click="EditSplitsMethod" />
+            <MenuItem Header="Layout">
+              <MenuItem Header="New" Click="NewLayout" />
+              <MenuItem Header="Open" Click="OpenLayout" />
+              <MenuItem Header="Save" Click="SaveLayout" />
+              <MenuItem Header="Save As" Click="SaveLayoutAs" />
+              <MenuItem Header="Edit" Click="EditLayout" />
             </MenuItem>
             <MenuItem Header="Preferences">
                 <MenuItem Header="Themes" Click="ThemesMethod" />
             </MenuItem>
             <MenuItem Header="Close" Click="CloseWindow" />
         </Menu>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}" />
+        <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="root:LayoutItem" >
+              <ContentControl Content="{Binding Control}" />
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Window>

@@ -2,11 +2,11 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LibreSplit"
     x:Class="LibreSplit.TimerControl"
-    x:DataType="local:MainWindowVM">
+    x:DataType="local:TimerVM">
   <Grid>
     <TextBlock Grid.Column="1"
-      Text="{Binding Elapsed, Converter={StaticResource TimeSpanToStringConverter}}"
+      Text="{Binding DataContext.Elapsed, Converter={StaticResource TimeSpanToStringConverter}}"
       Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"
-      FontSize="40"/>
+      FontSize="40" Foreground="{Binding LayoutItem.AheadColor}"/>
   </Grid>
 </UserControl>

@@ -8,6 +8,8 @@ using LibreSplit.Controls;
 using LibreSplit.Timing;
 using LibreSplit.IO.Serialization;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace LibreSplit;
 
@@ -16,28 +18,39 @@ public partial class MainWindow : Window {
   static FilePickerSaveOptions saveOptions = new();
   private readonly Timer timer = new();
   private RunData? Run { get; set; }
-  private string? loadedFile;
+  private string? loadedSplitsFile;
+  private string? loadedLayoutFile;
   private readonly ConfigLoader configLoader = new();
   private readonly Serializer serializer = new();
-  MainWindowVM viewModel = new();
+  public static LibreSplitContext GlobalContext = new();
 
   public TimeSpan CurrentTime {
     get;
     set;
   } = TimeSpan.Zero;
   public MainWindow() {
-    DataContext = viewModel;
+    DataContext = GlobalContext;
     InitializeComponent();
     KeyDown += HandleInput;
+    GlobalContext.Layout.Add(new SplitsLayout());
+    GlobalContext.Layout.Add(new TimerLayout());
 
     configLoader.LoadOrCreate();
-    configLoader.TryLoadSplits(out loadedFile);
-
-    if (loadedFile != null) {
-      Run = serializer.ReadRunData(loadedFile, configLoader);
-      viewModel.Layout.Add(new SplitsControl(viewModel));
-      viewModel.Layout.Add(new TimerControl(viewModel));
-      viewModel.Segments = Run.Segments;
+    configLoader.TryLoadSplits(out loadedSplitsFile);
+    if (loadedSplitsFile != null&& serializer.Read<RunData>(loadedSplitsFile, out var run)) {
+      Run = run;
+      GlobalContext.Run = Run;
+    } else {
+      configLoader.Set(ConfigKeys.LastLoadedSplits, "");
+    }
+    configLoader.TryLoadLayout(out loadedLayoutFile);
+    if (loadedLayoutFile != null && serializer.Read<List<LayoutItem>>(loadedLayoutFile, out var layout)) {
+      GlobalContext.Layout.Clear();
+      foreach(var layoutItem in layout) {
+        GlobalContext.Layout.Add(layoutItem);
+      }
+    } else {
+      configLoader.Set(ConfigKeys.LastLoadedLayout, "");
     }
     
     timer.AttachUpdateHook(elapsedSpan => {
@@ -45,7 +58,7 @@ public partial class MainWindow : Window {
       if (Run?.SegmentIndex < Run?.Segments.Count) {
         Run.Segments[Run.SegmentIndex].SegmentTime = timer.Delta;
         Run.Segments[Run.SegmentIndex].SplitTime = timer.Elapsed;
-        viewModel.Elapsed = timer.Elapsed;
+        GlobalContext.Elapsed = timer.Elapsed;
       }
     });
   }
@@ -62,14 +75,14 @@ public partial class MainWindow : Window {
             // this returns false at the end of the run.
             if (!Run.Split(timer)) {
               timer.Stop();
-              viewModel.ClearActiveSegment();
+              GlobalContext.ClearActiveSegment();
             } else {
-              viewModel.SetActiveSegment(Run.Segments[Run.SegmentIndex]);
+              GlobalContext.SetActiveSegment(Run.Segments[Run.SegmentIndex]);
             }
           }
           else {
             Run.Start(timer);
-            viewModel.SetActiveSegment(Run.Segments[Run.SegmentIndex]);
+            GlobalContext.SetActiveSegment(Run.Segments[Run.SegmentIndex]);
           }
 
         }
@@ -89,15 +102,15 @@ public partial class MainWindow : Window {
       case Key.D5: {
           timer.Reset();
           Run.Reset();
-          viewModel.ClearActiveSegment();
-          viewModel.Elapsed = TimeSpan.Zero;
+          GlobalContext.ClearActiveSegment();
+          GlobalContext.Elapsed = TimeSpan.Zero;
 
         }
         break;
     }
   }
 
-  public async void NewFileMethod(object sender, RoutedEventArgs e) {
+  public async void NewSplits(object sender, RoutedEventArgs e) {
     Run = new();
     var saveOptions = new FilePickerSaveOptions {
       Title = "newSplits.json",
@@ -112,21 +125,28 @@ public partial class MainWindow : Window {
     }
 
     var path = newFilePath.Path.AbsolutePath;
-    loadedFile = path;
-    await serializer.WriteRunData(path, Run, configLoader);
+    loadedSplitsFile = path;
+    if (serializer.Write(path, Run)) {
+      configLoader.Set(ConfigKeys.LastLoadedSplits, path);
+    }
   }
-  public async void OpenFileMethod(object sender, RoutedEventArgs e) {
+  public async void OpenSplits(object sender, RoutedEventArgs e) {
     var list = await StorageProvider.OpenFilePickerAsync(openOptions);
     if (list.Count == 0) {
       return;
     }
-    loadedFile = list[0].Path?.AbsolutePath!;
+    loadedSplitsFile = list[0].Path?.AbsolutePath!;
     
-    if (loadedFile != null)
-      serializer.ReadRunData(loadedFile, configLoader);
+    if (loadedSplitsFile != null&& serializer.Read<RunData>(loadedSplitsFile, out var run)) {
+      configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
+      Run = run;
+      GlobalContext.Run = Run;
+    } else {
+      configLoader.Set(ConfigKeys.LastLoadedSplits, "");
+    }
   }
-  public async void SaveFileMethod(object sender, RoutedEventArgs e) {
-    if (loadedFile == null) {
+  public void SaveSplits(object sender, RoutedEventArgs e) {
+    if (loadedSplitsFile == null) {
       Console.WriteLine("You must select a file to 'Save'");
       return;
     }
@@ -134,30 +154,29 @@ public partial class MainWindow : Window {
       Console.WriteLine("Run was null when tried to save.");
       return;
     }
-    await serializer.WriteRunData(loadedFile, Run, configLoader);
+    if (serializer.Write(loadedSplitsFile, Run)) {
+      configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
+    }
   
   }
-  public void CloseWindow(object sender, RoutedEventArgs e) {
-    Close();
-  }
-  public async void SaveAsFileMethod(object sender, RoutedEventArgs e) {
+  public async void SaveSplitsAs(object sender, RoutedEventArgs e) {
     var file = await StorageProvider.SaveFilePickerAsync(saveOptions);
     if (file == null) {
       Console.WriteLine("You must select a file to 'Save As'");
       return;
     }
-    var path = file.Path.AbsolutePath;
-    
     if (Run == null) {
       Console.WriteLine("Run was null when tried to save.");
       return;
     }
-    
-    await serializer.WriteRunData(path, Run, configLoader);
+    if (serializer.Write(file.Path.AbsolutePath, Run)) {
+      loadedSplitsFile = file.Path.AbsolutePath;
+      configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
+    }
   }
-  public async void EditSplitsMethod(object sender, RoutedEventArgs e) {
+  public async void EditSplits(object sender, RoutedEventArgs e) {
     if (Run == null) {
-      NewFileMethod(sender, e);
+      NewSplits(sender, e);
     }
 
     var window = new SplitEditor(Run);
@@ -171,6 +190,70 @@ public partial class MainWindow : Window {
     await window.ShowDialog(this);
 
     Run = window.GetRun();
+  }
+  public async void NewLayout(object sender, RoutedEventArgs e) {
+    GlobalContext.Layout.Clear();
+    var saveOptions = new FilePickerSaveOptions {
+      Title = "newLayout.json",
+      FileTypeChoices = [
+            new(".json"),
+            ]
+    };
+
+    var newFilePath = await StorageProvider.SaveFilePickerAsync(saveOptions);
+    if (newFilePath == null) {
+      return;
+    }
+
+    var path = newFilePath.Path.AbsolutePath;
+    loadedLayoutFile = path;
+    if (serializer.Write(path, GlobalContext.Layout.ToList())) {
+      configLoader.Set(ConfigKeys.LastLoadedLayout, path);
+    }
+  }
+  public async void OpenLayout(object sender, RoutedEventArgs e) {
+    var list = await StorageProvider.OpenFilePickerAsync(openOptions);
+    if (list.Count == 0) {
+      return;
+    }
+    loadedLayoutFile = list[0].Path?.AbsolutePath!;
+    
+    if (loadedLayoutFile != null && serializer.Read<List<LayoutItem>>(loadedLayoutFile, out var layout)) {
+      configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
+      GlobalContext.Layout.Clear();
+      foreach(var layoutItem in layout) {
+        GlobalContext.Layout.Add(layoutItem);
+      }
+    } else {
+      configLoader.Set(ConfigKeys.LastLoadedLayout, "");
+    }
+  }
+  public void SaveLayout(object sender, RoutedEventArgs e) {
+    if (loadedLayoutFile == null) {
+      Console.WriteLine("You must select a file to 'Save'");
+      return;
+    }
+    if (serializer.Write(loadedLayoutFile, GlobalContext.Layout.ToList())) {
+      configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
+    }
+  }
+  public async void SaveLayoutAs(object sender, RoutedEventArgs e) {
+    var file = await StorageProvider.SaveFilePickerAsync(saveOptions);
+    if (file == null) {
+      Console.WriteLine("You must select a file to 'Save As'");
+      return;
+    }
+    var path = file.Path.AbsolutePath;
+    if (serializer.Write(path, GlobalContext.Layout.ToList())) {
+      loadedLayoutFile = path;
+      configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
+    }
+  }
+  public async void EditLayout(object sender, RoutedEventArgs e) {
+
+  }
+  public void CloseWindow(object sender, RoutedEventArgs e) {
+    Close();
   }
   public void ThemesMethod(object sender, RoutedEventArgs e) {
 
