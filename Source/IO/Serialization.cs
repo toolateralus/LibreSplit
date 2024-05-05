@@ -1,11 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading.Tasks;
-using LibreSplit.IO.Config;
 using LibreSplit.Timing;
-using Newtonsoft.Json;
 
 namespace LibreSplit.IO.Serialization;
 

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using Avalonia.Controls;
 using LibreSplit.Timing;
 
 namespace LibreSplit;
@@ -35,9 +36,9 @@ public class TimerVM : ViewModelBase {
     switch (e.PropertyName) {
     case nameof(Timer.Running):
       if (Timer.Running) {
-        State = TimerState.Ahead;
+        Classes = "Ahead";
       } else {
-        State = TimerState.Inactive;
+        Classes = "Inactive";
       }
       break;
     }
@@ -54,6 +55,16 @@ public class TimerVM : ViewModelBase {
       if (state != value) {
       state = value;
       OnPropertyChanged();
+      }
+    }
+  }
+  private string classes = "Inactive";
+  public string Classes {
+    get => classes;
+    set {
+      if (classes != value) {
+        classes = value;
+        OnPropertyChanged();
       }
     }
   }

@@ -3,21 +3,21 @@
   xmlns:local="clr-namespace:LibreSplit"
   x:Class="LibreSplit.TimerControl"
   x:DataType="local:TimerVM">
-  <!-- <UserControl.Styles>
+  <UserControl.Styles>
     <Style Selector="TextBlock.Inactive">
       <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor}" />
     </Style>
     <Style Selector="TextBlock.Ahead">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadColor" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadColor}" />
     </Style>
     <Style Selector="TextBlock.Behind">
       <Setter Property="Foreground" Value="{Binding LayoutItem.BehindColor}" />
     </Style>
-  </UserControl.Styles> -->
+  </UserControl.Styles>
   <Grid>
     <TextBlock Grid.Column="1"
       Text="{Binding Timer.Elapsed, Converter={StaticResource TimeSpanToStringConverter}}"
       Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"
-      FontSize="40"  />
+      FontSize="40" local:Setters.Classes="{Binding Classes}"/>
   </Grid>
 </UserControl>
