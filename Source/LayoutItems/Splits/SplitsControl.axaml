@@ -19,7 +19,7 @@
       <DataTemplate x:DataType="local:SegmentVM">
         <Grid
           Classes.Active="{Binding IsActive }"
-          Classes.Inactive="{Binding !IsActive }">
+          Classes.Inactive="{Binding !IsActive}">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />

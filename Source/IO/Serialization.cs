@@ -10,22 +10,6 @@ using Newtonsoft.Json;
 namespace LibreSplit.IO.Serialization;
 
 public class Serializer {
-  public RunData ReadRunData(string path, ConfigLoader configLoader) {
-    configLoader.Set(ConfigKeys.LastLoadedSplits, path);
-    path = Uri.UnescapeDataString(path);
-    if (!File.Exists(path)) {
-      configLoader.Set(ConfigKeys.LastLoadedSplits, "");
-      throw new FileNotFoundException($"Couldn't find file {path}");
-    }
-    var text = File.ReadAllText(path);
-    
-    try  {
-      return JsonConvert.DeserializeObject<RunData>(text) ?? throw new Exception("Failed to deserialize run data.");
-    } catch (Exception e) {
-      throw new JsonException($"Failed to deserialize run data from {path} : {e}");
-    }
-    
-  }
   public bool Read<T>(string path, out T result) {
     result = default!;
     try {
@@ -53,13 +37,13 @@ public class Serializer {
       stream.Write(JsonConvert.SerializeObject(value, Settings[typeof(T)]));
     } catch (JsonSerializationException e) {
       Console.WriteLine($"An error has occured while serializing {typeof(T)}. {e}");
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   public Dictionary<Type, JsonSerializerSettings> Settings = new() {
-    [typeof(List<LayoutItem>)] = new(){
+    [typeof(Layout)] = new(){
       TypeNameHandling = TypeNameHandling.Auto,
       Formatting = Formatting.Indented,
     },

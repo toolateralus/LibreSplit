@@ -1,31 +1,28 @@
 using System;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
+using Avalonia.Input;
 using LibreSplit.Timing;
 
 namespace LibreSplit;
 public class LibreSplitContext : ViewModelBase {
-  public ObservableCollection<LayoutItem> Layout {get;} = [];
+  private RunData run = new();
+  private SegmentData? activeSegment;
+  private Layout layout = [];
 
-  private TimeSpan elapsed;
-  public TimeSpan Elapsed {
-    get => elapsed;
-	set {
-      elapsed = value;
-	  OnPropertyChanged();
+  public Timer Timer { get; } = new();
+  public Layout Layout {
+    get => layout;
+    set {
+      layout = value;
+      OnPropertyChanged();
     }
   }
-
-	private RunData run = new();
   public RunData Run {
     get => run;
     set {
       run = value;
-	    OnPropertyChanged();
+      OnPropertyChanged();
     }
   }
-
-  private SegmentData? activeSegment;
   public SegmentData? ActiveSegment {
     get => activeSegment;
     set {
@@ -39,5 +36,58 @@ public class LibreSplitContext : ViewModelBase {
   }
   public void ClearActiveSegment() {
     ActiveSegment = null;
+  }
+
+  internal void Initialize() {
+    Timer.AttachUpdateHook(elapsedSpan => {
+      if (Run?.SegmentIndex < Run?.Segments.Count) {
+        Run.Segments[Run.SegmentIndex].SegmentTime = Timer.Delta;
+        Run.Segments[Run.SegmentIndex].SplitTime = Timer.Elapsed;
+      }
+    });
+  }
+
+  internal void HandleInput(object? sender, KeyEventArgs e) {
+    if (Run == null) {
+      return;
+    }
+    switch (e.Key) {
+      case Key.D1: {
+          if (Timer.Running) {
+            // this returns false at the end of the run.
+            if (!Run.Split(Timer)) {
+              Timer.Stop();
+              ClearActiveSegment();
+            }
+            else {
+              SetActiveSegment(Run.Segments[Run.SegmentIndex]);
+            }
+          }
+          else {
+            Run.Start(Timer);
+            SetActiveSegment(Run.Segments[Run.SegmentIndex]);
+          }
+
+        }
+        break;
+      case Key.D2: {
+          // todo: Implement pausing.
+        }
+        break;
+      case Key.D3: {
+          // todo: implement skipping back
+        }
+        break;
+      case Key.D4: {
+          // todo: implement skipping forward.
+        }
+        break;
+      case Key.D5: {
+          Timer.Reset();
+          Run.Reset();
+          ClearActiveSegment();
+        }
+        break;
+    }
   }
 }

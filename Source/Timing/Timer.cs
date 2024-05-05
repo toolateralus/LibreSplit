@@ -1,7 +1,5 @@
 using System;
 using System.Diagnostics;
-using System.Reflection;
-using Avalonia.Threading;
 namespace LibreSplit.Timing;
 
 
@@ -9,7 +7,7 @@ namespace LibreSplit.Timing;
 /// This is a class that encapsulates a speedrun timer used for RunData and fetching
 /// relevant timing information.
 /// </summary>
-public class Timer {
+public class Timer : ViewModelBase {
   private readonly Stopwatch stopwatch = new();
   /// <summary>
   /// The last time a split was made, either at the start of the run
@@ -26,8 +24,13 @@ public class Timer {
   /// <summary>
   /// The time since this run began.
   /// </summary>
+  private TimeSpan elapsed = TimeSpan.Zero;
   public TimeSpan Elapsed {
-    get { return stopwatch.Elapsed - pauseTime + startTime; }
+    get => elapsed;
+    private set {
+      elapsed = value;
+      OnPropertyChanged();
+    }
   }
   /// <summary>
   /// The time since the last split time.
@@ -35,14 +38,20 @@ public class Timer {
   public TimeSpan Delta {
     get { return Elapsed - LastSplitTime; }
   }
-  
+
   /// <summary>
   /// Is the timer running?
   /// </summary>
-  public bool Running { get; internal set; }
-  
+  public bool Running {
+    get => running; internal set {
+      running = value;
+      OnPropertyChanged();
+    }
+  }
+
   private System.Threading.Timer? updaterTimer;
-  
+  private bool running;
+
 
   /// <summary>
   /// This starts a System.Threading.Timer and sets up the Elapsed event
@@ -54,6 +63,7 @@ public class Timer {
       throw new InvalidOperationException("Cannot subscribe several events to the Timing.Timer.Updater hook");
     }
     updaterTimer = new(delegate {
+      Elapsed = stopwatch.Elapsed - pauseTime + startTime;
       if (Running) action(Elapsed);
     });
     updaterTimer.Change(0, 16);
