@@ -34,8 +34,6 @@ public partial class LayoutEditor : Window {
       }
     }
   }
-  public void AddItem_Clicked(object? sender, RoutedEventArgs e) {
-  }
   public List<MenuItem> LayoutItemTypes {
     get {
       List<MenuItem> layoutItemTypes = [];
@@ -51,7 +49,6 @@ public partial class LayoutEditor : Window {
       return layoutItemTypes;
     }
   }
-
   private void AddLayoutItem_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is MenuItem menuItem &&
         menuItem.Tag is Type layoutItemType &&
@@ -59,6 +56,5 @@ public partial class LayoutEditor : Window {
       GlobalContext.Layout.Add(layoutItem);
     }
   }
-
   public static LibreSplitContext GlobalContext => MainWindow.GlobalContext;
 }

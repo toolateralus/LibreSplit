@@ -6,6 +6,7 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
     <Application.Resources>
     <convert:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
+    <convert:StringToColorConverter x:Key="StringToColorConverter"/>
   </Application.Resources>
     <Application.Styles>
         <FluentTheme />

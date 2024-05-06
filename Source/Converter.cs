@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 
 namespace LibreSplit.Convert;
 /// <summary>
@@ -35,6 +36,22 @@ public class TimeSpanToStringConverter : IValueConverter {
       else {
         Console.WriteLine("Unable to parse TimeSpan from given parameter : Likely the splits editor.");
       }
+    }
+    return AvaloniaProperty.UnsetValue;
+  }
+}
+public class StringToColorConverter : IValueConverter {
+  public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
+    if (value is string colorString &&
+        Color.TryParse(colorString, out var color)) {
+      return color;
+    }
+    return AvaloniaProperty.UnsetValue;
+  }
+
+  public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
+    if (value is Color color) {
+      return color.ToString();
     }
     return AvaloniaProperty.UnsetValue;
   }

@@ -23,6 +23,9 @@ public class Serializer {
     } catch (JsonSerializationException e) {
       Console.WriteLine($"An error has occured while deserializing {typeof(T)}. {e}");
       return false;
+    } catch (JsonReaderException e) {
+      Console.WriteLine($"An error has occured while deserializing {typeof(T)}. {e}");
+      return false;
     }
   }
   public bool Write<T>(string path, T value) {
