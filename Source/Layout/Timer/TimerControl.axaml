@@ -5,17 +5,17 @@
   x:DataType="local:TimerVM">
   <UserControl.Styles>
     <Style Selector="TextBlock.Inactive">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor}" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor.Value}" />
     </Style>
     <Style Selector="TextBlock.Ahead">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadColor}" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadColor.Value}" />
     </Style>
     <Style Selector="TextBlock.Behind">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindColor}" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindColor.Value}" />
     </Style>
   </UserControl.Styles>
   <Grid>
-    <TextBlock Grid.Column="1"
+    <TextBlock
       Text="{Binding Timer.Elapsed, Converter={StaticResource TimeSpanToStringConverter}}"
       Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"
       FontSize="40" local:Setters.Classes="{Binding Classes}"/>

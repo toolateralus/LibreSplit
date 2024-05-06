@@ -188,7 +188,15 @@ public partial class MainWindow : Window {
     }
   }
   public async void EditLayout(object sender, RoutedEventArgs e) {
-
+    var window = new LayoutEditor();
+    void onClosing(object? sender, EventArgs args) {
+      window.Close();
+    };
+    Closing += onClosing;
+    window.Closing += delegate {
+      Closing -= onClosing;
+    };
+    await window.ShowDialog(this);
   }
   public void CloseWindow(object sender, RoutedEventArgs e) {
     Close();

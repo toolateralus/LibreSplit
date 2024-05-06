@@ -1,6 +1,4 @@
-using System;
 using System.ComponentModel;
-using Avalonia.Controls;
 using LibreSplit.Timing;
 
 namespace LibreSplit;

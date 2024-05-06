@@ -7,11 +7,11 @@
   <UserControl.Styles>
     <Style Selector="Grid.Active">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsVM)DataContext).LayoutItem.ActiveBGColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsVM)DataContext).LayoutItem.ActiveBGColor.Value}" />
     </Style>
     <Style Selector="Grid.Inactive">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsVM)DataContext).LayoutItem.InactiveBGColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsVM)DataContext).LayoutItem.InactiveBGColor.Value}" />
     </Style>
   </UserControl.Styles>
   <ItemsControl ItemsSource="{Binding SegmentVMs}">
