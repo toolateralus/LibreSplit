@@ -11,7 +11,9 @@
         <Expander HorizontalAlignment="Stretch" Margin="0" MinHeight="0">
           <Expander.Header>
             <StackPanel Orientation="Horizontal">
-              <Button Content="X" Tag="{Binding}" Click="RemoveItem_Clicked" />
+              <Button Content="▲" Click="MoveItemUp_Clicked" Tag="{Binding}" />
+              <Button Content="▼" Click="MoveItemDown_Clicked" Tag="{Binding}" />
+              <Button Content="X" Click="RemoveItem_Clicked" Tag="{Binding}" />
               <TextBlock Text="{Binding LayoutItemName}" />
             </StackPanel>
           </Expander.Header>
