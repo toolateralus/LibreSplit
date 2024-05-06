@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
@@ -31,5 +34,31 @@ public partial class LayoutEditor : Window {
       }
     }
   }
+  public void AddItem_Clicked(object? sender, RoutedEventArgs e) {
+  }
+  public List<MenuItem> LayoutItemTypes {
+    get {
+      List<MenuItem> layoutItemTypes = [];
+      var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+      foreach(var assembly in assemblies) {
+        IEnumerable<Type> types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(LayoutItem)) && !t.IsAbstract);
+        foreach (var type in types) {
+          var item = new MenuItem() { Header = type.Name, Tag = type };
+          item.Click += AddLayoutItem_Clicked;
+          layoutItemTypes.Add(item);
+        }
+      }
+      return layoutItemTypes;
+    }
+  }
+
+  private void AddLayoutItem_Clicked(object? sender, RoutedEventArgs e) {
+    if (sender is MenuItem menuItem &&
+        menuItem.Tag is Type layoutItemType &&
+        Activator.CreateInstance(layoutItemType) is LayoutItem layoutItem) {
+      GlobalContext.Layout.Add(layoutItem);
+    }
+  }
+
   public static LibreSplitContext GlobalContext => MainWindow.GlobalContext;
 }
