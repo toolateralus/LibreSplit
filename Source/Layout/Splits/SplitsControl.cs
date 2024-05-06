@@ -3,9 +3,9 @@ using Avalonia.LogicalTree;
 
 namespace LibreSplit;
 public partial class SplitsControl : UserControl {
-  SplitsVM viewModel = new();
-  public SplitsControl() {
-    DataContext = viewModel;
+  SplitsVM viewModel;
+  public SplitsControl(SplitsLayout layoutItem) {
+    DataContext = viewModel = new(layoutItem);
     InitializeComponent();
   }
 
@@ -17,10 +17,5 @@ public partial class SplitsControl : UserControl {
   protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e) {
     viewModel.OnDetachedFromLogicalTree();
     base.OnDetachedFromLogicalTree(e);
-  }
-
-  public SplitsLayout LayoutItem {
-    get => viewModel.LayoutItem;
-    internal set => viewModel.LayoutItem = value;
   }
 }

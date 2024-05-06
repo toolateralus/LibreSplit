@@ -5,13 +5,13 @@
   x:DataType="local:TimerVM">
   <UserControl.Styles>
     <Style Selector="TextBlock.Inactive">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor.Value}" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor}" />
     </Style>
     <Style Selector="TextBlock.Ahead">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadColor.Value}" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadColor}" />
     </Style>
     <Style Selector="TextBlock.Behind">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindColor.Value}" />
+      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindColor}" />
     </Style>
   </UserControl.Styles>
   <Grid>

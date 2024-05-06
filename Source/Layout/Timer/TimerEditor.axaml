@@ -2,6 +2,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:LibreSplit"
     x:Class="LibreSplit.TimerEditor"
+    xmlns:colorpicker="clr-namespace:AvaloniaColorPicker;assembly=AvaloniaColorPicker"
     x:DataType="local:TimerEditor">
   <Grid>
     <Grid.ColumnDefinitions>
@@ -14,10 +15,13 @@
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <TextBlock Text="Inactive Color" Grid.Row="0" Grid.Column="0"/>
-    <TextBox Text="{Binding LayoutItem.InactiveColor.Value}" Grid.Row="0" Grid.Column="1"/>
+    <colorpicker:ColorButton Grid.Row="0" Grid.Column="1"
+      Color="{Binding LayoutItem.InactiveColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
     <TextBlock Text="Ahead Color" Grid.Row="1" Grid.Column="0"/>
-    <TextBox Text="{Binding LayoutItem.AheadColor.Value}" Grid.Row="1" Grid.Column="1"/>
+    <colorpicker:ColorButton Grid.Row="1" Grid.Column="1"
+      Color="{Binding LayoutItem.AheadColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
     <TextBlock Text="Behind Color" Grid.Row="2" Grid.Column="0"/>
-    <TextBox Text="{Binding LayoutItem.BehindColor.Value}" Grid.Row="2" Grid.Column="1"/>
+    <colorpicker:ColorButton Grid.Row="2" Grid.Column="1"
+      Color="{Binding LayoutItem.BehindColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
   </Grid>
 </UserControl>

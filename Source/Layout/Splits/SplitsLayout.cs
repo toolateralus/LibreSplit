@@ -19,7 +19,7 @@ public class SplitsLayout : LayoutItem {
       OnPropertyChanged();
     }
   }
-  public override Control? Control => new SplitsControl() { LayoutItem = this };
+  public override Control? Control => new SplitsControl(this);
   public override Control? Editor => new SplitsEditor(this);
   public override string LayoutItemName => "Splits";
 }

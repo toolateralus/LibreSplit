@@ -4,17 +4,9 @@ using LibreSplit.Timing;
 namespace LibreSplit;
 
 public class TimerVM : ViewModelBase {
-  private TimerLayout layoutItem = new();
   private Timer? timer;
-  private TimerState state = TimerState.Inactive;
 
-  public TimerLayout LayoutItem {
-    get => layoutItem;
-    set {
-      layoutItem = value;
-      OnPropertyChanged();
-    }
-  }
+  public TimerLayout LayoutItem {get;}
   public Timer? Timer {
     get => timer;
     set {
@@ -48,15 +40,12 @@ public class TimerVM : ViewModelBase {
       Timer = null;
     }
   }
-  public TimerState State {
-    get => state; set {
-      if (state != value) {
-      state = value;
-      OnPropertyChanged();
-      }
-    }
-  }
   private string classes = "Inactive";
+
+  public TimerVM(TimerLayout layoutItem) {
+    LayoutItem = layoutItem;
+  }
+
   public string Classes {
     get => classes;
     set {

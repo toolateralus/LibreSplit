@@ -8,14 +8,10 @@ using LibreSplit.Timing;
 namespace LibreSplit;
 
 public class SplitsVM : ViewModelBase {
-  private SplitsLayout layoutItem = new();
-  public SplitsLayout LayoutItem {
-    get => layoutItem;
-    set {
-      layoutItem = value;
-      OnPropertyChanged();
-    }
+  public SplitsVM(SplitsLayout layoutItem) {
+    LayoutItem = layoutItem;
   }
+  public SplitsLayout LayoutItem {get;}
   LibreSplitContext ctx;
   public SegmentData? activeSegment;
 

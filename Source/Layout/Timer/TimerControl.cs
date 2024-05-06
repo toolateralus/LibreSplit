@@ -3,9 +3,9 @@ using Avalonia.LogicalTree;
 
 namespace LibreSplit;
 public partial class TimerControl : UserControl {
-  TimerVM viewModel = new();
-  public TimerControl() {
-    DataContext = viewModel;
+  TimerVM viewModel;
+  public TimerControl(TimerLayout layoutItem) {
+    DataContext = viewModel = new(layoutItem);
     InitializeComponent();
   }
   protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e) {
@@ -16,5 +16,4 @@ public partial class TimerControl : UserControl {
     viewModel.OnDetachedFromLogicalTree();
     base.OnDetachedFromLogicalTree(e);
   }
-  public TimerLayout? LayoutItem { get; internal set; }
 }
