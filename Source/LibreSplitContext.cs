@@ -6,7 +6,7 @@ namespace LibreSplit;
 public class LibreSplitContext : ViewModelBase {
   private RunData run = new();
   private SegmentData? activeSegment;
-  private Layout layout = [];
+  private Layout layout = Layout.Default;
 
   public Timer Timer { get; } = new();
   public Layout Layout {
@@ -47,12 +47,12 @@ public class LibreSplitContext : ViewModelBase {
     });
   }
 
-  internal void HandleInput(object? sender, KeyEventArgs e) {
+  internal void HandleInput(string key) {
     if (Run == null) {
       return;
     }
-    switch (e.Key) {
-      case Key.D1: {
+    switch (key) {
+      case "1": {
           if (Timer.Running) {
             // this returns false at the end of the run.
             if (!Run.Split(Timer)) {
@@ -70,19 +70,19 @@ public class LibreSplitContext : ViewModelBase {
 
         }
         break;
-      case Key.D2: {
+      case "2": {
           // todo: Implement pausing.
         }
         break;
-      case Key.D3: {
+      case "3": {
           // todo: implement skipping back
         }
         break;
-      case Key.D4: {
+      case "4": {
           // todo: implement skipping forward.
         }
         break;
-      case Key.D5: {
+      case "5": {
           Timer.Reset();
           Run.Reset();
           ClearActiveSegment();

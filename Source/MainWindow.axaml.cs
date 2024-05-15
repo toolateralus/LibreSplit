@@ -22,6 +22,14 @@ public partial class MainWindow : Window {
   private readonly Serializer serializer = new();
   public static LibreSplitContext GlobalContext = new();
   public MainWindow() {
+    Closing += OnClosing;
+    Input.InitializeInput();
+    Input.GrabKey("1");
+    Input.GrabKey("2");
+    Input.GrabKey("3");
+    Input.GrabKey("4");
+    Input.GrabKey("5");
+    Input.Start();
     DataContext = GlobalContext;
     InitializeComponent();
     configLoader.LoadOrCreate();
@@ -42,10 +50,11 @@ public partial class MainWindow : Window {
     }
     
     GlobalContext.Initialize();
-    KeyDown += GlobalContext.HandleInput;
+    Input.KeyDown += GlobalContext.HandleInput;
   }
-  
-
+  private void OnClosing(object? sender, WindowClosingEventArgs e) {
+    Input.Stop();
+  }
   #region Events
   public async void NewSplits(object sender, RoutedEventArgs e) {
     GlobalContext.Run = new();

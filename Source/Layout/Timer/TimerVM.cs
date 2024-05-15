@@ -6,7 +6,7 @@ namespace LibreSplit;
 public class TimerVM : ViewModelBase {
   private Timer? timer;
 
-  public TimerLayout LayoutItem {get;}
+  public TimerLayout LayoutItem { get; }
   public Timer? Timer {
     get => timer;
     set {
@@ -29,6 +29,23 @@ public class TimerVM : ViewModelBase {
         Classes = "Ahead";
       } else {
         Classes = "Inactive";
+      }
+      break;
+    case nameof(Timer.Elapsed):
+      if (MainWindow.GlobalContext.ActiveSegment is SegmentData activeSegment) {
+        if (Timer.Elapsed < activeSegment.PBSplitTime) {
+          if (Timer.Delta < activeSegment.PBSegmentTime) {
+            Classes = "AheadGainingTime";
+          } else {
+            Classes = "AheadLosingTime";
+          }
+        } else {
+          if (Timer.Delta < activeSegment.PBSegmentTime) {
+            Classes = "BehindGainingTime";
+          } else {
+            Classes = "BehindLosingTime";
+          }
+        }
       }
       break;
     }

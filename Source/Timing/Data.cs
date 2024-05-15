@@ -20,9 +20,9 @@ public class RunData(TimeSpan? startTime = null) {
   /// <summary>
   /// The best time achieved of an RTA attempt at these segments.
   /// </summary>
-  public TimeSpan PersonalBest { get; set; }
-  
-  
+  public TimeSpan PersonalBest => Segments.Last().PBSplitTime;
+
+
   // for binding.
   public TimeSpan StartTime {
     get;
@@ -41,6 +41,7 @@ public class RunData(TimeSpan? startTime = null) {
   public int SegmentIndex { get; private set; } = 0;
   
   public void Start(Timer timer) {
+    SegmentIndex = 0;
     timer.Start(startTime);
   }
   
@@ -50,13 +51,13 @@ public class RunData(TimeSpan? startTime = null) {
   /// <param name="timer"></param>
   /// <returns>True if the run still has remaining segments, false if the run is complete.</returns>
   public bool Split(Timer timer) {
-    if (SegmentIndex >= Segments.Count) {
-      return false;
-    }
     Segments[SegmentIndex].AddSegmentTime(timer.Delta);
     Segments[SegmentIndex].AddSplitTime(timer.Elapsed);
     timer.LastSplitTime = timer.Elapsed;
     SegmentIndex++;
+    if (SegmentIndex >= Segments.Count) {
+      return false;
+    }
     return true;
   }
   
@@ -67,7 +68,6 @@ public class RunData(TimeSpan? startTime = null) {
     if (lastSplitTime != TimeSpan.Zero &&
     (lastSplitTime < PersonalBest || PersonalBest == TimeSpan.Zero)) {
       isPB = true;
-      PersonalBest = lastSplitTime;
     }
     foreach (var seg in Segments) {
       if (seg.SplitTime == TimeSpan.Zero) {
@@ -87,7 +87,6 @@ public class RunData(TimeSpan? startTime = null) {
 /// This class defines a single segment of a greater run and holds display information and timing data.
 /// </summary>
 /// <param name="label"></param>
-/// <param name="pbSegmentTime"></param>
 public class SegmentData(string label) : INotifyPropertyChanged {
   #region UI Stuff
   private TimeSpan _segmentTime;
