@@ -1,8 +1,10 @@
 using System;
 using System.Linq;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+  using Avalonia.Data;
 using LibreSplit.Timing;
 namespace LibreSplit.Controls;
 public partial class SplitEditor : Window {
@@ -21,40 +23,43 @@ public partial class SplitEditor : Window {
     this.run = run;
     splitListBox.ItemsSource = run.Segments;
     startTimeBox.Text = run.StartTime.ToString();
-    KeyDown += delegate(object? o, KeyEventArgs e) {
+    KeyDown += delegate (object? o, KeyEventArgs e) {
       if (!e.KeyModifiers.HasFlag(KeyModifiers.Control | KeyModifiers.Shift)) {
-        return;        
+        return;
       }
-      
-      switch(e.Key) {
+
+      switch (e.Key) {
         case Key.A: {
-          AddSplit();
-        } break;
+            AddSplit();
+          }
+          break;
         case Key.R: {
-          RemoveSplit();
-        } break;
+            RemoveSplit();
+          }
+          break;
       }
-      
+
     };
-    
+
   }
   public void OnAddSplitClicked(object sender, RoutedEventArgs e) {
     AddSplit();
   }
-  
+
   private void AddSplit() {
     run.Segments.Add(new SegmentData("New Split"));
   }
-  
+
   public void OnRemoveSplitClicked(object sender, RoutedEventArgs e) {
     RemoveSplit();
   }
-  
+
   private void RemoveSplit() {
     // remove selected otherwise pop last.
     if (splitListBox.SelectedItem is SegmentData selectedSegment) {
       run.Segments.Remove(selectedSegment);
-    } else {
+    }
+    else {
       run.Segments.Remove(run.Segments.Last());
     }
   }

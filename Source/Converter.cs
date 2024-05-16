@@ -21,8 +21,12 @@ public class TimeSpanToStringConverter : IValueConverter {
       else if (flooredTimeSpan.TotalHours < 1) {
         return flooredTimeSpan.ToString(@"m\:ss\.ff");
       }
-      else {
+      else if (flooredTimeSpan.TotalDays < 1) {
         return flooredTimeSpan.ToString(@"h\:mm\:ss\.ff");
+      } else {
+        var totalHours = flooredTimeSpan.Hours + (flooredTimeSpan.Days * 24);
+        string minutesSeconds = flooredTimeSpan.ToString(@"mm\:ss\.ff");
+        return totalHours.ToString() + ":" + minutesSeconds;
       }
     }
     return string.Empty;
@@ -30,12 +34,28 @@ public class TimeSpanToStringConverter : IValueConverter {
 
   public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is string str) {
-      if (TimeSpan.TryParse(str, out var timeSpan)) {
-        return timeSpan;
+      TimeSpan timeSpan = TimeSpan.Zero;
+      string[] timeParts = str.Split(':');
+      if (timeParts.Length > 0 && float.TryParse(timeParts[^1], out var seconds)) {
+        timeSpan = timeSpan.Add(TimeSpan.FromSeconds(seconds));
+      } else {
+        return AvaloniaProperty.UnsetValue;
       }
-      else {
-        Console.WriteLine("Unable to parse TimeSpan from given parameter : Likely the splits editor.");
+      if (timeParts.Length > 1) {
+        if (int.TryParse(timeParts[^2], out var minutes)) {
+          timeSpan = timeSpan.Add(TimeSpan.FromMinutes(minutes));
+        } else {
+          return AvaloniaProperty.UnsetValue;
+        }
       }
+      if (timeParts.Length > 2) {
+        if (int.TryParse(timeParts[^3], out var hours)) {
+          timeSpan = timeSpan.Add(TimeSpan.FromHours(hours));
+        } else {
+          return AvaloniaProperty.UnsetValue;
+        }
+      }
+      return timeSpan;
     }
     return AvaloniaProperty.UnsetValue;
   }
