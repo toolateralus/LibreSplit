@@ -1,17 +1,22 @@
 <Window xmlns="https://github.com/avaloniaui"
   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:local="clr-namespace:LibreSplit.Timing"
+  xmlns:t="clr-namespace:LibreSplit.Timing"
   xmlns:b="clr-namespace:LibreSplit.Behaviors"
+  xmlns:c="clr-namespace:LibreSplit.Controls"
   x:Class="LibreSplit.Controls.SplitEditor"
-  Title="Split Editor" Width="800" Height="600">
+  Title="Split Editor" Width="800" Height="600"
+  x:DataType="c:SplitEditor">
+  <Window.KeyBindings>
+    <KeyBinding Gesture="Enter" Command="{Binding ClearFocus}" />
+  </Window.KeyBindings>
   <DockPanel LastChildFill="True">
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
       <Button Content="Add Split" Click="OnAddSplitClicked" />
       <Button Content="Remove Split" Click="OnRemoveSplitClicked" />
       <StackPanel Orientation="Horizontal">
         <Label>Start Time:</Label>
-        <TextBox x:Name="startTimeBox" x:DataType="local:RunData"
-          Text="{Binding StartTime, Converter={StaticResource TimeSpanToStringConverter}}" />
+        <TextBox x:Name="startTimeBox"
+          Text="{Binding Run.StartTime, Converter={StaticResource NullableTimeSpanToStringConverter}}" />
       </StackPanel>
     </StackPanel>
     <Grid DockPanel.Dock="Top">
@@ -24,9 +29,9 @@
       <TextBlock Grid.Column="1" Text="Personal Best Split" Margin="2" />
       <TextBlock Grid.Column="2" Text="Personal Best Segment" Margin="2" />
     </Grid>
-    <ListBox x:Name="splitListBox">
+    <ListBox ItemsSource="{Binding Run.Segments}" SelectedItem="{Binding SelectedItem}">
       <ListBox.ItemTemplate>
-        <DataTemplate x:DataType="local:SegmentData">
+        <DataTemplate x:DataType="t:SegmentData">
           <Grid>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="*" />
@@ -36,14 +41,14 @@
             <TextBox Grid.Column="0" Text="{Binding Label}" Margin="1" />
             <TextBox Grid.Column="1" Margin="1">
               <Interaction.Behaviors>
-                <b:TextBoxUpdateSourceOnFocusLoss
-                  Text="{Binding PBSplitTime, Converter={StaticResource TimeSpanToStringConverter}}" />
+                <b:TextBoxTextUpdateSourceOnLostFocus
+                  Text="{Binding PBSplitTime, Converter={StaticResource NullableTimeSpanToStringConverter}}" />
               </Interaction.Behaviors>
             </TextBox>
             <TextBox Grid.Column="2" Margin="1">
               <Interaction.Behaviors>
-                <b:TextBoxUpdateSourceOnFocusLoss
-                  Text="{Binding PBSegmentTime, Converter={StaticResource TimeSpanToStringConverter}}" />
+                <b:TextBoxTextUpdateSourceOnLostFocus
+                  Text="{Binding PBSegmentTime, Converter={StaticResource NullableTimeSpanToStringConverter}}" />
               </Interaction.Behaviors>
             </TextBox>
           </Grid>

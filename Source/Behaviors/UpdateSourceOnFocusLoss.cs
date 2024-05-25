@@ -6,14 +6,14 @@ using System;
 using Avalonia.Data;
 
 namespace LibreSplit.Behaviors;
-public class TextBoxUpdateSourceOnFocusLoss : Behavior<TextBox> {
-  static TextBoxUpdateSourceOnFocusLoss() {
+public class TextBoxTextUpdateSourceOnLostFocus : Behavior<TextBox> {
+  static TextBoxTextUpdateSourceOnLostFocus() {
     TextProperty.Changed.Subscribe(e => {
-      ((TextBoxUpdateSourceOnFocusLoss)e.Sender).OnBindingValueChanged();
+      ((TextBoxTextUpdateSourceOnLostFocus)e.Sender).OnBindingValueChanged();
     });
   }
   public static readonly StyledProperty<string> TextProperty =
-    AvaloniaProperty.Register<TextBoxUpdateSourceOnFocusLoss, string>(
+    AvaloniaProperty.Register<TextBoxTextUpdateSourceOnLostFocus, string>(
       name: "Text",
       defaultBindingMode: BindingMode.TwoWay
     );

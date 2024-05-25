@@ -58,13 +58,12 @@ public class Timer : ViewModelBase {
   /// so that your Action<TimeSpan> is invoked once every 16 milliseconds
   /// with the current elapsed time.
   /// </summary>
-  public void AttachUpdateHook(Action<TimeSpan> action) {
+  public void Initialize() {
     if (updaterTimer != null) {
-      throw new InvalidOperationException("Cannot subscribe several events to the Timing.Timer.Updater hook");
+      throw new InvalidOperationException("Cannot initialize a timer that is already running.");
     }
     updaterTimer = new(delegate {
       Elapsed = stopwatch.Elapsed - pauseTime + startTime;
-      if (Running) action(Elapsed);
     });
     updaterTimer.Change(0, 16);
   }

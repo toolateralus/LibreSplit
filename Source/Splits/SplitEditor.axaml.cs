@@ -1,28 +1,30 @@
 using System;
 using System.Linq;
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
-  using Avalonia.Data;
 using LibreSplit.Timing;
+using System.Windows.Input;
 namespace LibreSplit.Controls;
 public partial class SplitEditor : Window {
-  private readonly RunData run;
+  public ICommand ClearFocus => new RelayCommand(_ => {
+    FocusManager?.ClearFocus();
+  });
+  public object? SelectedItem {get; set;}
+  public RunData Run { get; set; }
   public SplitEditor() {
     // This should never be used.
     // It is just here to get the compiler to stop complaining
     // with a warning.
-    run = null!;
-    DataContext = run;
+    Run = null!;
+    DataContext = this;
     throw new NotImplementedException("Do not use SplitEditor in your axaml code.");
   }
   public SplitEditor(RunData? run) {
-    InitializeComponent();
     run ??= new();
-    this.run = run;
-    splitListBox.ItemsSource = run.Segments;
-    startTimeBox.Text = run.StartTime.ToString();
+    Run = run;
+    DataContext = this;
+    InitializeComponent();
     KeyDown += delegate (object? o, KeyEventArgs e) {
       if (!e.KeyModifiers.HasFlag(KeyModifiers.Control | KeyModifiers.Shift)) {
         return;
@@ -47,7 +49,7 @@ public partial class SplitEditor : Window {
   }
 
   private void AddSplit() {
-    run.Segments.Add(new SegmentData("New Split"));
+    Run.Segments.Add(new SegmentData("New Split"));
   }
 
   public void OnRemoveSplitClicked(object sender, RoutedEventArgs e) {
@@ -56,15 +58,15 @@ public partial class SplitEditor : Window {
 
   private void RemoveSplit() {
     // remove selected otherwise pop last.
-    if (splitListBox.SelectedItem is SegmentData selectedSegment) {
-      run.Segments.Remove(selectedSegment);
+    if (SelectedItem is SegmentData selectedSegment) {
+      Run.Segments.Remove(selectedSegment);
     }
     else {
-      run.Segments.Remove(run.Segments.Last());
+      Run.Segments.Remove(Run.Segments.Last());
     }
   }
 
   internal RunData? GetRun() {
-    return run;
+    return Run;
   }
 }

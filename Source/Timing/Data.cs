@@ -4,9 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Avalonia.Markup.Xaml;
-using Avalonia.Media;
-using Newtonsoft.Json;
 
 namespace LibreSplit.Timing;
 /// <summary>
@@ -20,7 +17,8 @@ public class RunData(TimeSpan? startTime = null) {
   /// <summary>
   /// The best time achieved of an RTA attempt at these segments.
   /// </summary>
-  public TimeSpan PersonalBest => Segments.Last().PBSplitTime;
+  [JsonIgnore]
+  public TimeSpan? PersonalBest => Segments.LastOrDefault()?.PBSplitTime;
 
 
   // for binding.
@@ -28,49 +26,56 @@ public class RunData(TimeSpan? startTime = null) {
     get;
     set;
   } = startTime ?? TimeSpan.Zero;
-  
+
   /// <summary>
   /// The total count of attempts made at this run.
   /// </summary>
   public uint AttemptCount { get; set; } = 0;
-  
+
   /// <summary>
   /// The current segment index of an in-progress run.
   /// </summary>
   [JsonIgnore]
   public int SegmentIndex { get; private set; } = 0;
-  
+
   public void Start(Timer timer) {
     SegmentIndex = 0;
     timer.Start(startTime);
   }
-  
+
   /// <summary>
   /// Advance to the next segment in the run and save current time data,
   /// </summary>
   /// <param name="timer"></param>
   /// <returns>True if the run still has remaining segments, false if the run is complete.</returns>
   public bool Split(Timer timer) {
-    Segments[SegmentIndex].AddSegmentTime(timer.Delta);
-    Segments[SegmentIndex].AddSplitTime(timer.Elapsed);
-    timer.LastSplitTime = timer.Elapsed;
+    SegmentData segmentData = Segments[SegmentIndex];
+    TimeSpan elapsed = timer.Elapsed;
+    TimeSpan delta = timer.Delta;
+
+    segmentData.SplitTime = elapsed;
+    segmentData.SegmentTime = delta;
+    segmentData.AddSegmentTime(delta);
+    segmentData.AddSplitTime(elapsed);
+    
+    timer.LastSplitTime = elapsed;
     SegmentIndex++;
     if (SegmentIndex >= Segments.Count) {
       return false;
     }
     return true;
   }
-  
+
   internal void Reset() {
     SegmentIndex = 0;
     var lastSplitTime = Segments[^1].SplitTime;
     bool isPB = false;
-    if (lastSplitTime != TimeSpan.Zero &&
-    (lastSplitTime < PersonalBest || PersonalBest == TimeSpan.Zero)) {
+    if (lastSplitTime != null &&
+    (lastSplitTime < PersonalBest || PersonalBest == null)) {
       isPB = true;
     }
     foreach (var seg in Segments) {
-      if (seg.SplitTime == TimeSpan.Zero) {
+      if (seg.SplitTime == null) {
         continue;
       }
       if (isPB) {
@@ -89,8 +94,9 @@ public class RunData(TimeSpan? startTime = null) {
 /// <param name="label"></param>
 public class SegmentData(string label) : INotifyPropertyChanged {
   #region UI Stuff
-  private TimeSpan _segmentTime;
-  public TimeSpan SegmentTime {
+  private TimeSpan? _segmentTime;
+  [JsonIgnore]
+  public TimeSpan? SegmentTime {
     get { return _segmentTime; }
     set {
       if (_segmentTime != value) {
@@ -109,11 +115,9 @@ public class SegmentData(string label) : INotifyPropertyChanged {
   }
 
 
-  private TimeSpan _splitTime;
-  private TimeSpan pBSegmentTime = TimeSpan.Zero;
-  private TimeSpan pBSplitTime = TimeSpan.Zero;
-
-  public TimeSpan SplitTime {
+  private TimeSpan? _splitTime;
+  [JsonIgnore]
+  public TimeSpan? SplitTime {
     get { return _splitTime; }
     set {
       if (_splitTime != value) {
@@ -123,23 +127,27 @@ public class SegmentData(string label) : INotifyPropertyChanged {
     }
   }
   public event PropertyChangedEventHandler? PropertyChanged;
-  
+
   protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
   }
   #endregion
-  
-  public List<TimeSpan> SegmentTimeHistory {get;set;}= [];
-  public List<TimeSpan> SplitTimeHistory {get;set;} = [];
 
-  public TimeSpan PBSegmentTime {
+  public List<TimeSpan> SegmentTimeHistory { get; set; } = [];
+  public List<TimeSpan> SplitTimeHistory { get; set; } = [];
+
+
+  private TimeSpan? pBSegmentTime = null;
+  public TimeSpan? PBSegmentTime {
     get => pBSegmentTime;
     set {
       pBSegmentTime = value;
       OnPropertyChanged();
     }
   }
-  public TimeSpan PBSplitTime {
+
+  private TimeSpan? pBSplitTime = null;
+  public TimeSpan? PBSplitTime {
     get => pBSplitTime;
     set {
       pBSplitTime = value;
@@ -152,41 +160,41 @@ public class SegmentData(string label) : INotifyPropertyChanged {
   public void AddSplitTime(TimeSpan time) {
     SplitTimeHistory.Add(time);
   }
-  
-  public TimeSpan BestSegmentTime() {
+
+  public TimeSpan? BestSegmentTime() {
     if (SegmentTimeHistory.Count == 0) {
-      return TimeSpan.Zero;
+      return null;
     }
     return SegmentTimeHistory.Min();
   }
-  public TimeSpan WorstSegmentTime() {
+  public TimeSpan? WorstSegmentTime() {
     if (SegmentTimeHistory.Count == 0) {
-      return TimeSpan.Zero;
+      return null;
     }
     return SegmentTimeHistory.Max();
   }
-  public TimeSpan AverageSegmentTime() {
+  public TimeSpan? AverageSegmentTime() {
     if (SegmentTimeHistory.Count == 0) {
-      return TimeSpan.Zero;
+      return null;
     }
     long averageTicks = (long)SegmentTimeHistory.Average(timeSpan => timeSpan.Ticks);
     return new TimeSpan(averageTicks);
   }
-  public TimeSpan BestSplitTime() {
+  public TimeSpan? BestSplitTime() {
     if (SplitTimeHistory.Count == 0) {
-      return TimeSpan.Zero;
+      return null;
     }
     return SplitTimeHistory.Min();
   }
-  public TimeSpan WorstSplitTime() {
-        if (SplitTimeHistory.Count == 0) {
-      return TimeSpan.Zero;
+  public TimeSpan? WorstSplitTime() {
+    if (SplitTimeHistory.Count == 0) {
+      return null;
     }
     return SplitTimeHistory.Max();
   }
-  public TimeSpan AverageSplitTime() {
+  public TimeSpan? AverageSplitTime() {
     if (SplitTimeHistory.Count == 0) {
-      return TimeSpan.Zero;
+      return null;
     }
     long averageTicks = (long)SplitTimeHistory.Average(timeSpan => timeSpan.Ticks);
     return new TimeSpan(averageTicks);
