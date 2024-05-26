@@ -5,7 +5,7 @@
              RequestedThemeVariant="Dark">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
     <Application.Resources>
-    <convert:TimeSpanToStringConverter x:Key="TimeSpanToStringConverter"/>
+    <convert:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter"/>
     <convert:StringToColorConverter x:Key="StringToColorConverter"/>
   </Application.Resources>
     <Application.Styles>

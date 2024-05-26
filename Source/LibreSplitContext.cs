@@ -39,12 +39,7 @@ public class LibreSplitContext : ViewModelBase {
   }
 
   internal void Initialize() {
-    Timer.AttachUpdateHook(elapsedSpan => {
-      if (Run?.SegmentIndex < Run?.Segments.Count) {
-        Run.Segments[Run.SegmentIndex].SegmentTime = Timer.Delta;
-        Run.Segments[Run.SegmentIndex].SplitTime = Timer.Elapsed;
-      }
-    });
+    Timer.Initialize();
   }
 
   internal void HandleInput(string key) {
