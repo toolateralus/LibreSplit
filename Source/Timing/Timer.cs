@@ -59,7 +59,7 @@ public class Timer : ViewModelBase {
       throw new InvalidOperationException("Cannot initialize a timer that is already running.");
     }
     updaterTimer = new(delegate {
-      Elapsed = stopwatch.Elapsed - pauseTime + startTime;
+      Elapsed = stopwatch.Elapsed  + startTime;
     });
     updaterTimer.Change(0, 16);
   }
