@@ -3,7 +3,7 @@ using Avalonia.LogicalTree;
 
 namespace LibreSplit;
 public partial class SplitsControl : UserControl {
-  SplitsVM viewModel;
+  SplitsViewModel viewModel;
   public SplitsControl(SplitsLayout layoutItem) {
     DataContext = viewModel = new(layoutItem);
     InitializeComponent();

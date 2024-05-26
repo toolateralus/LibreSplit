@@ -133,8 +133,8 @@ public partial class MainWindow : Window {
       Closing -= onClosing;
     };
     await window.ShowDialog(this);
-
-    GlobalContext.Run = window.GetRun();
+    
+    GlobalContext.Run = window.GetRun() ?? new();
   }
   public async void NewLayout(object sender, RoutedEventArgs e) {
     GlobalContext.Layout.Clear();

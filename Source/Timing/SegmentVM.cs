@@ -2,7 +2,7 @@ using LibreSplit.Timing;
 
 namespace LibreSplit;
 
-public class SegmentVM(SegmentData segmentData) : ViewModelBase {
+public class SegmentViewModel(SegmentData segmentData) : ViewModelBase {
   public SegmentData Segment { get; } = segmentData;
   private bool isActive;
   public bool IsActive {

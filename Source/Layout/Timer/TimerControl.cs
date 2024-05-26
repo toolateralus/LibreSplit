@@ -3,7 +3,7 @@ using Avalonia.LogicalTree;
 
 namespace LibreSplit;
 public partial class TimerControl : UserControl {
-  TimerVM viewModel;
+  TimerViewModel viewModel;
   public TimerControl(TimerLayout layoutItem) {
     DataContext = viewModel = new(layoutItem);
     InitializeComponent();

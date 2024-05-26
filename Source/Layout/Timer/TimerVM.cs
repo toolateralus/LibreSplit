@@ -3,7 +3,7 @@ using LibreSplit.Timing;
 
 namespace LibreSplit;
 
-public class TimerVM : ViewModelBase {
+public class TimerViewModel : ViewModelBase {
   private Timer? timer;
 
   public TimerLayout LayoutItem { get; }
@@ -59,7 +59,7 @@ public class TimerVM : ViewModelBase {
   }
   private string classes = "Inactive";
 
-  public TimerVM(TimerLayout layoutItem) {
+  public TimerViewModel(TimerLayout layoutItem) {
     LayoutItem = layoutItem;
   }
 

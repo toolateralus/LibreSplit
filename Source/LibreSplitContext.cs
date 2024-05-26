@@ -64,6 +64,8 @@ public class LibreSplitContext : ViewModelBase {
             }
           }
           else {
+            Timer.Reset();
+            Run.Reset();
             Run.Start(Timer);
             SetActiveSegment(Run.Segments[Run.SegmentIndex]);
           }
@@ -71,15 +73,17 @@ public class LibreSplitContext : ViewModelBase {
         }
         break;
       case "2": {
-          // todo: Implement pausing.
+          Timer.Pause();
         }
         break;
       case "3": {
-          // todo: implement skipping back
+          Run.SkipBack();
+          SetActiveSegment(Run.Segments[Run.SegmentIndex]);
         }
         break;
       case "4": {
-          // todo: implement skipping forward.
+          Run.SkipForward();
+          SetActiveSegment(Run.Segments[Run.SegmentIndex]);
         }
         break;
       case "5": {

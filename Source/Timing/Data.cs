@@ -22,7 +22,7 @@ public class RunData(TimeSpan? startTime = null) {
   /// </summary>
   public TimeSpan PersonalBest => Segments.Last().PBSplitTime;
 
-
+  
   // for binding.
   public TimeSpan StartTime {
     get;
@@ -82,6 +82,22 @@ public class RunData(TimeSpan? startTime = null) {
     }
     AttemptCount++;
   }
+  
+  internal void SkipBack() {
+    Segments[SegmentIndex].SegmentTime = TimeSpan.Zero;
+    Segments[SegmentIndex].SplitTime = TimeSpan.Zero;
+    if (SegmentIndex > 0) {
+      SegmentIndex--;
+    }
+  }
+  internal void SkipForward() {
+    Segments[SegmentIndex].SegmentTime = TimeSpan.Zero;
+    Segments[SegmentIndex].SplitTime = TimeSpan.Zero;
+    if (SegmentIndex < Segments.Count) {
+      SegmentIndex++;
+    }
+  }
+  
 }
 /// <summary>
 /// This class defines a single segment of a greater run and holds display information and timing data.

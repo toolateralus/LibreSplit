@@ -15,10 +15,6 @@ public class Timer : ViewModelBase {
   /// </summary>
   public TimeSpan LastSplitTime { get; set; }
    = TimeSpan.Zero;
-  /// <summary>
-  /// The elapsed time at which the timer was paused.
-  /// </summary>
-  private TimeSpan pauseTime = TimeSpan.Zero;
   private TimeSpan startTime = TimeSpan.Zero;
   
   /// <summary>
@@ -38,7 +34,7 @@ public class Timer : ViewModelBase {
   public TimeSpan Delta {
     get { return Elapsed - LastSplitTime; }
   }
-
+  
   /// <summary>
   /// Is the timer running?
   /// </summary>
@@ -48,34 +44,35 @@ public class Timer : ViewModelBase {
       OnPropertyChanged();
     }
   }
-
+  
   private System.Threading.Timer? updaterTimer;
   private bool running;
-
-
+  
+  
   /// <summary>
   /// This starts a System.Threading.Timer and sets up the Elapsed event
   /// so that your Action<TimeSpan> is invoked once every 16 milliseconds
   /// with the current elapsed time.
   /// </summary>
-  public void AttachUpdateHook(Action<TimeSpan> action) {
+  public void AttachUpdateHook(Action<TimeSpan> updateCallback) {
     if (updaterTimer != null) {
       throw new InvalidOperationException("Cannot subscribe several events to the Timing.Timer.Updater hook");
     }
     updaterTimer = new(delegate {
-      Elapsed = stopwatch.Elapsed - pauseTime + startTime;
-      if (Running) action(Elapsed);
+      Elapsed = stopwatch.Elapsed + startTime;
+      if (Running) {
+        updateCallback?.Invoke(Elapsed);
+      }
     });
     updaterTimer.Change(0, 16);
   }
-
+  
   /// <summary>
   /// Pause the current timer and store the total elapsed time up to this point.
   /// </summary>
   public void Pause() {
     if (Running) {
       Running = false;
-      pauseTime = Elapsed;
       stopwatch.Stop();
     }
     else {
@@ -111,6 +108,5 @@ public class Timer : ViewModelBase {
     stopwatch.Reset();
     startTime = TimeSpan.Zero; 
     LastSplitTime = TimeSpan.Zero;
-    pauseTime = TimeSpan.Zero;
   }
 }

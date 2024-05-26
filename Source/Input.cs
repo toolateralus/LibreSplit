@@ -14,7 +14,7 @@ public unsafe static partial class Input
   private static partial int UnGrabKey(nint key_string);
   private static bool running = false;
   private static bool initialized = false;
-  private static Thread thread = new(HandleInput);
+  private static readonly Thread thread = new(HandleInput);
   private static void HandleInput() {
     int buffer_size = 256;
     char* key_string = stackalloc char[buffer_size];

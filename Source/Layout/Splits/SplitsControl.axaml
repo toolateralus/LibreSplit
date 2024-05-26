@@ -3,20 +3,20 @@
   xmlns:timing="clr-namespace:LibreSplit.Timing"
   xmlns:local="clr-namespace:LibreSplit"
   x:Class="LibreSplit.SplitsControl"
-  x:DataType="local:SplitsVM">
+  x:DataType="local:SplitsViewModel">
   <UserControl.Styles>
     <Style Selector="Grid.Active">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsVM)DataContext).LayoutItem.ActiveBGColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.ActiveBGColor}" />
     </Style>
     <Style Selector="Grid.Inactive">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsVM)DataContext).LayoutItem.InactiveBGColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.InactiveBGColor}" />
     </Style>
   </UserControl.Styles>
-  <ItemsControl ItemsSource="{Binding SegmentVMs}">
+  <ItemsControl ItemsSource="{Binding SegmentViewModels}">
     <ItemsControl.ItemTemplate>
-      <DataTemplate x:DataType="local:SegmentVM">
+      <DataTemplate x:DataType="local:SegmentViewModel">
         <Grid
           Classes.Active="{Binding IsActive }"
           Classes.Inactive="{Binding !IsActive}">
