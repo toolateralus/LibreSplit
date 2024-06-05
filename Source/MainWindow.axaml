@@ -22,7 +22,9 @@
                 <MenuItem Header="Save As" Click="SaveSplitsAs" />
                 <MenuItem Header="Edit" Click="EditSplits" />
             </MenuItem>
-
+            <MenuItem Header="Keybinds">
+              <MenuItem Header="Edit" Click="EditKeybinds" />
+            </MenuItem>
             <MenuItem Header="Layout">
               <MenuItem Header="New" Click="NewLayout" />
               <MenuItem Header="Open" Click="OpenLayout" />

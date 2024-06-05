@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Avalonia.Input;
+using LibreSplit.IO.Config;
 using LibreSplit.Timing;
+using Newtonsoft.Json.Linq;
 
 namespace LibreSplit;
 
@@ -27,7 +29,7 @@ public class LibreSplitContext : ViewModelBase {
   private RunData run = new();
   private SegmentData? activeSegment;
   private Layout layout = Layout.Default;
-  private bool isEditingSplits = false;
+  private bool isEditMode = false;
   public Timer Timer { get; } = new();
   public Layout Layout {
     get => layout;
@@ -63,7 +65,7 @@ public class LibreSplitContext : ViewModelBase {
   }
 
   internal void HandleInput(string key) {
-    if (Run == null || isEditingSplits) {
+    if (Run == null || isEditMode) {
       return;
     }
 
@@ -124,21 +126,43 @@ public class LibreSplitContext : ViewModelBase {
     if (bind == Keybind.Invalid) {
       throw new InvalidOperationException($"Cannot use {key} :: not a valid keybind.");
     }
-
+    
     return bind;
   }
-
-  internal void StartEditingSplits() {
+  
+  // Disengage the input while we're editing
+  internal void StartEditing() {
+    if (isEditMode) {
+      return;
+    }
+    
     foreach (var (_, key) in keymap) {
       Input.UnGrabKey(key);
     }
-    isEditingSplits = true;
+    isEditMode = true;
   }
   
-  internal void StopEditingSplits() {
+  // re engage the input
+  internal void StopEditing() {
+    if (!isEditMode) {
+      return;
+    }
+    
     foreach (var (_, key) in keymap) {
       Input.GrabKey(key);
     }
-    isEditingSplits = false;
+    isEditMode = false;
+  }
+
+  internal void InitializeInputAndKeymap(ConfigLoader configLoader) {
+    if (configLoader.TryGetValue("keymap", out JToken? obj) && obj != null) {
+     var keymap = obj.ToObject<Dictionary<Keybind, string>>() ?? throw new Exception("invalid keymap table");
+     this.keymap = keymap;
+    }
+    Input.InitializeInput();
+    foreach (var (_, key_string) in keymap) {
+      Input.GrabKey(key_string);
+    }
+    Input.Start();
   }
 }

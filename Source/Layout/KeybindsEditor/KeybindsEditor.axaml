@@ -1,0 +1,50 @@
+<Window xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="clr-namespace:LibreSplit"
+  x:Class="LibreSplit.KeybindsEditor"
+  Width="200"
+  Height="300"
+ >
+  <StackPanel Orientation="Vertical">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="Start or Split" VerticalAlignment="Center" Grid.Column="0"/>
+      <TextBox Text="{Binding StartOrSplit, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+    </Grid>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="Pause" VerticalAlignment="Center" Grid.Column="0"/>
+      <TextBox Text="{Binding Pause, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+    </Grid>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="Skip Back" VerticalAlignment="Center" Grid.Column="0"/>
+      <TextBox Text="{Binding SkipBack, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+    </Grid>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="Skip Forward" VerticalAlignment="Center" Grid.Column="0"/>
+      <TextBox Text="{Binding SkipForward, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+    </Grid>
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <TextBlock Text="Reset" VerticalAlignment="Center" Grid.Column="0"/>
+      <TextBox Text="{Binding Reset, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+    </Grid>
+  </StackPanel>
+</Window>

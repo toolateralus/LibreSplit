@@ -10,6 +10,7 @@ using LibreSplit.IO.Serialization;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Collections.Generic;
+using Newtonsoft.Json.Linq;
 
 namespace LibreSplit;
 
@@ -23,13 +24,7 @@ public partial class MainWindow : Window {
   public static LibreSplitContext GlobalContext {get; set;} = new();
   public MainWindow() {
     Closing += OnClosing;
-    Input.InitializeInput();
-    
-    foreach (var (key, key_string) in GlobalContext.keymap) {
-      Input.GrabKey(key_string);
-    }
-    
-    Input.Start();
+   
     DataContext = GlobalContext;
     InitializeComponent();
     configLoader.LoadOrCreate();
@@ -50,6 +45,9 @@ public partial class MainWindow : Window {
     }
     
     GlobalContext.Initialize();
+    
+    GlobalContext.InitializeInputAndKeymap(configLoader);
+    
     Input.KeyDown += GlobalContext.HandleInput;
   }
   private void OnClosing(object? sender, WindowClosingEventArgs e) {
@@ -123,22 +121,18 @@ public partial class MainWindow : Window {
     if (GlobalContext.Run == null) {
       NewSplits(sender, e);
     }
-    
-    GlobalContext.StartEditingSplits();
-    
     var window = new SplitEditor(GlobalContext.Run);
-    void onClosing(object? sender, EventArgs args) {
-      window.Close();
-    };
-    Closing += onClosing;
-    window.Closing += delegate {
-      Closing -= onClosing;
-    };
+    GlobalContext.StartEditing();
     await window.ShowDialog(this);
-    
+    GlobalContext.StopEditing();
     GlobalContext.Run = window.GetRun() ?? new();
-    
-    GlobalContext.StopEditingSplits();
+  }
+  public async void EditKeybinds(object sender, RoutedEventArgs e) {
+    GlobalContext.StartEditing();
+    var win = new KeybindsEditor(GlobalContext);
+    await win.ShowDialog(this);
+    GlobalContext.StopEditing();
+    configLoader.Set("keymap", GlobalContext.keymap);
   }
   public async void NewLayout(object sender, RoutedEventArgs e) {
     GlobalContext.Layout.Clear();
