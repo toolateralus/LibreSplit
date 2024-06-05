@@ -147,7 +147,6 @@ public class LibreSplitContext : ViewModelBase {
     if (!isEditMode) {
       return;
     }
-    
     foreach (var (_, key) in keymap) {
       Input.GrabKey(key);
     }
@@ -164,5 +163,6 @@ public class LibreSplitContext : ViewModelBase {
       Input.GrabKey(key_string);
     }
     Input.Start();
+    Input.KeyDown += HandleInput;
   }
 }

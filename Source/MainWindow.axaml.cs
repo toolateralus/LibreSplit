@@ -45,10 +45,7 @@ public partial class MainWindow : Window {
     }
     
     GlobalContext.Initialize();
-    
     GlobalContext.InitializeInputAndKeymap(configLoader);
-    
-    Input.KeyDown += GlobalContext.HandleInput;
   }
   private void OnClosing(object? sender, WindowClosingEventArgs e) {
     Input.Stop();
