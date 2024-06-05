@@ -20,15 +20,15 @@ public partial class MainWindow : Window {
   private string? loadedLayoutFile;
   private readonly ConfigLoader configLoader = new();
   private readonly Serializer serializer = new();
-  public static LibreSplitContext GlobalContext = new();
+  public static LibreSplitContext GlobalContext {get; set;} = new();
   public MainWindow() {
     Closing += OnClosing;
     Input.InitializeInput();
-    Input.GrabKey("1");
-    Input.GrabKey("2");
-    Input.GrabKey("3");
-    Input.GrabKey("4");
-    Input.GrabKey("5");
+    
+    foreach (var (key, key_string) in GlobalContext.keymap) {
+      Input.GrabKey(key_string);
+    }
+    
     Input.Start();
     DataContext = GlobalContext;
     InitializeComponent();
@@ -123,7 +123,9 @@ public partial class MainWindow : Window {
     if (GlobalContext.Run == null) {
       NewSplits(sender, e);
     }
-
+    
+    GlobalContext.StartEditingSplits();
+    
     var window = new SplitEditor(GlobalContext.Run);
     void onClosing(object? sender, EventArgs args) {
       window.Close();
@@ -135,6 +137,8 @@ public partial class MainWindow : Window {
     await window.ShowDialog(this);
     
     GlobalContext.Run = window.GetRun() ?? new();
+    
+    GlobalContext.StopEditingSplits();
   }
   public async void NewLayout(object sender, RoutedEventArgs e) {
     GlobalContext.Layout.Clear();

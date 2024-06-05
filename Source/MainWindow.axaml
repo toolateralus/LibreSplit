@@ -30,9 +30,6 @@
               <MenuItem Header="Save As" Click="SaveLayoutAs" />
               <MenuItem Header="Edit" Click="EditLayout" />
             </MenuItem>
-            <MenuItem Header="Preferences">
-                <MenuItem Header="Themes" Click="ThemesMethod" />
-            </MenuItem>
             <MenuItem Header="Close" Click="CloseWindow" />
         </Menu>
         <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}">

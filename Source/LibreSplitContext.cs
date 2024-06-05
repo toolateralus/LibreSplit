@@ -1,13 +1,33 @@
 using System;
+using System.Collections.Generic;
 using Avalonia.Input;
 using LibreSplit.Timing;
 
 namespace LibreSplit;
+
+public enum Keybind {
+  StartOrSplit,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Reset,
+  Invalid,
+}
+
 public class LibreSplitContext : ViewModelBase {
+  
+  public Dictionary<Keybind, string> keymap = new() {
+    {Keybind.StartOrSplit, "1"},
+    {Keybind.Pause, "2"},
+    {Keybind.SkipBack, "3"},
+    {Keybind.SkipForward, "4"},
+    {Keybind.Reset, "5"},
+  };
+  
   private RunData run = new();
   private SegmentData? activeSegment;
   private Layout layout = Layout.Default;
-
+  private bool isEditingSplits = false;
   public Timer Timer { get; } = new();
   public Layout Layout {
     get => layout;
@@ -43,11 +63,14 @@ public class LibreSplitContext : ViewModelBase {
   }
 
   internal void HandleInput(string key) {
-    if (Run == null) {
+    if (Run == null || isEditingSplits) {
       return;
     }
-    switch (key) {
-      case "1": {
+
+    Keybind bind = GetBindFromKey(key);
+
+    switch (bind) {
+      case Keybind.StartOrSplit: {
           if (Timer.Running) {
             // this returns false at the end of the run.
             if (!Run.Split(Timer)) {
@@ -67,26 +90,55 @@ public class LibreSplitContext : ViewModelBase {
 
         }
         break;
-      case "2": {
+      case Keybind.Pause: {
           Timer.Pause();
         }
         break;
-      case "3": {
+      case Keybind.SkipBack: {
           Run.SkipBack();
           SetActiveSegment(Run.Segments[Run.SegmentIndex]);
         }
         break;
-      case "4": {
+      case Keybind.SkipForward: {
           Run.SkipForward();
           SetActiveSegment(Run.Segments[Run.SegmentIndex]);
         }
         break;
-      case "5": {
+      case Keybind.Reset: {
           Timer.Reset();
           Run.Reset();
           ClearActiveSegment();
         }
         break;
     }
+  }
+
+  private Keybind GetBindFromKey(string key) {
+    Keybind bind = Keybind.Invalid;
+    foreach (var (binding, key_str) in keymap) {
+      if (key_str == key) {
+        bind = binding;
+      }
+    }
+
+    if (bind == Keybind.Invalid) {
+      throw new InvalidOperationException($"Cannot use {key} :: not a valid keybind.");
+    }
+
+    return bind;
+  }
+
+  internal void StartEditingSplits() {
+    foreach (var (_, key) in keymap) {
+      Input.UnGrabKey(key);
+    }
+    isEditingSplits = true;
+  }
+  
+  internal void StopEditingSplits() {
+    foreach (var (_, key) in keymap) {
+      Input.GrabKey(key);
+    }
+    isEditingSplits = false;
   }
 }
