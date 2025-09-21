@@ -4,6 +4,7 @@ using Avalonia.Input;
 using LibreSplit.IO.Config;
 using LibreSplit.Timing;
 using Newtonsoft.Json.Linq;
+using SharpHook.Data;
 
 namespace LibreSplit;
 
@@ -17,20 +18,21 @@ public enum Keybind {
 }
 
 public class LibreSplitContext : ViewModelBase {
-  
-  public Dictionary<Keybind, string> keymap = new() {
-    {Keybind.StartOrSplit, "1"},
-    {Keybind.Pause, "2"},
-    {Keybind.SkipBack, "3"},
-    {Keybind.SkipForward, "4"},
-    {Keybind.Reset, "5"},
+
+  public Dictionary<Keybind, KeyCode> keymap = new() {
+    {Keybind.StartOrSplit, KeyCode.Vc1},
+    {Keybind.Pause, KeyCode.Vc2},
+    {Keybind.SkipBack, KeyCode.Vc3},
+    {Keybind.SkipForward, KeyCode.Vc4},
+    {Keybind.Reset, KeyCode.Vc5},
   };
-  
+
   private RunData run = new();
   private SegmentData? activeSegment;
   private Layout layout = Layout.Default;
   private bool isEditMode = false;
   public Timer Timer { get; } = new();
+
   public Layout Layout {
     get => layout;
     set {
@@ -38,6 +40,7 @@ public class LibreSplitContext : ViewModelBase {
       OnPropertyChanged();
     }
   }
+
   public RunData Run {
     get => run;
     set {
@@ -45,6 +48,7 @@ public class LibreSplitContext : ViewModelBase {
       OnPropertyChanged();
     }
   }
+
   public SegmentData? ActiveSegment {
     get => activeSegment;
     set {
@@ -53,15 +57,58 @@ public class LibreSplitContext : ViewModelBase {
     }
   }
 
-  public void SetActiveSegment(SegmentData segment) {
-    ActiveSegment = segment;
+  public void UpdateActiveSegment() {
+    var index = Run.SegmentIndex;
+
+    if (index >= Run.Segments.Count || index < 0) {
+      Console.WriteLine($"Index out of bounds when setting active segment.\nvalue={index}, segments count={Run.Segments.Count}.\nNOTE: There may just be no splits, then this is expected.");
+      return;
+    }
+
+    ActiveSegment = Run.Segments[index];
   }
+
   public void ClearActiveSegment() {
     ActiveSegment = null;
   }
 
   internal void Initialize() {
     Timer.Initialize();
+  }
+
+  public void StartOrSplit() {
+    if (Timer.Running) {
+      // this returns false at the end of the run.
+      if (!Run.Split(Timer)) {
+        Timer.Stop();
+        ClearActiveSegment();
+      }
+      else {
+        UpdateActiveSegment();
+      }
+    }
+    else {
+      Timer.Reset();
+      Run.Reset();
+      Run.Start(Timer);
+      UpdateActiveSegment();
+    }
+  }
+
+  public void SkipBack() {
+    Run.SkipBack();
+    UpdateActiveSegment();
+  }
+
+  public void SkipForward() {
+    Run.SkipForward();
+    UpdateActiveSegment();
+  }
+
+  public void Reset() {
+    Timer.Reset();
+    Run.Reset();
+    ClearActiveSegment();
   }
 
   internal void HandleInput(string key) {
@@ -71,98 +118,84 @@ public class LibreSplitContext : ViewModelBase {
 
     Keybind bind = GetBindFromKey(key);
 
-    switch (bind) {
-      case Keybind.StartOrSplit: {
-          if (Timer.Running) {
-            // this returns false at the end of the run.
-            if (!Run.Split(Timer)) {
-              Timer.Stop();
-              ClearActiveSegment();
-            }
-            else {
-              SetActiveSegment(Run.Segments[Run.SegmentIndex]);
-            }
-          }
-          else {
-            Timer.Reset();
-            Run.Reset();
-            Run.Start(Timer);
-            SetActiveSegment(Run.Segments[Run.SegmentIndex]);
-          }
-
-        }
-        break;
-      case Keybind.Pause: {
-          Timer.Pause();
-        }
-        break;
-      case Keybind.SkipBack: {
-          Run.SkipBack();
-          SetActiveSegment(Run.Segments[Run.SegmentIndex]);
-        }
-        break;
-      case Keybind.SkipForward: {
-          Run.SkipForward();
-          SetActiveSegment(Run.Segments[Run.SegmentIndex]);
-        }
-        break;
-      case Keybind.Reset: {
-          Timer.Reset();
-          Run.Reset();
-          ClearActiveSegment();
-        }
-        break;
-    }
   }
+
 
   private Keybind GetBindFromKey(string key) {
     Keybind bind = Keybind.Invalid;
-    foreach (var (binding, key_str) in keymap) {
-      if (key_str == key) {
-        bind = binding;
-      }
-    }
+
+
+
+
 
     if (bind == Keybind.Invalid) {
       throw new InvalidOperationException($"Cannot use {key} :: not a valid keybind.");
     }
-    
+
     return bind;
   }
-  
+
   // Disengage the input while we're editing
   internal void StartEditing() {
     if (isEditMode) {
       return;
     }
-    
-    foreach (var (_, key) in keymap) {
-      Input.UnGrabKey(key);
-    }
+
+    UnregisterKeyMap();
+
     isEditMode = true;
   }
-  
+
   // re engage the input
   internal void StopEditing() {
     if (!isEditMode) {
       return;
     }
-    foreach (var (_, key) in keymap) {
-      Input.GrabKey(key);
-    }
+
+    RegisterKeyMap();
+
     isEditMode = false;
   }
 
+  private void RegisterKeyMap() {
+    foreach (var (keybind, keycode) in keymap) {
+      Action action;
+
+      if (keybind == Keybind.Invalid) {
+        continue;
+      }
+
+      action = keybind switch {
+        Keybind.StartOrSplit => StartOrSplit,
+        Keybind.Pause => Timer.Pause,
+        Keybind.SkipBack => SkipBack,
+        Keybind.SkipForward => SkipForward,
+        Keybind.Reset => Reset,
+        Keybind.Invalid => static () => Console.WriteLine("Invalid keybind in keymap!"),
+        _ => static () => Console.WriteLine("Unknown keybind!")
+      };
+
+      Input.RegisterKeyPressedListener(keycode, action);
+    }
+  }
+
+  private void UnregisterKeyMap() {
+    foreach (var (_, keycode) in keymap) {
+      Input.UnregisterKeyPressedListener(keycode);
+    }
+  }
+
   internal void InitializeInputAndKeymap(ConfigLoader configLoader) {
+
     if (configLoader.TryGetValue("keymap", out JToken? obj) && obj != null) {
-     var keymap = obj.ToObject<Dictionary<Keybind, string>>() ?? throw new Exception("invalid keymap table");
-     this.keymap = keymap;
+      var keymap = obj.ToObject<Dictionary<Keybind, KeyCode>>() ?? throw new Exception("invalid keymap table");
+      this.keymap = keymap;
     }
-    Input.InitializeInput();
-    foreach (var (_, key_string) in keymap) {
-      Input.GrabKey(key_string);
+
+    Input.Start().FireAndForget();
+
+    foreach (var (_, key) in keymap) {
+
     }
-    Input.Start();
-    Input.KeyDown += HandleInput;
   }
 }

@@ -1,56 +1,74 @@
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
+using SharpHook;
+using SharpHook.Data;
 namespace LibreSplit;
-public unsafe static partial class Input
-{
-  private static bool running = false;
-  private static bool initialized = false;
-  private static readonly Thread thread = new(HandleInput);
-  private static void HandleInput() {
-    int buffer_size = 256;
-    char* key_string = stackalloc char[buffer_size];
-    while(running) {
-      if (PollKey((nint)key_string, buffer_size) == 0) {
-        KeyDown?.Invoke(new string(key_string));
+
+public static partial class Input {
+  private static CancellationTokenSource _cancellationTokenSource = new();
+  private static EventLoopGlobalHook _globalEventHook = new();
+
+  private readonly static ConcurrentDictionary<KeyCode, Action> _keyPressedHandlers = [];
+
+  public static event Action<KeyCode>? AnyKeyPressed;
+
+  public static KeyCode StringToKeyCode(string str) {
+    var enumFormat = $"Vc{str.ToUpper()}";
+    if (Enum.TryParse<KeyCode>(enumFormat, out var value)) {
+      return value;
+    }
+    return KeyCode.VcUndefined;
+  }
+
+  private static void KeyPressed(object? _, KeyboardHookEventArgs e) {
+    if (_keyPressedHandlers.TryGetValue(e.Data.KeyCode, out var handler)) {
+      try {
+        handler?.Invoke();
+      }
+      catch (Exception ex) {
+        Console.WriteLine("An exception occured when handling a KeyPressed event.");
+        Console.WriteLine(ex);
       }
     }
-  }
-  public static event Action<string>? KeyDown;
-  public static void Start() {
-    if (!initialized) {
-      throw new Exception("Input not initialized");
+
+    try {
+      AnyKeyPressed?.Invoke(e.Data.KeyCode);
     }
-    if (running) {
-      return;
+    catch (Exception ex) {
+      Console.WriteLine("An exception occured when calling the AnyKeyPressed event.");
+      Console.WriteLine(ex);
     }
-    running = true;
-    thread.Start();
   }
+
+  public static void RegisterKeyPressedListener(KeyCode key, Action callback) {
+    _keyPressedHandlers[key] = callback;
+  }
+
+  public static void UnregisterKeyPressedListener(KeyCode key) {
+    _keyPressedHandlers.TryRemove(key, out _);
+  }
+
+  public static async Task Start() {
+    _globalEventHook.KeyPressed += KeyPressed;
+    await _globalEventHook.RunAsync();
+  }
+
+  public static void Pause() {
+    _globalEventHook.Stop();
+  }
+
   public static void Stop() {
-    if (!running) {
-      return;
+    try {
+      _globalEventHook.Dispose();
     }
-    running = false;
-    thread.Join();
-  }
-  public static void GrabKey(string key) {
-    var key_string = Marshal.StringToHGlobalAnsi(key);
-    var _ = GrabKey(key_string);
-    Marshal.FreeHGlobal(key_string);
-  }
-  public static void UnGrabKey(string key) {
-    var key_string = Marshal.StringToHGlobalAnsi(key);
-    var _ = UnGrabKey(key_string);
-    Marshal.FreeHGlobal(key_string);
-  }
-  public static void InitializeInput() {
-    var result = Initialize();
-    if (result != 0) {
-      initialized = false;
-      throw new Exception("Failed to initialize input");
-    } else {
-      initialized = true;
+    catch (Exception ex) {
+      Console.WriteLine("An exception occured when stopping the global event hook input listener");
+      Console.WriteLine(ex);
     }
   }
+
 }

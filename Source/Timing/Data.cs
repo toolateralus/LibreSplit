@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Avalonia.Logging;
 
 namespace LibreSplit.Timing;
 /// <summary>
@@ -20,7 +21,7 @@ public class RunData(TimeSpan? startTime = null) {
   [JsonIgnore]
   public TimeSpan? PersonalBest => Segments.LastOrDefault()?.PBSplitTime;
 
-  
+
   // for binding.
   public TimeSpan StartTime {
     get;
@@ -49,6 +50,12 @@ public class RunData(TimeSpan? startTime = null) {
   /// <param name="timer"></param>
   /// <returns>True if the run still has remaining segments, false if the run is complete.</returns>
   public bool Split(Timer timer) {
+    
+    if (SegmentIndex > Segments.Count - 1) {
+      Console.WriteLine($"Failed to split, SegmentIndex ({SegmentIndex}) was >= Segments.Count - 1 {Segments.Count - 1}");
+      return false;
+    }
+
     SegmentData segmentData = Segments[SegmentIndex];
     TimeSpan elapsed = timer.Elapsed;
     TimeSpan delta = timer.Delta;
@@ -57,52 +64,80 @@ public class RunData(TimeSpan? startTime = null) {
     segmentData.SegmentTime = delta;
     segmentData.AddSegmentTime(delta);
     segmentData.AddSplitTime(elapsed);
-    
+
     timer.LastSplitTime = elapsed;
+
     SegmentIndex++;
-    if (SegmentIndex >= Segments.Count) {
+
+    if (SegmentIndex >= Segments.Count - 1) {
+      SegmentIndex = Segments.Count - 1;
       return false;
     }
+
     return true;
   }
 
   internal void Reset() {
-    SegmentIndex = 0;
-    var lastSplitTime = Segments[^1].SplitTime;
-    bool isPB = false;
-    if (lastSplitTime != null &&
-    (lastSplitTime < PersonalBest || PersonalBest == null)) {
-      isPB = true;
+
+    if (Segments.Count == 0 || SegmentIndex == 0) {
+      return;
     }
+
+    SegmentIndex = 0;
+
+    // get the last split time.
+    var lastSplitTime = Segments[^1].SplitTime;
+    bool isPersonalBest = false;
+
+    if (lastSplitTime != null && (lastSplitTime < PersonalBest || PersonalBest == null)) {
+      isPersonalBest = true;
+    }
+
     foreach (var seg in Segments) {
+
       if (seg.SplitTime == null) {
+        // Why would this even happen? should this be an error?
         continue;
       }
-      if (isPB) {
+
+      if (isPersonalBest) {
         seg.PBSegmentTime = seg.SegmentTime;
         seg.PBSplitTime = seg.SplitTime;
       }
+
       seg.SegmentTime = seg.PBSegmentTime;
       seg.SplitTime = seg.PBSplitTime;
     }
+
     AttemptCount++;
   }
-  
+
   internal void SkipBack() {
     Segments[SegmentIndex].SegmentTime = TimeSpan.Zero;
     Segments[SegmentIndex].SplitTime = TimeSpan.Zero;
+
     if (SegmentIndex > 0) {
       SegmentIndex--;
     }
+    else {
+      Console.WriteLine($"Failed to skip back, segment index was zero. value={SegmentIndex}");
+      SegmentIndex = 0;
+    }
   }
+
   internal void SkipForward() {
     Segments[SegmentIndex].SegmentTime = TimeSpan.Zero;
     Segments[SegmentIndex].SplitTime = TimeSpan.Zero;
-    if (SegmentIndex < Segments.Count) {
+
+    if (SegmentIndex < Segments.Count - 1) {
       SegmentIndex++;
     }
+    else {
+      Console.WriteLine($"Failed to skip forward, segment index was >= Segments.Count - 1. value={SegmentIndex}");
+      SegmentIndex = Segments.Count - 1;
+    }
   }
-  
+
 }
 /// <summary>
 /// This class defines a single segment of a greater run and holds display information and timing data.

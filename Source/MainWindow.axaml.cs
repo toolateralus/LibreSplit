@@ -15,8 +15,8 @@ using Newtonsoft.Json.Linq;
 namespace LibreSplit;
 
 public partial class MainWindow : Window {
-  static FilePickerOpenOptions openOptions = new();
-  static FilePickerSaveOptions saveOptions = new();
+  static readonly FilePickerOpenOptions openOptions = new();
+  static readonly FilePickerSaveOptions saveOptions = new();
   private string? loadedSplitsFile;
   private string? loadedLayoutFile;
   private readonly ConfigLoader configLoader = new();
@@ -24,23 +24,29 @@ public partial class MainWindow : Window {
   public static LibreSplitContext GlobalContext {get; set;} = new();
   public MainWindow() {
     Closing += OnClosing;
-   
     DataContext = GlobalContext;
+
     InitializeComponent();
+
     configLoader.LoadOrCreate();
     configLoader.TryLoadSplits(out loadedSplitsFile);
-    if (loadedSplitsFile != null&& serializer.Read<RunData>(loadedSplitsFile, out var run)) {
+
+    if (loadedSplitsFile != null && serializer.Read<RunData>(loadedSplitsFile, out var run)) {
       GlobalContext.Run = run;
-    } else {
+    }
+    else {
       configLoader.Set(ConfigKeys.LastLoadedSplits, "");
     }
+
     configLoader.TryLoadLayout(out loadedLayoutFile);
+    
     if (loadedLayoutFile != null && serializer.Read<Layout>(loadedLayoutFile, out var layout)) {
       GlobalContext.Layout.Clear();
-      foreach(var layoutItem in layout) {
+      foreach (var layoutItem in layout) {
         GlobalContext.Layout.Add(layoutItem);
       }
-    } else {
+    }
+    else {
       configLoader.Set(ConfigKeys.LastLoadedLayout, "");
     }
     
@@ -50,14 +56,13 @@ public partial class MainWindow : Window {
   private void OnClosing(object? sender, WindowClosingEventArgs e) {
     Input.Stop();
   }
+  
   #region Events
   public async void NewSplits(object sender, RoutedEventArgs e) {
     GlobalContext.Run = new();
     var saveOptions = new FilePickerSaveOptions {
       Title = "newSplits.json",
-      FileTypeChoices = [
-            new(".json"),
-            ]
+      FileTypeChoices = [new(".json"),]
     };
 
     var newFilePath = await StorageProvider.SaveFilePickerAsync(saveOptions);

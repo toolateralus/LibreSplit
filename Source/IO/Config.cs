@@ -4,10 +4,12 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace LibreSplit.IO.Config;
+
 public static class ConfigKeys {
   public const string LastLoadedSplits = "lastLoadedSplits";
   public const string LastLoadedLayout = "lastLoadedLayout";
 }
+
 public class ConfigLoader {
   private static readonly string configPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/libresplit/libresplit.json";
   private JObject configTable = [];
