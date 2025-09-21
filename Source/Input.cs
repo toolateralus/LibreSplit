@@ -4,14 +4,6 @@ using System.Threading;
 namespace LibreSplit;
 public unsafe static partial class Input
 {
-  [LibraryImport("libxserverinput.so")]
-  private static partial int PollKey(nint key_string, int buffer_size);
-  [LibraryImport("libxserverinput.so")]
-  private static partial int Initialize();
-  [LibraryImport("libxserverinput.so")]
-  private static partial int GrabKey(nint key_string);
-  [LibraryImport("libxserverinput.so")]
-  private static partial int UnGrabKey(nint key_string);
   private static bool running = false;
   private static bool initialized = false;
   private static readonly Thread thread = new(HandleInput);
