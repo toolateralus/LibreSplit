@@ -24,7 +24,7 @@ public unsafe static partial class Input
       }
     }
   }
-  public static Action<string>? KeyDown;
+  public static event Action<string>? KeyDown;
   public static void Start() {
     if (!initialized) {
       throw new Exception("Input not initialized");

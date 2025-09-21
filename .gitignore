@@ -1,2 +1,6 @@
 /bin
 /obj
+
+libxserverinput/tests
+libxserverinput/.cache
+libxserverinput/compile_commands.json
