@@ -1,50 +1,66 @@
 <Window xmlns="https://github.com/avaloniaui"
-  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-  xmlns:local="clr-namespace:LibreSplit"
-  x:Class="LibreSplit.KeybindsEditor"
-  Width="200"
-  Height="300"
- >
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:LibreSplit"
+        x:Class="LibreSplit.KeybindsEditor"
+        Width="200"
+        Height="300"
+        x:DataType="local:KeybindsEditor">
   <StackPanel Orientation="Vertical">
+
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBlock Text="Start or Split" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox Text="{Binding StartOrSplit, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+      <TextBox x:Name="StartOrSplitBox" Text="{Binding StartOrSplit, Mode=TwoWay}" Grid.Column="1"/>
+      <Button x:Name="StartOrSplitButton" Content="Listen" Click="ListenForBinding_StartOrSplit" Grid.Column="2"/>
     </Grid>
+
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBlock Text="Pause" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox Text="{Binding Pause, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+      <TextBox x:Name="PauseBox" Text="{Binding Pause, Mode=TwoWay}" Grid.Column="1"/>
+      <Button x:Name="PauseButton" Content="Listen" Click="ListenForBinding_Pause" Grid.Column="2"/>
     </Grid>
+
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBlock Text="Skip Back" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox Text="{Binding SkipBack, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+      <TextBox x:Name="SkipBackBox" Text="{Binding SkipBack, Mode=TwoWay}" Grid.Column="1"/>
+      <Button x:Name="SkipBackButton" Content="Listen" Click="ListenForBinding_SkipBack" Grid.Column="2"/>
     </Grid>
+
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBlock Text="Skip Forward" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox Text="{Binding SkipForward, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+      <TextBox x:Name="SkipForwardBox" Text="{Binding SkipForward, Mode=TwoWay}" Grid.Column="1"/>
+      <Button x:Name="SkipForwardButton" Content="Listen" Click="ListenForBinding_SkipForward" Grid.Column="2"/>
     </Grid>
+
     <Grid>
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBlock Text="Reset" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox Text="{Binding Reset, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType=local:KeybindsEditor}}" Grid.Column="1"/>
+      <TextBox x:Name="ResetBox" Text="{Binding Reset, Mode=TwoWay}" Grid.Column="1"/>
+      <Button x:Name="ResetButton" Content="Listen" Click="ListenForBinding_Reset" Grid.Column="2"/>
     </Grid>
+
   </StackPanel>
 </Window>
