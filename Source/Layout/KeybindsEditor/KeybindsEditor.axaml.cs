@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using SharpHook.Data;
 
 namespace LibreSplit;
@@ -71,7 +72,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
   }
 
   private CancellationTokenSource? _cancellationSource;
-  private Task<string> AwaitKeyPress(CancellationToken ctk) {
+  private Task<string> AwaitKeyPress(CancellationToken ctk, Button button) {
     var tcs = new TaskCompletionSource<string>();
 
     void set(KeyCode code) {
@@ -79,9 +80,30 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
       tcs.TrySetResult(code.ToString()[2..]);
     }
 
+    int secondsRemaining = 3;
+    button.Content = $"{secondsRemaining}...";
+    var timer = new System.Timers.Timer(1000);
+    timer.Elapsed += (s, e) => {
+      secondsRemaining--;
+      Dispatcher.UIThread.Invoke(() => {
+        if (secondsRemaining > 0)
+          button.Content = $"{secondsRemaining}...";
+      });
+
+      if (secondsRemaining <= 0) {
+        timer.Stop();
+      }
+    };
+    timer.Start();
+
     Input.AnyKeyPressed += set;
 
     ctk.Register(() => {
+      Dispatcher.UIThread.Invoke(() => {
+        button.Content = "Listen";
+      });
+      timer.Stop();
+      timer.Dispose();
       Input.AnyKeyPressed -= set;
       tcs.TrySetCanceled();
     });
@@ -128,16 +150,14 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
     _cancellationSource = new CancellationTokenSource(3000);
-    StartOrSplitButton.Content = "...";
     try {
-      StartOrSplit = await AwaitKeyPress(_cancellationSource.Token);
+      StartOrSplit = await AwaitKeyPress(_cancellationSource.Token, StartOrSplitButton);
     }
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
       _cancellationSource.Dispose();
       _cancellationSource = null;
-      StartOrSplitButton.Content = "Listen";
     }
   }
 
@@ -145,14 +165,12 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
     _cancellationSource = new CancellationTokenSource(3000);
-    PauseButton.Content = "...";
     try {
-      Pause = await AwaitKeyPress(_cancellationSource.Token);
+      Pause = await AwaitKeyPress(_cancellationSource.Token, PauseButton);
     }
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
-      PauseButton.Content = "Listen";
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -162,15 +180,12 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
     _cancellationSource = new CancellationTokenSource(3000);
-    SkipForwardButton.Content = "...";
-
     try {
-      SkipForward = await AwaitKeyPress(_cancellationSource.Token);
+      SkipForward = await AwaitKeyPress(_cancellationSource.Token, SkipForwardButton);
     }
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
-      SkipForwardButton.Content = "Listen";
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -180,14 +195,12 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
     _cancellationSource = new CancellationTokenSource(3000);
-    SkipBackButton.Content = "...";
     try {
-      SkipBack = await AwaitKeyPress(_cancellationSource.Token);
+      SkipBack = await AwaitKeyPress(_cancellationSource.Token, SkipBackButton);
     }
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
-      SkipBackButton.Content = "Listen";
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -197,14 +210,12 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
     _cancellationSource = new CancellationTokenSource(3000);
-    ResetButton.Content = "...";
     try {
-      Reset = await AwaitKeyPress(_cancellationSource.Token);
+      Reset = await AwaitKeyPress(_cancellationSource.Token, ResetButton);
     }
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
-      ResetButton.Content = "Listen";
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
