@@ -81,8 +81,11 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     }
 
     int secondsRemaining = 3;
+
     button.Content = $"{secondsRemaining}...";
+
     var timer = new System.Timers.Timer(1000);
+
     timer.Elapsed += (s, e) => {
       secondsRemaining--;
       Dispatcher.UIThread.Invoke(() => {
@@ -94,6 +97,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
         timer.Stop();
       }
     };
+
     timer.Start();
 
     Input.AnyKeyPressed += set;
@@ -156,6 +160,8 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
+      StartOrSplitButton.Content = "Listen";
+      _cancellationSource.Cancel();
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -171,6 +177,8 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
+      PauseButton.Content = "Listen";
+      _cancellationSource.Cancel();
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -186,6 +194,8 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
+      SkipForwardButton.Content = "Listen";
+      _cancellationSource.Cancel();
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -201,6 +211,8 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
+      SkipBackButton.Content = "Listen";
+      _cancellationSource.Cancel();
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
@@ -216,6 +228,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     catch (TaskCanceledException) { }
     finally {
       MakeAllControlsEnabled();
+      ResetButton.Content = "Listen";
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
