@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 
 namespace LibreSplit;
 public abstract class LayoutItem : ViewModelBase {

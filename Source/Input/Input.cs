@@ -17,7 +17,7 @@ public static partial class Input {
   public static event Action<KeyCode>? AnyKeyPressed;
 
   public static KeyCode StringToKeyCode(string str) {
-    var enumFormat = $"Vc{str.ToUpper()}";
+    var enumFormat = $"Vc{str}";
     if (Enum.TryParse<KeyCode>(enumFormat, out var value)) {
       return value;
     }
