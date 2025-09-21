@@ -1,33 +1,53 @@
 #if defined(__linux__) || defined(__gnu_linux__)
 
+#include <time.h>
+#include <stdio.h>
 #include "X11/keysym.h"
 #include <X11/X.h>
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 #include <string.h>
 
-#define Success 0
-#define XServerConnectionFailure 4
-#define NoKeyPolled 5
-#define KeySymbolStringConversionFailed 6
+enum {
+  RESULT_SUCCESS = 0,
+  RESULT_X_SERVER_CONNECTION_FAILURE = 4,
+  RESULT_NO_KEY_POLLED = 5,
+  RESULT_KEY_SYMBOL_STRING_CONVERSION_FAILED = 6,
+};
 
 Display *display;
 Window root;
 
+long start_time;
+
+#define DO_LOG
+
+#ifdef DO_LOG
+#define LOG(s) printf("%ld [LIB_X_SERVER_INPUT]: %s\n", time(NULL) - start_time, s);
+#else
+#define LOG(s)
+#endif
+
 int PollKey(char *key_string, size_t buffer_size) {
   if (display == NULL) {
-    return XServerConnectionFailure;
+    return RESULT_X_SERVER_CONNECTION_FAILURE;
   }
 
   XEvent xevent;
 
   if (XPending(display) == 0) {
-    return NoKeyPolled;
+    LOG("No key at poll time");
+    return RESULT_NO_KEY_POLLED;
   }
 
   XNextEvent(display, &xevent);
-  if (xevent.type != KeyPress) {
-    return NoKeyPolled;
+  while (xevent.type != KeyPress && (XPending(display) != 0)) {
+    LOG("Non key pressed events draining");
+  }
+
+  if (XPending(display) == 0) {
+    LOG("No key event after draining");
+    return RESULT_NO_KEY_POLLED;
   }
 
   XKeyEvent key = xevent.xkey;
@@ -36,18 +56,21 @@ int PollKey(char *key_string, size_t buffer_size) {
   const char *temp = XKeysymToString(key_symbol);
 
   if (temp == NULL) {
-    return KeySymbolStringConversionFailed;
+    LOG("Result null");
+    return RESULT_KEY_SYMBOL_STRING_CONVERSION_FAILED;
   }
 
   strncpy(key_string, temp, buffer_size - 1);
   key_string[buffer_size - 1] = '\0'; // ensure null-termination
-  return Success;
+
+  return RESULT_SUCCESS;
 }
 
 int Initialize() {
+  start_time = time(NULL);
   display = XOpenDisplay(NULL);
   if (display == NULL) {
-    return XServerConnectionFailure;
+    return RESULT_X_SERVER_CONNECTION_FAILURE;
   }
   root = RootWindow(display, DefaultScreen(display));
   return Success;
@@ -55,11 +78,11 @@ int Initialize() {
 
 int GrabKey(char *key_string) {
   if (display == NULL) {
-    return XServerConnectionFailure;
+    return RESULT_X_SERVER_CONNECTION_FAILURE;
   }
   KeySym key_symbol = XStringToKeysym(key_string);
   if (key_symbol == NoSymbol) {
-    return KeySymbolStringConversionFailed;
+    return RESULT_KEY_SYMBOL_STRING_CONVERSION_FAILED;
   }
   KeyCode keycode = XKeysymToKeycode(display, key_symbol);
   return XGrabKey(display, keycode, AnyModifier, root, True, GrabModeAsync,
@@ -68,12 +91,14 @@ int GrabKey(char *key_string) {
 
 int UnGrabKey(char *key_string) {
   if (display == NULL) {
-    return XServerConnectionFailure;
+    return RESULT_X_SERVER_CONNECTION_FAILURE;
   }
+
   KeySym key_symbol = XStringToKeysym(key_string);
   if (key_symbol == NoSymbol) {
-    return KeySymbolStringConversionFailed;
+    return RESULT_KEY_SYMBOL_STRING_CONVERSION_FAILED;
   }
+
   KeyCode keycode = XKeysymToKeycode(display, key_symbol);
   XUngrabKey(display, keycode, AnyModifier, root);
   return Success;
