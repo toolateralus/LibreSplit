@@ -15,8 +15,7 @@
       </Grid.ColumnDefinitions>
       <TextBlock Text="Start or Split" VerticalAlignment="Center" Grid.Column="0" />
       <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
-        <TextBlock x:Name="StartOrSplitBox" VerticalAlignment="Center" Text="{Binding StartOrSplit}"
-        />
+        <TextBlock x:Name="StartOrSplitBox" VerticalAlignment="Center" Text="{Binding StartOrSplit}" />
       </Border>
       <Button HorizontalAlignment="Stretch" x:Name="StartOrSplitButton" Content="Listen"
         Click="ListenForBinding_StartOrSplit" Grid.Column="2" />
@@ -30,8 +29,7 @@
       </Grid.ColumnDefinitions>
       <TextBlock Text="Pause" VerticalAlignment="Center" Grid.Column="0" />
       <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
-        <TextBlock x:Name="PauseBox" VerticalAlignment="Center" Text="{Binding Pause}"
-        />
+        <TextBlock x:Name="PauseBox" VerticalAlignment="Center" Text="{Binding Pause}" />
       </Border>
       <Button HorizontalAlignment="Stretch" x:Name="PauseButton" Content="Listen"
         Click="ListenForBinding_Pause" Grid.Column="2" />
@@ -45,8 +43,7 @@
       </Grid.ColumnDefinitions>
       <TextBlock Text="Skip Back" VerticalAlignment="Center" Grid.Column="0" />
       <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
-        <TextBlock x:Name="SkipBackBox" VerticalAlignment="Center" Text="{Binding SkipBack}"
-        />
+        <TextBlock x:Name="SkipBackBox" VerticalAlignment="Center" Text="{Binding SkipBack}" />
       </Border>
       <Button HorizontalAlignment="Stretch" x:Name="SkipBackButton" Content="Listen"
         Click="ListenForBinding_SkipBack" Grid.Column="2" />
@@ -60,8 +57,7 @@
       </Grid.ColumnDefinitions>
       <TextBlock Text="Skip Forward" VerticalAlignment="Center" Grid.Column="0" />
       <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
-        <TextBlock x:Name="SkipForwardBox" VerticalAlignment="Center" Text="{Binding SkipForward}"
-        />
+        <TextBlock x:Name="SkipForwardBox" VerticalAlignment="Center" Text="{Binding SkipForward}" />
       </Border>
       <Button HorizontalAlignment="Stretch" x:Name="SkipForwardButton" Content="Listen"
         Click="ListenForBinding_SkipForward" Grid.Column="2" />
@@ -75,8 +71,7 @@
       </Grid.ColumnDefinitions>
       <TextBlock Text="Reset" VerticalAlignment="Center" Grid.Column="0" />
       <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
-        <TextBlock x:Name="ResetBox" VerticalAlignment="Center" Text="{Binding Reset}"
-        />
+        <TextBlock x:Name="ResetBox" VerticalAlignment="Center" Text="{Binding Reset}" />
       </Border>
       <Button HorizontalAlignment="Stretch" x:Name="ResetButton" Content="Listen"
         Click="ListenForBinding_Reset" Grid.Column="2" />
