@@ -115,125 +115,43 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     return tcs.Task;
   }
 
-  public void MakeAllControlsDisabled() {
-    StartOrSplitBox.IsEnabled = false;
-    StartOrSplitButton.IsEnabled = false;
-
-    PauseBox.IsEnabled = false;
-    PauseButton.IsEnabled = false;
-
-    SkipBackBox.IsEnabled = false;
-    SkipBackButton.IsEnabled = false;
-
-    SkipForwardBox.IsEnabled = false;
-    SkipForwardButton.IsEnabled = false;
-
-    ResetBox.IsEnabled = false;
-    ResetButton.IsEnabled = false;
-  }
-
-  public void MakeAllControlsEnabled() {
-    StartOrSplitBox.IsEnabled = true;
-    StartOrSplitButton.IsEnabled = true;
-
-    PauseBox.IsEnabled = true;
-    PauseButton.IsEnabled = true;
-
-    SkipBackBox.IsEnabled = true;
-    SkipBackButton.IsEnabled = true;
-
-    SkipForwardBox.IsEnabled = true;
-    SkipForwardButton.IsEnabled = true;
-
-    ResetBox.IsEnabled = true;
-    ResetButton.IsEnabled = true;
+  public void SetControlsEnabled(bool state) {
+    StartOrSplitButton.IsEnabled = state;
+    PauseButton.IsEnabled = state;
+    SkipBackButton.IsEnabled = state;
+    SkipForwardButton.IsEnabled = state;
+    ResetButton.IsEnabled = state;
   }
 
 
-  public async void ListenForBinding_StartOrSplit(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
-    MakeAllControlsDisabled();
+  public async void ListenForBinding(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
+    if (sender is not Button button) {
+      return;
+    }
+
+    SetControlsEnabled(false);
     _cancellationSource?.Cancel();
     _cancellationSource = new CancellationTokenSource(3000);
     try {
-      StartOrSplit = await AwaitKeyPress(_cancellationSource.Token, StartOrSplitButton);
+      var key = await AwaitKeyPress(_cancellationSource.Token, button);
+      switch (button.Name) {
+        case "StartOrSplitButton": StartOrSplit = key; break;
+        case "PauseButton": Pause = key; break;
+        case "SkipBackButton": SkipBack = key; break;
+        case "SkipForwardButton": SkipForward = key; break;
+        case "ResetButton": Reset = key; break;
+        default: break;
+      }
     }
     catch (TaskCanceledException) { }
     finally {
-      MakeAllControlsEnabled();
-      StartOrSplitButton.Content = "Listen";
+      SetControlsEnabled(true);
+      button.Content = "Listen";
       _cancellationSource.Cancel();
       _cancellationSource.Dispose();
       _cancellationSource = null;
     }
   }
-
-  public async void ListenForBinding_Pause(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
-    MakeAllControlsDisabled();
-    _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource(3000);
-    try {
-      Pause = await AwaitKeyPress(_cancellationSource.Token, PauseButton);
-    }
-    catch (TaskCanceledException) { }
-    finally {
-      MakeAllControlsEnabled();
-      PauseButton.Content = "Listen";
-      _cancellationSource.Cancel();
-      _cancellationSource.Dispose();
-      _cancellationSource = null;
-    }
-  }
-
-  public async void ListenForBinding_SkipForward(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
-    MakeAllControlsDisabled();
-    _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource(3000);
-    try {
-      SkipForward = await AwaitKeyPress(_cancellationSource.Token, SkipForwardButton);
-    }
-    catch (TaskCanceledException) { }
-    finally {
-      MakeAllControlsEnabled();
-      SkipForwardButton.Content = "Listen";
-      _cancellationSource.Cancel();
-      _cancellationSource.Dispose();
-      _cancellationSource = null;
-    }
-  }
-
-  public async void ListenForBinding_SkipBack(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
-    MakeAllControlsDisabled();
-    _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource(3000);
-    try {
-      SkipBack = await AwaitKeyPress(_cancellationSource.Token, SkipBackButton);
-    }
-    catch (TaskCanceledException) { }
-    finally {
-      MakeAllControlsEnabled();
-      SkipBackButton.Content = "Listen";
-      _cancellationSource.Cancel();
-      _cancellationSource.Dispose();
-      _cancellationSource = null;
-    }
-  }
-
-  public async void ListenForBinding_Reset(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
-    MakeAllControlsDisabled();
-    _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource(3000);
-    try {
-      Reset = await AwaitKeyPress(_cancellationSource.Token, ResetButton);
-    }
-    catch (TaskCanceledException) { }
-    finally {
-      MakeAllControlsEnabled();
-      ResetButton.Content = "Listen";
-      _cancellationSource.Dispose();
-      _cancellationSource = null;
-    }
-  }
-
 
   public KeybindsEditor(LibreSplitContext context) {
     InitializeComponent();
