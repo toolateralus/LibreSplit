@@ -23,7 +23,7 @@ long start_time;
 #define DO_LOG
 
 #ifdef DO_LOG
-#define LOG(s) printf("%ld [LIB_X_SERVER_INPUT]: %s\n", time(NULL) - start_time, s);
+#define LOG(s, ...) do { printf("%ld [LIB_X_SERVER_INPUT]: ", time(NULL) - start_time); printf(s, ##__VA_ARGS__); } while (0);
 #else
 #define LOG(s)
 #endif
@@ -35,18 +35,18 @@ int PollKey(char *key_string, size_t buffer_size) {
 
   XEvent xevent;
 
-  if (XPending(display) == 0) {
-    LOG("No key at poll time");
-    return RESULT_NO_KEY_POLLED;
+  int pending = XPending(display);
+  
+  // find first key event
+  for (; pending > 0; --pending) {
+    XNextEvent(display, &xevent);
+    if (xevent.type == KeyPress) {
+      LOG("Got key %d", xevent.xkey.keycode);
+      break;
+    }
   }
 
-  XNextEvent(display, &xevent);
-  while (xevent.type != KeyPress && (XPending(display) != 0)) {
-    LOG("Non key pressed events draining");
-  }
-
-  if (XPending(display) == 0) {
-    LOG("No key event after draining");
+  if (xevent.type != KeyPress) {
     return RESULT_NO_KEY_POLLED;
   }
 

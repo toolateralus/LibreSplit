@@ -13,15 +13,16 @@ char string[buffer_size];
 
 int main() {
   Initialize();
-  const char *key = "f7";
   
+  const char *key = "f";
   GrabKey(key);
-
-  int result = PollKey(string, buffer_size);
-  if (result == 0) {
-    printf("Got key %s\n", string);
-  } else {
-    printf("Result=%d\n", result);
+  while (1) {
+    int result = PollKey(string, buffer_size);
+    if (result == 0) {
+      printf("Got key %s\n", string);
+    } else {
+      printf("Result=%d\n", result);
+    }
   }
   
   UnGrabKey(key);
