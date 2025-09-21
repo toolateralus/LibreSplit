@@ -1,65 +1,85 @@
 <Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:LibreSplit"
-        x:Class="LibreSplit.KeybindsEditor"
-        Width="200"
-        Height="300"
-        x:DataType="local:KeybindsEditor">
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:local="clr-namespace:LibreSplit"
+  x:Class="LibreSplit.KeybindsEditor"
+  Width="300"
+  Height="300"
+  x:DataType="local:KeybindsEditor">
   <StackPanel Orientation="Vertical">
 
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="100" />
+        <ColumnDefinition Width="60" />
       </Grid.ColumnDefinitions>
-      <TextBlock Text="Start or Split" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox x:Name="StartOrSplitBox" Text="{Binding StartOrSplit, Mode=TwoWay}" Grid.Column="1"/>
-      <Button x:Name="StartOrSplitButton" Content="Listen" Click="ListenForBinding_StartOrSplit" Grid.Column="2"/>
+      <TextBlock Text="Start or Split" VerticalAlignment="Center" Grid.Column="0" />
+      <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
+        <TextBlock x:Name="StartOrSplitBox" VerticalAlignment="Center" Text="{Binding StartOrSplit}"
+        />
+      </Border>
+      <Button HorizontalAlignment="Stretch" x:Name="StartOrSplitButton" Content="Listen"
+        Click="ListenForBinding_StartOrSplit" Grid.Column="2" />
     </Grid>
 
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="100" />
+        <ColumnDefinition Width="60" />
       </Grid.ColumnDefinitions>
-      <TextBlock Text="Pause" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox x:Name="PauseBox" Text="{Binding Pause, Mode=TwoWay}" Grid.Column="1"/>
-      <Button x:Name="PauseButton" Content="Listen" Click="ListenForBinding_Pause" Grid.Column="2"/>
+      <TextBlock Text="Pause" VerticalAlignment="Center" Grid.Column="0" />
+      <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
+        <TextBlock x:Name="PauseBox" VerticalAlignment="Center" Text="{Binding Pause}"
+        />
+      </Border>
+      <Button HorizontalAlignment="Stretch" x:Name="PauseButton" Content="Listen"
+        Click="ListenForBinding_Pause" Grid.Column="2" />
     </Grid>
 
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="100" />
+        <ColumnDefinition Width="60" />
       </Grid.ColumnDefinitions>
-      <TextBlock Text="Skip Back" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox x:Name="SkipBackBox" Text="{Binding SkipBack, Mode=TwoWay}" Grid.Column="1"/>
-      <Button x:Name="SkipBackButton" Content="Listen" Click="ListenForBinding_SkipBack" Grid.Column="2"/>
+      <TextBlock Text="Skip Back" VerticalAlignment="Center" Grid.Column="0" />
+      <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
+        <TextBlock x:Name="SkipBackBox" VerticalAlignment="Center" Text="{Binding SkipBack}"
+        />
+      </Border>
+      <Button HorizontalAlignment="Stretch" x:Name="SkipBackButton" Content="Listen"
+        Click="ListenForBinding_SkipBack" Grid.Column="2" />
     </Grid>
 
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="100" />
+        <ColumnDefinition Width="60" />
       </Grid.ColumnDefinitions>
-      <TextBlock Text="Skip Forward" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox x:Name="SkipForwardBox" Text="{Binding SkipForward, Mode=TwoWay}" Grid.Column="1"/>
-      <Button x:Name="SkipForwardButton" Content="Listen" Click="ListenForBinding_SkipForward" Grid.Column="2"/>
+      <TextBlock Text="Skip Forward" VerticalAlignment="Center" Grid.Column="0" />
+      <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
+        <TextBlock x:Name="SkipForwardBox" VerticalAlignment="Center" Text="{Binding SkipForward}"
+        />
+      </Border>
+      <Button HorizontalAlignment="Stretch" x:Name="SkipForwardButton" Content="Listen"
+        Click="ListenForBinding_SkipForward" Grid.Column="2" />
     </Grid>
 
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="100" />
+        <ColumnDefinition Width="60" />
       </Grid.ColumnDefinitions>
-      <TextBlock Text="Reset" VerticalAlignment="Center" Grid.Column="0"/>
-      <TextBox x:Name="ResetBox" Text="{Binding Reset, Mode=TwoWay}" Grid.Column="1"/>
-      <Button x:Name="ResetButton" Content="Listen" Click="ListenForBinding_Reset" Grid.Column="2"/>
+      <TextBlock Text="Reset" VerticalAlignment="Center" Grid.Column="0" />
+      <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
+        <TextBlock x:Name="ResetBox" VerticalAlignment="Center" Text="{Binding Reset}"
+        />
+      </Border>
+      <Button HorizontalAlignment="Stretch" x:Name="ResetButton" Content="Listen"
+        Click="ListenForBinding_Reset" Grid.Column="2" />
     </Grid>
 
   </StackPanel>
