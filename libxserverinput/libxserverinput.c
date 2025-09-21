@@ -20,12 +20,12 @@ Window root;
 
 long start_time;
 
-#define DO_LOG
+// #define DO_LOG
 
 #ifdef DO_LOG
 #define LOG(s, ...) do { printf("%ld [LIB_X_SERVER_INPUT]: ", time(NULL) - start_time); printf(s, ##__VA_ARGS__); } while (0);
 #else
-#define LOG(s)
+#define LOG(s, ...)
 #endif
 
 int PollKey(char *key_string, size_t buffer_size) {
@@ -35,20 +35,13 @@ int PollKey(char *key_string, size_t buffer_size) {
 
   XEvent xevent;
 
-  int pending = XPending(display);
-  
-  // find first key event
-  for (; pending > 0; --pending) {
+  XNextEvent(display, &xevent);
+
+  while (xevent.type != KeyPress) {
     XNextEvent(display, &xevent);
-    if (xevent.type == KeyPress) {
-      LOG("Got key %d", xevent.xkey.keycode);
-      break;
-    }
   }
 
-  if (xevent.type != KeyPress) {
-    return RESULT_NO_KEY_POLLED;
-  }
+  LOG("Got key %d", xevent.xkey.keycode);
 
   XKeyEvent key = xevent.xkey;
   int shift_level = key.state & ShiftMask ? 1 : 0;
