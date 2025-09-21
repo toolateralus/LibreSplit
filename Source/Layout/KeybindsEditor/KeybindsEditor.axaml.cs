@@ -127,7 +127,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
   public async void ListenForBinding_StartOrSplit(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource();
+    _cancellationSource = new CancellationTokenSource(3000);
     StartOrSplitButton.Content = "...";
     try {
       StartOrSplit = await AwaitKeyPress(_cancellationSource.Token);
@@ -144,7 +144,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
   public async void ListenForBinding_Pause(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource();
+    _cancellationSource = new CancellationTokenSource(3000);
     PauseButton.Content = "...";
     try {
       Pause = await AwaitKeyPress(_cancellationSource.Token);
@@ -161,7 +161,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
   public async void ListenForBinding_SkipForward(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource();
+    _cancellationSource = new CancellationTokenSource(3000);
     SkipForwardButton.Content = "...";
 
     try {
@@ -179,7 +179,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
   public async void ListenForBinding_SkipBack(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource();
+    _cancellationSource = new CancellationTokenSource(3000);
     SkipBackButton.Content = "...";
     try {
       SkipBack = await AwaitKeyPress(_cancellationSource.Token);
@@ -196,7 +196,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
   public async void ListenForBinding_Reset(object? sender, Avalonia.Interactivity.RoutedEventArgs a) {
     MakeAllControlsDisabled();
     _cancellationSource?.Cancel();
-    _cancellationSource = new CancellationTokenSource();
+    _cancellationSource = new CancellationTokenSource(3000);
     ResetButton.Content = "...";
     try {
       Reset = await AwaitKeyPress(_cancellationSource.Token);
