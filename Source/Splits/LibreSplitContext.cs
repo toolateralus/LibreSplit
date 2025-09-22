@@ -111,29 +111,6 @@ public class LibreSplitContext : ViewModelBase {
     ClearActiveSegment();
   }
 
-  internal void HandleInput(string key) {
-    if (Run == null || isEditMode) {
-      return;
-    }
-
-    Keybind bind = GetBindFromKey(key);
-
-  }
-
-
-  private Keybind GetBindFromKey(string key) {
-    Keybind bind = Keybind.Invalid;
-
-
-
-
-
-    if (bind == Keybind.Invalid) {
-      throw new InvalidOperationException($"Cannot use {key} :: not a valid keybind.");
-    }
-
-    return bind;
-  }
 
   // Disengage the input while we're editing
   internal void StartEditing() {
@@ -186,16 +163,13 @@ public class LibreSplitContext : ViewModelBase {
   }
 
   internal void InitializeInputAndKeymap(ConfigLoader configLoader) {
-
     if (configLoader.TryGetValue("keymap", out JToken? obj) && obj != null) {
       var keymap = obj.ToObject<Dictionary<Keybind, KeyCode>>() ?? throw new Exception("invalid keymap table");
       this.keymap = keymap;
     }
 
+    RegisterKeyMap();
+
     Input.Start().FireAndForget();
-
-    foreach (var (_, key) in keymap) {
-
-    }
   }
 }
