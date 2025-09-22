@@ -71,7 +71,7 @@ public class RunData(TimeSpan? startTime = null) {
 
     SegmentIndex++;
 
-    if (SegmentIndex >= Segments.Count - 1) {
+    if (SegmentIndex > Segments.Count - 1) {
       SegmentIndex = Segments.Count - 1;
       return false;
     }

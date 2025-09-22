@@ -1,3 +1,4 @@
+using System;
 using System.ComponentModel;
 using LibreSplit.Timing;
 
@@ -24,30 +25,50 @@ public class TimerViewModel : ViewModelBase {
       return;
     }
     switch (e.PropertyName) {
-    case nameof(Timer.Running):
-      if (Timer.Running) {
-        Classes = "Ahead";
-      } else {
-        Classes = "Inactive";
-      }
-      break;
-    case nameof(Timer.Elapsed):
-      if (MainWindow.GlobalContext.ActiveSegment is SegmentData activeSegment) {
-        if (Timer.Elapsed < activeSegment.PBSplitTime) {
-          if (Timer.Delta < activeSegment.PBSegmentTime) {
-            Classes = "AheadGainingTime";
-          } else {
-            Classes = "AheadLosingTime";
+      case nameof(Timer.Running):
+        if (Timer.Running) {
+          Classes = "Ahead";
+        }
+        else {
+          Classes = "Inactive";
+        }
+        break;
+      case nameof(Timer.Elapsed):
+        if (MainWindow.GlobalContext.ActiveSegment is SegmentData activeSegment) {
+          if (activeSegment.PBSplitTime is null) {
+            TimeSpan? nextSplit = null;
+            RunData run = MainWindow.GlobalContext.Run;
+            for (var i = run.SegmentIndex + 1; i < run.Segments.Count; i++) {
+              if (run.Segments[i].PBSplitTime is TimeSpan split) {
+                nextSplit = split;
+                break;
+              }
+            }
+            if (nextSplit is null || Timer.Elapsed < nextSplit) {
+              Classes = "AheadGainingTime";
+            }
+            else {
+              Classes = "BehindGainingTime";
+            }
           }
-        } else {
-          if (Timer.Delta < activeSegment.PBSegmentTime) {
-            Classes = "BehindGainingTime";
-          } else {
-            Classes = "BehindLosingTime";
+          else if (Timer.Elapsed < activeSegment.PBSplitTime) {
+            if (activeSegment.PBSegmentTime is null || Timer.Delta < activeSegment.PBSegmentTime) {
+              Classes = "AheadGainingTime";
+            }
+            else {
+              Classes = "AheadLosingTime";
+            }
+          }
+          else {
+            if (activeSegment.PBSegmentTime is null || Timer.Delta < activeSegment.PBSegmentTime) {
+              Classes = "BehindGainingTime";
+            }
+            else {
+              Classes = "BehindLosingTime";
+            }
           }
         }
-      }
-      break;
+        break;
     }
   }
 
