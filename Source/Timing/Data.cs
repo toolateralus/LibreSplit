@@ -14,7 +14,9 @@ public class RunData(TimeSpan? startTime = null) {
   /// <summary>
   /// The collection of segment data that defines this run.
   /// </summary>
-  public ObservableCollection<SegmentData> Segments { get; } = [];
+  public ObservableCollection<SegmentData> Segments { get; } = [
+    new()
+  ];
   /// <summary>
   /// The best time achieved of an RTA attempt at these segments.
   /// </summary>
@@ -143,7 +145,7 @@ public class RunData(TimeSpan? startTime = null) {
 /// This class defines a single segment of a greater run and holds display information and timing data.
 /// </summary>
 /// <param name="label"></param>
-public class SegmentData(string label) : INotifyPropertyChanged {
+public class SegmentData(string label = "New Split") : INotifyPropertyChanged {
   #region UI Stuff
   private TimeSpan? _segmentTime;
   [JsonIgnore]

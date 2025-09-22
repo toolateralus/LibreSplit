@@ -16,6 +16,13 @@ public partial class LayoutEditor : Window {
       GlobalContext.Layout.Remove(item);
     }
   }
+  private void AddLayoutItem_Clicked(object? sender, RoutedEventArgs e) {
+    if (sender is MenuItem menuItem &&
+        menuItem.Tag is Type layoutItemType &&
+        Activator.CreateInstance(layoutItemType) is LayoutItem layoutItem) {
+      GlobalContext.Layout.Add(layoutItem);
+    }
+  }
   public void MoveItemUp_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
         button.Tag is LayoutItem item) {
@@ -47,13 +54,6 @@ public partial class LayoutEditor : Window {
         }
       }
       return layoutItemTypes;
-    }
-  }
-  private void AddLayoutItem_Clicked(object? sender, RoutedEventArgs e) {
-    if (sender is MenuItem menuItem &&
-        menuItem.Tag is Type layoutItemType &&
-        Activator.CreateInstance(layoutItemType) is LayoutItem layoutItem) {
-      GlobalContext.Layout.Add(layoutItem);
     }
   }
   public static LibreSplitContext GlobalContext => MainWindow.GlobalContext;

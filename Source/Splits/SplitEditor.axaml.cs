@@ -49,7 +49,12 @@ public partial class SplitEditor : Window {
   }
 
   private void AddSplit() {
-    Run.Segments.Add(new SegmentData("New Split"));
+    if (SelectedItem is SegmentData selectedSegment) {
+      Run.Segments.Insert(Run.Segments.IndexOf(selectedSegment) + 1, new());
+    }
+    else {
+      Run.Segments.Add(new());
+    }
   }
 
   public void OnRemoveSplitClicked(object sender, RoutedEventArgs e) {
@@ -63,6 +68,9 @@ public partial class SplitEditor : Window {
     }
     else {
       Run.Segments.Remove(Run.Segments.Last());
+    }
+    if (Run.Segments.Count == 0) {
+      AddSplit();
     }
   }
 
