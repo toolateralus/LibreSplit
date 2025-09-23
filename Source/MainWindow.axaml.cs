@@ -161,7 +161,7 @@ public partial class MainWindow : Window {
     if (GlobalContext.Run == null) {
       NewSplits(sender, e);
     }
-    var window = new SplitEditor(GlobalContext.Run);
+    var window = new RunEditor(GlobalContext.Run);
     GlobalContext.StartEditing();
     await window.ShowDialog(this);
     GlobalContext.StopEditing();

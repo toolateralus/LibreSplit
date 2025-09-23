@@ -3,9 +3,9 @@
   xmlns:t="clr-namespace:LibreSplit.Timing"
   xmlns:b="clr-namespace:LibreSplit.Behaviors"
   xmlns:c="clr-namespace:LibreSplit.Controls"
-  x:Class="LibreSplit.Controls.SplitEditor"
-  Title="Split Editor" Width="800" Height="600"
-  x:DataType="c:SplitEditor">
+  x:Class="LibreSplit.Controls.RunEditor"
+  Title="Run Editor" Width="800" Height="600"
+  x:DataType="c:RunEditor">
   <Window.KeyBindings>
     <KeyBinding Gesture="Enter" Command="{Binding ClearFocus}" />
   </Window.KeyBindings>
