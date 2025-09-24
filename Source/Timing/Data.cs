@@ -74,7 +74,6 @@ public class RunData {
     SegmentIndex++;
 
     if (SegmentIndex > Segments.Count - 1) {
-      SegmentIndex = Segments.Count - 1;
       return false;
     }
 
@@ -82,11 +81,6 @@ public class RunData {
   }
 
   internal void Reset() {
-
-    if (Segments.Count == 0 || SegmentIndex == 0) {
-      return;
-    }
-
     SegmentIndex = 0;
 
     // get the last split time.
@@ -100,7 +94,6 @@ public class RunData {
     foreach (var seg in Segments) {
 
       if (seg.SplitTime == null) {
-        // Why would this even happen? should this be an error?
         continue;
       }
 
@@ -114,30 +107,31 @@ public class RunData {
     }
 
     AttemptCount++;
+    OnReset?.Invoke();
   }
 
+  public Action? OnReset;
+
   internal void SkipBack() {
-    Segments[SegmentIndex].SegmentTime = TimeSpan.Zero;
-    Segments[SegmentIndex].SplitTime = TimeSpan.Zero;
+    Segments[SegmentIndex].SegmentTime = null;
+    Segments[SegmentIndex].SplitTime = null;
 
     if (SegmentIndex > 0) {
       SegmentIndex--;
     }
     else {
-      Console.WriteLine($"Failed to skip back, segment index was zero. value={SegmentIndex}");
       SegmentIndex = 0;
     }
   }
 
   internal void SkipForward() {
-    Segments[SegmentIndex].SegmentTime = TimeSpan.Zero;
-    Segments[SegmentIndex].SplitTime = TimeSpan.Zero;
+    Segments[SegmentIndex].SegmentTime = null;
+    Segments[SegmentIndex].SplitTime = null;
 
     if (SegmentIndex < Segments.Count - 1) {
       SegmentIndex++;
     }
     else {
-      Console.WriteLine($"Failed to skip forward, segment index was >= Segments.Count - 1. value={SegmentIndex}");
       SegmentIndex = Segments.Count - 1;
     }
   }

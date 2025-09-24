@@ -18,7 +18,7 @@
     <ItemsControl.ItemTemplate>
       <DataTemplate x:DataType="local:SegmentViewModel">
         <Grid
-          Classes.Active="{Binding IsActive }"
+          Classes.Active="{Binding IsActive}"
           Classes.Inactive="{Binding !IsActive}">
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
@@ -28,10 +28,10 @@
           <TextBlock Grid.Column="0" Text="{Binding Segment.Label}" Margin="1"
             HorizontalAlignment="Left" />
           <TextBlock Grid.Column="1"
-            Text="{Binding Segment.PBSegmentTime, Converter={StaticResource NullableTimeSpanToStringConverter}}"
+            Text="{Binding SegmentTime, Converter={StaticResource NullableTimeSpanToStringConverter}}"
             Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace" />
           <TextBlock Grid.Column="2"
-            Text="{Binding Segment.PBSplitTime, Converter={StaticResource NullableTimeSpanToStringConverter}}"
+            Text="{Binding SplitTime, Converter={StaticResource NullableTimeSpanToStringConverter}}"
             Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace" />
         </Grid>
       </DataTemplate>
