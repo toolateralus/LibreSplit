@@ -21,18 +21,25 @@
           Classes.Active="{Binding IsActive}"
           Classes.Inactive="{Binding !IsActive}">
           <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
           <TextBlock Grid.Column="0" Text="{Binding Segment.Label}" Margin="1"
             HorizontalAlignment="Left" />
-          <TextBlock Grid.Column="1"
-            Text="{Binding SegmentTime, Converter={StaticResource NullableTimeSpanToStringConverter}}"
-            Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace" />
-          <TextBlock Grid.Column="2"
-            Text="{Binding SplitTime, Converter={StaticResource NullableTimeSpanToStringConverter}}"
-            Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace" />
+          <ItemsControl ItemsSource="{Binding Comparisons}" Grid.Column="1">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:ComparisonViewModel">
+                <TextBlock TextAlignment="Right" Width="50"
+                  Text="{Binding TimeString}"
+                  Margin="1" FontFamily="Consolas, Courier New, monospace" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ItemsControl>
         </Grid>
       </DataTemplate>
     </ItemsControl.ItemTemplate>

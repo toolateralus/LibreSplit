@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using Avalonia;
 using Avalonia.Data.Converters;
@@ -12,21 +13,30 @@ namespace LibreSplit.Convert;
 public class NullableTimeSpanToStringConverter : IValueConverter {
   public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
     if (value is TimeSpan timeSpan) {
-      double totalms = Math.Floor(timeSpan.TotalMilliseconds);
-      TimeSpan flooredTimeSpan = TimeSpan.FromMilliseconds(totalms);
+      bool signed = false;
+      if (parameter is string paramString && paramString == "Signed") {
+        signed = true;
+      }
+      var sign = signed ? "+" : "";
+      if (timeSpan.TotalMilliseconds < 0) {
+        sign = "-";
+      }
+      double milliseconds = Math.Floor(Math.Abs(timeSpan.TotalMilliseconds));
+      TimeSpan flooredTimeSpan = TimeSpan.FromMilliseconds(milliseconds);
 
       if (flooredTimeSpan.TotalMinutes < 1) {
-        return flooredTimeSpan.ToString(@"s\.ff");
+        return sign + flooredTimeSpan.ToString(@"s\.ff");
       }
       else if (flooredTimeSpan.TotalHours < 1) {
-        return flooredTimeSpan.ToString(@"m\:ss\.ff");
+        return sign + flooredTimeSpan.ToString(@"m\:ss\.ff");
       }
       else if (flooredTimeSpan.TotalDays < 1) {
-        return flooredTimeSpan.ToString(@"h\:mm\:ss\.ff");
-      } else {
+        return sign + flooredTimeSpan.ToString(@"h\:mm\:ss\.ff");
+      }
+      else {
         var totalHours = flooredTimeSpan.Hours + (flooredTimeSpan.Days * 24);
         string minutesSeconds = flooredTimeSpan.ToString(@"mm\:ss\.ff");
-        return totalHours.ToString() + ":" + minutesSeconds;
+        return sign + totalHours.ToString() + ":" + minutesSeconds;
       }
     }
     return "―";
@@ -36,6 +46,14 @@ public class NullableTimeSpanToStringConverter : IValueConverter {
     if (value is string str) {
       if (str == string.Empty || str == "―") {
         return null;
+      }
+      bool isNegative = false;
+      if (str[0] == '-') {
+        isNegative = true;
+        str = str[1..];
+      }
+      else if (str[0] == '+') {
+        str = str[1..];
       }
       TimeSpan timeSpan = TimeSpan.Zero;
       string[] timeParts = str.Split(':');
@@ -58,7 +76,7 @@ public class NullableTimeSpanToStringConverter : IValueConverter {
           return AvaloniaProperty.UnsetValue;
         }
       }
-      return timeSpan;
+      return isNegative ? -timeSpan : timeSpan;
     }
     return AvaloniaProperty.UnsetValue;
   }
