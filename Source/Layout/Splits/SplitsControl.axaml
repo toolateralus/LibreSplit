@@ -44,10 +44,10 @@
           <ItemsControl ItemsSource="{Binding Comparisons}" Grid.Column="1">
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="local:ComparisonViewModel">
-                <TextBlock TextAlignment="Right" Width="50"
+                <TextBlock TextAlignment="Right" Width="80" 
                   Text="{Binding TimeString}" local:Setters.Classes="{Binding Classes}"
-                  Margin="1" FontFamily="Consolas, Courier New, monospace" />
-              </DataTemplate>
+                  Margin="1,1,10,1" FontFamily="Consolas, Courier New, monospace" />
+                </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate>
