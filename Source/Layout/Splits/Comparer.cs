@@ -55,6 +55,9 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
         comparison.Time = null;
         break;
     }
+    if (status == SegmentStatus.Upcoming) {
+      comparison.Classes = "Normal";
+    }
   }
   string DeltaColor(TimeSpan? split, TimeSpan? segment, TimeSpan? comparisonSplit, TimeSpan? comparisonSegment) {
     if (split is null || comparisonSegment is null) {
