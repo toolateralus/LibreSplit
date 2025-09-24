@@ -30,8 +30,10 @@ public class SplitsViewModel : ViewModelBase {
       [nameof(ctx.Run)] = () => {
         SyncSegmentViewModels();
         run.Segments.CollectionChanged -= RunCollectionChanged;
+        run.OnReset -= OnReset;
         run = ctx.Run;
         run.Segments.CollectionChanged += RunCollectionChanged;
+        run.OnReset += OnReset;
       },
       [nameof(ctx.ActiveSegment)] = () => {
         if (activeSegment != null) {
