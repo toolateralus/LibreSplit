@@ -1,0 +1,30 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:ls="clr-namespace:LibreSplit"
+  xmlns:local="clr-namespace:LibreSplit.Layouts.TimerLayout"
+  x:Class="LibreSplit.Layouts.TimerLayout.TimerControl"
+  x:DataType="local:TimerViewModel">
+  <UserControl.Styles>
+    <Style Selector="TextBlock.Inactive">
+      <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor}" />
+    </Style>
+    <Style Selector="TextBlock.AheadGainingTime">
+      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadGainingTimeColor}" />
+    </Style>
+    <Style Selector="TextBlock.AheadLosingTime">
+      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadLosingTimeColor}" />
+    </Style>
+    <Style Selector="TextBlock.BehindLosingTime">
+      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindLosingTimeColor}" />
+    </Style>
+    <Style Selector="TextBlock.BehindGainingTime">
+      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindGainingTimeColor}" />
+    </Style>
+  </UserControl.Styles>
+  <Grid>
+    <TextBlock
+      Text="{Binding Timer.Elapsed, Converter={StaticResource NullableTimeSpanToStringConverter}}"
+      Margin="1" HorizontalAlignment="Right" FontFamily="Consolas, Courier New, monospace"
+      FontSize="40" ls:Setters.Classes="{Binding Classes}"/>
+  </Grid>
+</UserControl>

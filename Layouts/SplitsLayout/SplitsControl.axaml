@@ -1,0 +1,63 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:timing="clr-namespace:LibreSplit.Timing"
+  xmlns:ls="clr-namespace:LibreSplit"
+  xmlns:local="clr-namespace:LibreSplit.Layouts.SplitsLayout"
+  x:Class="LibreSplit.Layouts.SplitsLayout.SplitsControl"
+  x:DataType="local:SplitsViewModel">
+  <UserControl.Styles>
+    <Style Selector="Grid.Active">
+      <Setter Property="Background"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.ActiveBGColor}" />
+    </Style>
+    <Style Selector="Grid.Inactive">
+      <Setter Property="Background"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.InactiveBGColor}" />
+    </Style>
+    <Style Selector="TextBlock.Normal">
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+    <Style Selector="TextBlock.AheadGainingTime">
+      <Setter Property="Foreground" Value="Green" />
+    </Style>
+    <Style Selector="TextBlock.AheadLosingTime">
+      <Setter Property="Foreground" Value="LightGreen" />
+    </Style>
+    <Style Selector="TextBlock.BehindLosingTime">
+      <Setter Property="Foreground" Value="Red" />
+    </Style>
+    <Style Selector="TextBlock.BehindGainingTime">
+      <Setter Property="Foreground" Value="IndianRed" />
+    </Style>
+  </UserControl.Styles>
+  <ItemsControl ItemsSource="{Binding SegmentViewModels}">
+    <ItemsControl.ItemTemplate>
+      <DataTemplate x:DataType="local:SegmentViewModel">
+        <Grid
+          Classes.Active="{Binding IsActive}"
+          Classes.Inactive="{Binding !IsActive}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="{Binding Segment.Label}" Margin="1"
+            HorizontalAlignment="Left" />
+          <ItemsControl ItemsSource="{Binding Comparisons}" Grid.Column="1">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="local:ComparisonViewModel">
+                <TextBlock TextAlignment="Right" Width="50"
+                  Text="{Binding TimeString}" ls:Setters.Classes="{Binding Classes}"
+                  Margin="1" FontFamily="Consolas, Courier New, monospace" />
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal" />
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ItemsControl>
+        </Grid>
+      </DataTemplate>
+    </ItemsControl.ItemTemplate>
+  </ItemsControl>
+</UserControl>

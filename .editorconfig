@@ -7,3 +7,10 @@ charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
 csharp_new_line_before_open_brace = none
+dotnet_style_namespace_match_folder = true:warning
+
+[obj/**]
+generated_code = true
+
+[bin/**]
+generated_code = true
