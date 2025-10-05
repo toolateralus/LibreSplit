@@ -13,10 +13,6 @@
   SystemDecorations="None"
   Title="LibreSplit">
   <Grid PointerPressed="Grid_PointerPressed">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto" />
-      <RowDefinition Height="*" />
-    </Grid.RowDefinitions>
     <Grid.ContextMenu>
       <ContextMenu>
         <MenuItem Header="Splits">
@@ -39,12 +35,74 @@
         <MenuItem Header="Close" Click="CloseWindow" />
       </ContextMenu>
     </Grid.ContextMenu>
-    <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}">
+
+    <ItemsControl ItemsSource="{Binding Layout}">
       <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="layouts:LayoutData">
           <ContentControl Content="{Binding Control}" />
         </DataTemplate>
       </ItemsControl.ItemTemplate>
     </ItemsControl>
+
+    <Border Background="Transparent"
+      Height="5"
+      VerticalAlignment="Top"
+      Cursor="SizeNorthSouth"
+      Tag="North"
+      PointerPressed="ResizeWindow" />
+
+    <Border Background="Transparent"
+      Width="5"
+      HorizontalAlignment="Left"
+      Cursor="SizeWestEast"
+      Tag="West"
+      PointerPressed="ResizeWindow" />
+
+    <Border Background="Transparent"
+      Width="5"
+      HorizontalAlignment="Right"
+      Cursor="SizeWestEast"
+      Tag="East"
+      PointerPressed="ResizeWindow" />
+
+    <Border Background="Transparent"
+      Height="5"
+      VerticalAlignment="Bottom"
+      Cursor="SizeNorthSouth"
+      Tag="South"
+      PointerPressed="ResizeWindow" />
+
+    <!-- Corners -->
+    <Border Background="Transparent"
+      Width="10" Height="10"
+      HorizontalAlignment="Left"
+      VerticalAlignment="Top"
+      Cursor="TopLeftCorner"
+      Tag="NorthWest"
+      PointerPressed="ResizeWindow" />
+
+    <Border Background="Transparent"
+      Width="10" Height="10"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Top"
+      Cursor="TopRightCorner"
+      Tag="NorthEast"
+      PointerPressed="ResizeWindow" />
+
+    <Border Background="Transparent"
+      Width="10" Height="10"
+      HorizontalAlignment="Left"
+      VerticalAlignment="Bottom"
+      Cursor="BottomLeftCorner"
+      Tag="SouthWest"
+      PointerPressed="ResizeWindow" />
+
+    <Border Background="Transparent"
+      Width="10" Height="10"
+      HorizontalAlignment="Right"
+      VerticalAlignment="Bottom"
+      Cursor="BottomRightCorner"
+      Tag="SouthEast"
+      PointerPressed="ResizeWindow" />
   </Grid>
 </Window>

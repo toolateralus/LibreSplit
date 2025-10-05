@@ -234,9 +234,22 @@ public partial class MainWindow : Window {
     Close();
   }
   private void Grid_PointerPressed(object? sender, PointerPressedEventArgs e) {
+    e.Handled = true;
     // Only start move drag if left mouse button is pressed
     if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
       this.BeginMoveDrag(e);
+    }
+  }
+  private void ResizeWindow(object? sender, PointerPressedEventArgs e) {
+    if (sender is Border border && border.Tag is string tag) {
+      try {
+        var edge = Enum.Parse<WindowEdge>(tag);
+        e.Handled = true;
+        BeginResizeDrag(edge, e);
+      }
+      catch (Exception exception) {
+        Console.WriteLine(exception);
+      }
     }
   }
   #endregion
