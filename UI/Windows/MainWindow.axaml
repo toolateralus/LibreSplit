@@ -5,14 +5,14 @@
   xmlns:root="clr-namespace:LibreSplit"
   xmlns:layouts="clr-namespace:LibreSplit.Layouts"
   xmlns:timing="clr-namespace:LibreSplit.Timing"
+  xmlns:controls="clr-namespace:LibreSplit.UI.Controls"
   mc:Ignorable="d" Width="300"
   SizeToContent="Height"
   x:Class="LibreSplit.MainWindow"
-  xmlns:controls="clr-namespace:LibreSplit.Controls;assembly=LibreSplit"
   x:DataType="timing:LibreSplitContext"
   SystemDecorations="None"
   Title="LibreSplit">
-  <Grid PointerPressed="Grid_PointerPressed">
+  <Grid>
     <Grid.ContextMenu>
       <ContextMenu>
         <MenuItem Header="Splits">
@@ -44,65 +44,6 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
 
-    <Border Background="Transparent"
-      Height="5"
-      VerticalAlignment="Top"
-      Cursor="SizeNorthSouth"
-      Tag="North"
-      PointerPressed="ResizeWindow" />
-
-    <Border Background="Transparent"
-      Width="5"
-      HorizontalAlignment="Left"
-      Cursor="SizeWestEast"
-      Tag="West"
-      PointerPressed="ResizeWindow" />
-
-    <Border Background="Transparent"
-      Width="5"
-      HorizontalAlignment="Right"
-      Cursor="SizeWestEast"
-      Tag="East"
-      PointerPressed="ResizeWindow" />
-
-    <Border Background="Transparent"
-      Height="5"
-      VerticalAlignment="Bottom"
-      Cursor="SizeNorthSouth"
-      Tag="South"
-      PointerPressed="ResizeWindow" />
-
-    <!-- Corners -->
-    <Border Background="Transparent"
-      Width="10" Height="10"
-      HorizontalAlignment="Left"
-      VerticalAlignment="Top"
-      Cursor="TopLeftCorner"
-      Tag="NorthWest"
-      PointerPressed="ResizeWindow" />
-
-    <Border Background="Transparent"
-      Width="10" Height="10"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Top"
-      Cursor="TopRightCorner"
-      Tag="NorthEast"
-      PointerPressed="ResizeWindow" />
-
-    <Border Background="Transparent"
-      Width="10" Height="10"
-      HorizontalAlignment="Left"
-      VerticalAlignment="Bottom"
-      Cursor="BottomLeftCorner"
-      Tag="SouthWest"
-      PointerPressed="ResizeWindow" />
-
-    <Border Background="Transparent"
-      Width="10" Height="10"
-      HorizontalAlignment="Right"
-      VerticalAlignment="Bottom"
-      Cursor="BottomRightCorner"
-      Tag="SouthEast"
-      PointerPressed="ResizeWindow" />
+    <controls:BorderlessWindowControls />
   </Grid>
 </Window>
