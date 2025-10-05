@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-namespace LibreSplit;
+namespace LibreSplit.UI;
 
 public class ViewModelBase : INotifyPropertyChanged {
   public event PropertyChangedEventHandler? PropertyChanged;

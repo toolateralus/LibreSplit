@@ -3,22 +3,29 @@ using Avalonia.Controls;
 namespace LibreSplit.Layouts.SplitsLayout;
 
 public class SplitsLayoutData : LayoutData {
-  private string activeBGColor = "Purple";
-  private string inactiveBGColor = "Transparent";
+  private string textColor = "White";
+  private string activeSplitColor = "Purple";
+  private string inactiveSplitColor = "Black";
   private string aheadGainingTimeColor = "Green";
   private string aheadLosingTimeColor = "LightGreen";
   private string behindGainingTimeColor = "IndianRed";
   private string behindLosingTimeColor = "Red";
-  public string ActiveBGColor {
-    get => activeBGColor; set {
-      activeBGColor = value;
+  public string TextColor {
+    get => textColor; set {
+      textColor = value;
+      OnPropertyChanged();
+    }
+  }
+  public string ActiveSplitColor {
+    get => activeSplitColor; set {
+      activeSplitColor = value;
       OnPropertyChanged();
     }
   }
 
-  public string InactiveBGColor {
-    get => inactiveBGColor; set {
-      inactiveBGColor = value;
+  public string InactiveSplitColor {
+    get => inactiveSplitColor; set {
+      inactiveSplitColor = value;
       OnPropertyChanged();
     }
   }

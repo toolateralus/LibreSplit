@@ -110,6 +110,7 @@ public class RunData {
     OnReset?.Invoke();
   }
 
+  [JsonIgnore]
   public Action? OnReset;
 
   internal void SkipBack() {

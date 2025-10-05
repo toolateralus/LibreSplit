@@ -1,47 +1,50 @@
 <Window xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:root="clr-namespace:LibreSplit"
-    xmlns:layouts="clr-namespace:LibreSplit.Layouts"
-    xmlns:timing="clr-namespace:LibreSplit.Timing"
-    mc:Ignorable="d" Width="300" Height="400"
-    x:Class="LibreSplit.MainWindow"
-    xmlns:controls="clr-namespace:LibreSplit.Controls;assembly=LibreSplit"
-    x:DataType="timing:LibreSplitContext"
-    SystemDecorations="None"
-    Title="LibreSplit">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-        <Menu Grid.Row="0">
-            <MenuItem Header="Splits">
-                <MenuItem Header="New" Click="NewSplits" />
-                <MenuItem Header="Open" Click="OpenSplits" />
-                <MenuItem Header="Save" Click="SaveSplits" />
-                <MenuItem Header="Save As" Click="SaveSplitsAs" />
-                <MenuItem Header="Edit" Click="EditSplits" />
-            </MenuItem>
-            <MenuItem Header="Keybinds">
-              <MenuItem Header="Edit" Click="EditKeybinds" />
-            </MenuItem>
-            <MenuItem Header="Layout">
-              <MenuItem Header="New" Click="NewLayout" />
-              <MenuItem Header="Open" Click="OpenLayout" />
-              <MenuItem Header="Save" Click="SaveLayout" />
-              <MenuItem Header="Save As" Click="SaveLayoutAs" />
-              <MenuItem Header="Edit" Click="EditLayout" />
-            </MenuItem>
-            <MenuItem Header="Close" Click="CloseWindow" />
-        </Menu>
-        <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="layouts:LayoutData" >
-              <ContentControl Content="{Binding Control}" />
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-    </Grid>
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:root="clr-namespace:LibreSplit"
+  xmlns:layouts="clr-namespace:LibreSplit.Layouts"
+  xmlns:timing="clr-namespace:LibreSplit.Timing"
+  mc:Ignorable="d" Width="300"
+  SizeToContent="Height"
+  x:Class="LibreSplit.MainWindow"
+  xmlns:controls="clr-namespace:LibreSplit.Controls;assembly=LibreSplit"
+  x:DataType="timing:LibreSplitContext"
+  SystemDecorations="None"
+  Title="LibreSplit">
+  <Grid PointerPressed="Grid_PointerPressed">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+    <Grid.ContextMenu>
+      <ContextMenu>
+        <MenuItem Header="Splits">
+          <MenuItem Header="New" Click="NewSplits" />
+          <MenuItem Header="Open" Click="OpenSplits" />
+          <MenuItem Header="Save" Click="SaveSplits" />
+          <MenuItem Header="Save As" Click="SaveSplitsAs" />
+          <MenuItem Header="Edit" Click="EditSplits" />
+        </MenuItem>
+        <MenuItem Header="Keybinds">
+          <MenuItem Header="Edit" Click="EditKeybinds" />
+        </MenuItem>
+        <MenuItem Header="Layout">
+          <MenuItem Header="New" Click="NewLayout" />
+          <MenuItem Header="Open" Click="OpenLayout" />
+          <MenuItem Header="Save" Click="SaveLayout" />
+          <MenuItem Header="Save As" Click="SaveLayoutAs" />
+          <MenuItem Header="Edit" Click="EditLayout" />
+        </MenuItem>
+        <MenuItem Header="Close" Click="CloseWindow" />
+      </ContextMenu>
+    </Grid.ContextMenu>
+    <ItemsControl Grid.Row="1" ItemsSource="{Binding Layout}">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate x:DataType="layouts:LayoutData">
+          <ContentControl Content="{Binding Control}" />
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+  </Grid>
 </Window>

@@ -9,6 +9,7 @@ using LibreSplit.IO;
 using LibreSplit.Layouts;
 using LibreSplit.UI;
 using LibreSplit.UI.Windows;
+using Avalonia.Input;
 
 namespace LibreSplit;
 
@@ -232,8 +233,11 @@ public partial class MainWindow : Window {
   public void CloseWindow(object sender, RoutedEventArgs e) {
     Close();
   }
-  public void ThemesMethod(object sender, RoutedEventArgs e) {
-
+  private void Grid_PointerPressed(object? sender, PointerPressedEventArgs e) {
+    // Only start move drag if left mouse button is pressed
+    if (e.GetCurrentPoint(this).Properties.IsLeftButtonPressed) {
+      this.BeginMoveDrag(e);
+    }
   }
   #endregion
 }

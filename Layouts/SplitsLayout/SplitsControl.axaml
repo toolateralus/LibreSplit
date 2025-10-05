@@ -8,26 +8,31 @@
   <UserControl.Styles>
     <Style Selector="Grid.Active">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.ActiveBGColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.ActiveSplitColor}" />
     </Style>
     <Style Selector="Grid.Inactive">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.InactiveBGColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.InactiveSplitColor}" />
     </Style>
     <Style Selector="TextBlock.Normal">
-      <Setter Property="Foreground" Value="White" />
+      <Setter Property="Foreground"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.TextColor}" />
     </Style>
     <Style Selector="TextBlock.AheadGainingTime">
-      <Setter Property="Foreground" Value="Green" />
+      <Setter Property="Foreground"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.AheadGainingTimeColor}" />
     </Style>
     <Style Selector="TextBlock.AheadLosingTime">
-      <Setter Property="Foreground" Value="LightGreen" />
+      <Setter Property="Foreground"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.AheadLosingTimeColor}" />
     </Style>
     <Style Selector="TextBlock.BehindLosingTime">
-      <Setter Property="Foreground" Value="Red" />
+      <Setter Property="Foreground"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindGainingTimeColor}" />
     </Style>
     <Style Selector="TextBlock.BehindGainingTime">
-      <Setter Property="Foreground" Value="IndianRed" />
+      <Setter Property="Foreground"
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindLosingTimeColor}" />
     </Style>
   </UserControl.Styles>
   <ItemsControl ItemsSource="{Binding SegmentViewModels}">
@@ -41,14 +46,14 @@
             <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
           <TextBlock Grid.Column="0" Text="{Binding Segment.Label}"
-            HorizontalAlignment="Left" Margin="10,1,1,1" />
+            HorizontalAlignment="Left" Margin="10,1,1,1" Foreground="White" />
           <ItemsControl ItemsSource="{Binding Comparisons}" Grid.Column="1">
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="local:ComparisonViewModel">
-                <TextBlock TextAlignment="Right" Width="80" 
+                <TextBlock TextAlignment="Right" Width="80"
                   Text="{Binding TimeString}" ls:Setters.Classes="{Binding Classes}"
                   Margin="1,1,10,1" FontFamily="Consolas, Courier New, monospace" />
-                </DataTemplate>
+              </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate>

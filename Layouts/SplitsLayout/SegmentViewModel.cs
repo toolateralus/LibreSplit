@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using LibreSplit.Timing;
+using LibreSplit.UI;
 
 namespace LibreSplit.Layouts.SplitsLayout;
 

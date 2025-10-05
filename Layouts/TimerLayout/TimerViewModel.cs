@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using LibreSplit.Timing;
+using LibreSplit.UI;
 
 namespace LibreSplit.Layouts.TimerLayout;
 

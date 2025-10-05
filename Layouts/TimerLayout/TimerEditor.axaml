@@ -15,6 +15,7 @@
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <TextBlock Grid.Row="0" Grid.Column="0" Text="Inactive Color" />
     <c:ColorButton Grid.Row="0" Grid.Column="1" Color="{Binding LayoutItem.InactiveColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
@@ -26,5 +27,7 @@
     <c:ColorButton Grid.Row="3" Grid.Column="1" Color="{Binding LayoutItem.BehindGainingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
     <TextBlock Grid.Row="4" Grid.Column="0" Text="Behind (Losing Time) Color" />
     <c:ColorButton Grid.Row="4" Grid.Column="1" Color="{Binding LayoutItem.BehindLosingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+    <TextBlock Grid.Row="5" Grid.Column="0" Text="Background Color" />
+    <c:ColorButton Grid.Row="5" Grid.Column="1" Color="{Binding LayoutItem.BackgroundColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
   </Grid>
 </UserControl>
