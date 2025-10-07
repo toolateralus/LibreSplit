@@ -24,6 +24,7 @@ public class SplitsViewModel : ViewModelBase {
   public SplitsViewModel(SplitsLayoutData layoutItem) {
     LayoutItem = layoutItem;
     comparers = [
+      new("Best", ComparisonType.BestSegmentDelta, ComparisonType.BestSegment),
       new("+/-", ComparisonType.PBSplitDelta, ComparisonType.PBSegment),
       new("Split", ComparisonType.CurrentSplit, ComparisonType.PBSplit),
     ];

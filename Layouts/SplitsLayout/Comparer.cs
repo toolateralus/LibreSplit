@@ -11,6 +11,10 @@ public enum ComparisonType {
   PBSplit,
   PBSegmentDelta,
   PBSplitDelta,
+  BestSegment,
+  BestSplit,
+  BestSegmentDelta,
+  BestSplitDelta,
 }
 
 public record Comparer(string Label, ComparisonType PassedComparison, ComparisonType UpcomingComparison) {
@@ -25,6 +29,9 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
       _ => UpcomingComparison,
     };
     switch (comparisonType) {
+      case ComparisonType.None:
+        comparison.Time = null;
+        break;
       case ComparisonType.CurrentSegment:
         comparison.Signed = false;
         comparison.Time = segment.SegmentTime;
@@ -51,8 +58,23 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
         comparison.Signed = true;
         comparison.Classes = DeltaColor(segment.SplitTime, segment.SegmentTime, segment.PBSplitTime, segment.PBSegmentTime);
         break;
-      case ComparisonType.None:
-        comparison.Time = null;
+      case ComparisonType.BestSegment:
+        comparison.Signed = false;
+        comparison.Time = segment.BestSegmentTime();
+        break;
+      case ComparisonType.BestSplit:
+        comparison.Signed = false;
+        comparison.Time = segment.BestSplitTime();
+        break;
+      case ComparisonType.BestSegmentDelta:
+        comparison.Time = segment.SegmentTime - segment.BestSegmentTime();
+        comparison.Signed = true;
+        comparison.Classes = DeltaColor(segment.SplitTime, segment.SegmentTime, segment.BestSplitTime(), segment.BestSegmentTime());
+        break;
+      case ComparisonType.BestSplitDelta:
+        comparison.Time = segment.SplitTime - segment.BestSplitTime();
+        comparison.Signed = true;
+        comparison.Classes = DeltaColor(segment.SplitTime, segment.SegmentTime, segment.BestSplitTime(), segment.BestSegmentTime());
         break;
     }
     if (status == SegmentStatus.Upcoming) {
@@ -95,6 +117,20 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
         }
         comparison.Signed = true;
         comparison.Time = timer.Elapsed - segment.PBSplitTime;
+        break;
+      case ComparisonType.BestSegmentDelta:
+        if (timer is null) {
+          return;
+        }
+        comparison.Signed = true;
+        comparison.Time = timer.Delta - segment.BestSegmentTime();
+        break;
+      case ComparisonType.BestSplitDelta:
+        if (timer is null) {
+          return;
+        }
+        comparison.Signed = true;
+        comparison.Time = timer.Elapsed - segment.BestSplitTime();
         break;
       default:
         break;
