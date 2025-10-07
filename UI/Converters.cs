@@ -4,7 +4,7 @@ using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 
-namespace LibreSplit.Convert;
+namespace LibreSplit.UI;
 /// <summary>
 /// Converts a System.TimeSpan to a string and back.
 /// used for Binding to UI elements.

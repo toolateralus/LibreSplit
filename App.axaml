@@ -1,12 +1,12 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="LibreSplit.App"
-             xmlns:convert="clr-namespace:LibreSplit.Convert"
+             xmlns:ui="clr-namespace:LibreSplit.UI"
              RequestedThemeVariant="Default">
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
     <Application.Resources>
-    <convert:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter"/>
-    <convert:StringToColorConverter x:Key="StringToColorConverter"/>
+    <ui:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter"/>
+    <ui:StringToColorConverter x:Key="StringToColorConverter"/>
   </Application.Resources>
     <Application.Styles>
         <FluentTheme />

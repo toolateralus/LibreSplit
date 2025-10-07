@@ -36,7 +36,9 @@
       </ContextMenu>
     </Grid.ContextMenu>
 
-    <ItemsControl ItemsSource="{Binding Layout}" />
+    <controls:AspectMaintainingViewbox>
+      <ItemsControl ItemsSource="{Binding Layout}" />
+    </controls:AspectMaintainingViewbox>
 
     <controls:BorderlessWindowControls />
   </Grid>
