@@ -93,7 +93,7 @@ public class LibreSplitContext : ViewModelBase {
     var index = Run.SegmentIndex;
 
     if (index >= Run.Segments.Count || index < 0) {
-      Console.WriteLine($"Index out of bounds when setting active segment.\nvalue={index}, segments count={Run.Segments.Count}.\nNOTE: There may just be no splits, then this is expected.");
+      Logs.LogError($"Index out of bounds when setting active segment.\nvalue={index}, segments count={Run.Segments.Count}.\nNOTE: There may just be no splits, then this is expected.");
       return;
     }
 
@@ -180,8 +180,8 @@ public class LibreSplitContext : ViewModelBase {
         Keybind.SkipBack => SkipBack,
         Keybind.SkipForward => SkipForward,
         Keybind.Reset => Reset,
-        Keybind.Invalid => static () => Console.WriteLine("Invalid keybind in keymap!"),
-        _ => static () => Console.WriteLine("Unknown keybind!")
+        Keybind.Invalid => () => Logs.LogWarning($"Invalid keybind '{keybind}' in keymap!"),
+        _ => () => Logs.LogWarning($"Unknown keybind! '{keybind}'")
       };
 
       Input.RegisterKeyPressedListener(keycode, action);

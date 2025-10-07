@@ -5,8 +5,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Threading;
+using LibreSplit.IO;
 using LibreSplit.Timing;
 using SharpHook.Data;
+using SharpHook.Logging;
 
 namespace LibreSplit.UI.Windows;
 
@@ -176,9 +178,9 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
         {Keybind.Reset, Input.StringToKeyCode(Reset)},
       };
 
-      Console.WriteLine("Key binding map updated");
+      Logs.LogInfo("Key binding map updated");
       foreach (var binding in context.keymap) {
-        Console.WriteLine($"{binding.Key} {binding.Value}");
+        Logs.LogInfo($"{binding.Key} {binding.Value}");
       }
     };
   }

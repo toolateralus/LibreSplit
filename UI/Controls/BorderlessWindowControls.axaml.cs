@@ -2,6 +2,7 @@ using System;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using LibreSplit.IO;
 namespace LibreSplit.UI.Controls;
 
 public partial class BorderlessWindowControls : UserControl {
@@ -19,7 +20,7 @@ public partial class BorderlessWindowControls : UserControl {
         ParentWindow?.BeginResizeDrag(edge, e);
       }
       catch (Exception exception) {
-        Console.WriteLine(exception);
+        Logs.LogError(exception);
       }
     }
   }

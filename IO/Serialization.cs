@@ -24,11 +24,11 @@ public class Serializer {
       return true;
     }
     catch (JsonSerializationException e) {
-      Console.WriteLine($"An error has occured while deserializing {typeof(T)}. {e}");
+      Logs.LogError($"An error has occured while deserializing {typeof(T)}. {e}");
       return false;
     }
     catch (JsonReaderException e) {
-      Console.WriteLine($"An error has occured while deserializing {typeof(T)}. {e}");
+      Logs.LogError($"An error has occured while deserializing {typeof(T)}. {e}");
       return false;
     }
   }
@@ -40,7 +40,7 @@ public class Serializer {
       stream.Write(JsonConvert.SerializeObject(value, Settings[typeof(T)]));
     }
     catch (JsonSerializationException e) {
-      Console.WriteLine($"An error has occured while serializing {typeof(T)}. {e}");
+      Logs.LogError($"An error has occured while serializing {typeof(T)}. {e}");
       return false;
     }
     return true;

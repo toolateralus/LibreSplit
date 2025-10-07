@@ -1,11 +1,12 @@
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using LibreSplit.IO;
 
 public static class TaskExtensionMethods {
   public static void FireAndForget(this Task task, bool continueWithThisThread = true, Action<Exception>? exceptionHandler = null, [CallerMemberName] string callerMemberName = "") {
     task.ContinueWith(t => {
-      var handler = exceptionHandler ?? (ex => Console.WriteLine($"An exception occured in a FireAndForget method, source {callerMemberName}, exception {ex}"));
+      var handler = exceptionHandler ?? (ex => Logs.LogError($"An exception occured in a FireAndForget method, source {callerMemberName}, exception {ex}"));
       if (t.Exception != null) {
         handler(t.Exception.InnerException ?? t.Exception);
       }

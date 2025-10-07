@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
+using LibreSplit.IO;
 
 namespace LibreSplit.Timing;
 /// <summary>
@@ -56,7 +57,7 @@ public class RunData {
   public bool Split(Timer timer) {
 
     if (SegmentIndex > Segments.Count - 1) {
-      Console.WriteLine($"Failed to split, SegmentIndex ({SegmentIndex}) was >= Segments.Count - 1 {Segments.Count - 1}");
+      Logs.LogError($"Failed to split, SegmentIndex ({SegmentIndex}) was >= Segments.Count - 1 {Segments.Count - 1}");
       return false;
     }
 

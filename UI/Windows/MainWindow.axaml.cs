@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
+using Avalonia.Logging;
 
 namespace LibreSplit.UI.Windows;
 
@@ -122,7 +123,7 @@ public partial class MainWindow : Window {
   }
   public void SaveSplits(object sender, RoutedEventArgs e) {
     if (GlobalContext.Run == null) {
-      Console.WriteLine("Run was null when tried to save.");
+      Logs.LogError("Run was null when tried to save.");
       return;
     }
     if (loadedSplitsFile == null) {
@@ -135,7 +136,7 @@ public partial class MainWindow : Window {
   }
   public async void SaveSplitsAs(object sender, RoutedEventArgs e) {
     if (GlobalContext.Run == null) {
-      Console.WriteLine("Run was null when tried to save.");
+      Logs.LogError("Run was null when tried to save.");
       return;
     }
     if (loadedSplitsFile is not null && Path.GetDirectoryName(loadedSplitsFile) is string dir) {
@@ -143,7 +144,7 @@ public partial class MainWindow : Window {
     }
     var file = await StorageProvider.SaveFilePickerAsync(splitsSaveOptions);
     if (file == null) {
-      Console.WriteLine("You must select a file to 'Save As'");
+      Logs.LogInfo("You must select a file to 'Save As'");
       return;
     }
     if (serializer.Write(file.Path.AbsolutePath, GlobalContext.Run)) {
@@ -207,7 +208,7 @@ public partial class MainWindow : Window {
     }
     var file = await StorageProvider.SaveFilePickerAsync(layoutSaveOptions);
     if (file == null) {
-      Console.WriteLine("You must select a file to 'Save As'");
+      Logs.LogInfo("You must select a file to 'Save As'");
       return;
     }
     var path = file.Path.AbsolutePath;

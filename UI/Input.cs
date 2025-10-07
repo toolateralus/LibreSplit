@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using SharpHook;
 using SharpHook.Data;
+using LibreSplit.IO;
 namespace LibreSplit.UI;
 
 public static partial class Input {
@@ -26,8 +27,7 @@ public static partial class Input {
         handler?.Invoke();
       }
       catch (Exception ex) {
-        Console.WriteLine("An exception occured when handling a KeyPressed event.");
-        Console.WriteLine(ex);
+        Logs.LogError($"An exception occured when handling a KeyPressed event: {ex}");
       }
     }
 
@@ -35,8 +35,7 @@ public static partial class Input {
       AnyKeyPressed?.Invoke(e.Data.KeyCode);
     }
     catch (Exception ex) {
-      Console.WriteLine("An exception occured when calling the AnyKeyPressed event.");
-      Console.WriteLine(ex);
+      Logs.LogError($"An exception occured when calling the AnyKeyPressed event: {ex}");
     }
   }
 
@@ -62,8 +61,7 @@ public static partial class Input {
       _globalEventHook.Dispose();
     }
     catch (Exception ex) {
-      Console.WriteLine("An exception occured when stopping the global event hook input listener");
-      Console.WriteLine(ex);
+      Logs.LogError($"An exception occured when stopping the global event hook input listener: {ex}");
     }
   }
 

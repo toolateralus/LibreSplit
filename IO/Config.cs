@@ -8,6 +8,7 @@ namespace LibreSplit.IO;
 public static class ConfigKeys {
   public const string LastLoadedSplits = "lastLoadedSplits";
   public const string LastLoadedLayout = "lastLoadedLayout";
+  
 }
 
 public class ConfigLoader {
@@ -20,8 +21,9 @@ public class ConfigLoader {
       File.WriteAllText(configPath, json);
     }
     catch (Exception e) {
-      Console.WriteLine($"Failed to save config : {e}");
+      Logs.LogError($"Failed to save config : {e}");
     }
+    Logs.LogInfo($"Saved config to {configPath}");
   }
 
   public void Set(string key, object value) {
@@ -49,6 +51,7 @@ public class ConfigLoader {
   public JObject LoadOrCreate() {
     if (File.Exists(configPath)) {
       configTable = JsonConvert.DeserializeObject<JObject>(File.ReadAllText(configPath)) ?? [];
+      Logs.LogInfo($"Loaded config from {configPath}");
     }
     else {
       DirectoryInfo? parent = Directory.GetParent(configPath);
@@ -57,6 +60,7 @@ public class ConfigLoader {
 
       File.Create(configPath).Close();
       File.WriteAllText(configPath, JsonConvert.SerializeObject(configTable, Formatting.Indented));
+      Logs.LogInfo($"Created new config at {configPath}");
     }
 
     return configTable;
