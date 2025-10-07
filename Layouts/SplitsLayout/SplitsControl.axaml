@@ -28,11 +28,14 @@
     </Style>
     <Style Selector="TextBlock.BehindLosingTime">
       <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindGainingTimeColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindLosingTimeColor}" />
     </Style>
     <Style Selector="TextBlock.BehindGainingTime">
       <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindLosingTimeColor}" />
+        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindGainingTimeColor}" />
+    </Style>
+    <Style Selector="TextBlock.BestSegmentTime">
+      <Setter Property="Foreground" Value="#dfd02eff" />
     </Style>
   </UserControl.Styles>
   <ItemsControl ItemsSource="{Binding SegmentViewModels}">

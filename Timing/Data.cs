@@ -67,8 +67,7 @@ public class RunData {
 
     segmentData.SplitTime = elapsed;
     segmentData.SegmentTime = delta;
-    segmentData.AddSegmentTime(delta);
-    segmentData.AddSplitTime(elapsed);
+
 
     timer.LastSplitTime = elapsed;
 
@@ -92,10 +91,14 @@ public class RunData {
       isPersonalBest = true;
     }
 
-    foreach (var seg in Segments) {
 
-      if (seg.SplitTime == null) {
-        continue;
+    foreach (var seg in Segments) {
+      if (seg.SegmentTime is TimeSpan segmentTime) {
+        seg.AddSegmentTime(segmentTime);
+      }
+
+      if (seg.SplitTime is TimeSpan splitTime) {
+        seg.AddSplitTime(splitTime);
       }
 
       if (isPersonalBest) {
@@ -103,8 +106,8 @@ public class RunData {
         seg.PBSplitTime = seg.SplitTime;
       }
 
-      seg.SegmentTime = seg.PBSegmentTime;
-      seg.SplitTime = seg.PBSplitTime;
+      seg.SegmentTime = null;
+      seg.SplitTime = null;
     }
 
     AttemptCount++;

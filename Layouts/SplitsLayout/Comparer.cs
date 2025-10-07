@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.CompilerServices;
 using LibreSplit.Timing;
 
 namespace LibreSplit.Layouts.SplitsLayout;
@@ -69,7 +70,18 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
       case ComparisonType.BestSegmentDelta:
         comparison.Time = segment.SegmentTime - segment.BestSegmentTime();
         comparison.Signed = true;
-        comparison.Classes = DeltaColor(segment.SplitTime, segment.SegmentTime, segment.BestSplitTime(), segment.BestSegmentTime());
+        if (segment.SplitTime is null || segment.SegmentTime is null) {
+          comparison.Classes = "Normal";
+        }
+        else if (segment.BestSegmentTime() is null) {
+          comparison.Classes = "BestSegmentTime";
+        }
+        else if (segment.BestSegmentTime() > segment.SegmentTime) {
+          comparison.Classes = "BestSegmentTime";
+        }
+        else {
+          comparison.Classes = "BehindLosingTime";
+        }
         break;
       case ComparisonType.BestSplitDelta:
         comparison.Time = segment.SplitTime - segment.BestSplitTime();
@@ -81,7 +93,7 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
       comparison.Classes = "Normal";
     }
   }
-  string DeltaColor(TimeSpan? split, TimeSpan? segment, TimeSpan? comparisonSplit, TimeSpan? comparisonSegment) {
+  private static string DeltaColor(TimeSpan? split, TimeSpan? segment, TimeSpan? comparisonSplit, TimeSpan? comparisonSegment) {
     if (split is null || comparisonSegment is null) {
       return "Normal";
     }
@@ -102,6 +114,7 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
       }
     }
   }
+
   public void Update(ComparisonViewModel comparison, SegmentData segment, Timer? timer) {
     switch (PassedComparison) {
       case ComparisonType.PBSegmentDelta:

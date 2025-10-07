@@ -8,11 +8,14 @@
   x:DataType="local:RunEditor">
   <Window.KeyBindings>
     <KeyBinding Gesture="Enter" Command="{Binding ClearFocus}" />
+    <!-- <KeyBinding Gesture="Tab" Command="{Binding SelectNextTimeElement}" /> -->
   </Window.KeyBindings>
   <DockPanel LastChildFill="True">
     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
       <Button Content="Add Split" Click="OnAddSplitClicked" />
       <Button Content="Remove Split" Click="OnRemoveSplitClicked" />
+      <Button Content="Clear History" Click="OnClearHistoryClicked" />
+      <Button Content="Clear Times" Click="OnClearTimesClicked" />
       <StackPanel Orientation="Horizontal">
         <Label>Start Time:</Label>
         <TextBox x:Name="startTimeBox"

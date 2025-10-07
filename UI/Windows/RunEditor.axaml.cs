@@ -5,11 +5,13 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using LibreSplit.Timing;
 using System.Windows.Input;
+using LibreSplit.IO;
 namespace LibreSplit.UI.Windows;
 public partial class RunEditor : Window {
   public ICommand ClearFocus => new RelayCommand(_ => {
     FocusManager?.ClearFocus();
   });
+
   public object? SelectedItem { get; set; }
   public RunData Run { get; set; }
   public RunEditor() {
@@ -29,7 +31,6 @@ public partial class RunEditor : Window {
       if (!e.KeyModifiers.HasFlag(KeyModifiers.Control | KeyModifiers.Shift)) {
         return;
       }
-
       switch (e.Key) {
         case Key.A: {
             AddSplit();
@@ -40,12 +41,26 @@ public partial class RunEditor : Window {
           }
           break;
       }
-
     };
 
   }
+
   public void OnAddSplitClicked(object sender, RoutedEventArgs e) {
     AddSplit();
+  }
+
+  public void OnClearHistoryClicked(object sender, RoutedEventArgs e) {
+    foreach (var split in Run.Segments) {
+      split.SegmentTimeHistory.Clear();
+    }
+  }
+
+  public void OnClearTimesClicked(object sender, RoutedEventArgs e) {
+    foreach (var split in Run.Segments) {
+      split.PBSplitTime = null;
+      split.PBSegmentTime = null;
+    }
+    
   }
 
   private void AddSplit() {
