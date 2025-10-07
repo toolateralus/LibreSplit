@@ -7,11 +7,8 @@ using System.IO;
 using System.Threading.Tasks;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
-using LibreSplit.UI;
-using LibreSplit.UI.Windows;
-using Avalonia.Input;
 
-namespace LibreSplit;
+namespace LibreSplit.UI.Windows;
 
 public partial class MainWindow : Window {
   IStorageFolder? defaultStartLocation;
@@ -83,13 +80,14 @@ public partial class MainWindow : Window {
 
     configLoader.TryLoadLayout(out loadedLayoutFile);
 
-    if (loadedLayoutFile != null && serializer.Read<Layout>(loadedLayoutFile, out var layout)) {
-      GlobalContext.Layout.Clear();
+    if (loadedLayoutFile != null && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
+      GlobalContext.LayoutData.Clear();
       foreach (var layoutItem in layout) {
-        GlobalContext.Layout.Add(layoutItem);
+        GlobalContext.LayoutData.Add(layoutItem);
       }
     }
     else {
+      GlobalContext.LayoutData = LayoutData.Default;
       configLoader.Set(ConfigKeys.LastLoadedLayout, "");
     }
 
@@ -171,7 +169,7 @@ public partial class MainWindow : Window {
     configLoader.Set("keymap", GlobalContext.keymap);
   }
   public void NewLayout(object sender, RoutedEventArgs e) {
-    GlobalContext.Layout = Layout.Default;
+    GlobalContext.LayoutData = LayoutData.Default;
   }
   public async void OpenLayout(object sender, RoutedEventArgs e) {
     if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string dir) {
@@ -183,11 +181,11 @@ public partial class MainWindow : Window {
     }
     loadedLayoutFile = list[0].Path?.AbsolutePath!;
 
-    if (loadedLayoutFile != null && serializer.Read<Layout>(loadedLayoutFile, out var layout)) {
+    if (loadedLayoutFile != null && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
-      GlobalContext.Layout.Clear();
+      GlobalContext.LayoutData.Clear();
       foreach (var layoutItem in layout) {
-        GlobalContext.Layout.Add(layoutItem);
+        GlobalContext.LayoutData.Add(layoutItem);
       }
     }
     else {
@@ -199,7 +197,7 @@ public partial class MainWindow : Window {
       SaveLayoutAs(sender, e);
       return;
     }
-    if (serializer.Write(loadedLayoutFile, GlobalContext.Layout)) {
+    if (serializer.Write(loadedLayoutFile, GlobalContext.LayoutData)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }
   }
@@ -213,7 +211,7 @@ public partial class MainWindow : Window {
       return;
     }
     var path = file.Path.AbsolutePath;
-    if (serializer.Write(path, GlobalContext.Layout)) {
+    if (serializer.Write(path, GlobalContext.LayoutData)) {
       loadedLayoutFile = path;
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }

@@ -14,32 +14,32 @@ public partial class LayoutEditor : Window {
   }
   public void RemoveItem_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
-        button.Tag is LayoutData item) {
-      GlobalContext.Layout.Remove(item);
+        button.Tag is LayoutItemData item) {
+      GlobalContext.LayoutData.Remove(item);
     }
   }
   private void AddLayoutItem_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is MenuItem menuItem &&
         menuItem.Tag is Type layoutItemType &&
-        Activator.CreateInstance(layoutItemType) is LayoutData layoutItem) {
-      GlobalContext.Layout.Add(layoutItem);
+        Activator.CreateInstance(layoutItemType) is LayoutItemData layoutItem) {
+      GlobalContext.LayoutData.Add(layoutItem);
     }
   }
   public void MoveItemUp_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
-        button.Tag is LayoutData item) {
-      int currentIndex = GlobalContext.Layout.IndexOf(item);
+        button.Tag is LayoutItemData item) {
+      int currentIndex = GlobalContext.LayoutData.IndexOf(item);
       if (currentIndex > 0) {
-        GlobalContext.Layout.Move(currentIndex, currentIndex - 1);
+        GlobalContext.LayoutData.Move(currentIndex, currentIndex - 1);
       }
     }
   }
   public void MoveItemDown_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
-        button.Tag is LayoutData item) {
-      int currentIndex = GlobalContext.Layout.IndexOf(item);
-      if (currentIndex < GlobalContext.Layout.Count - 1) {
-        GlobalContext.Layout.Move(currentIndex, currentIndex + 1);
+        button.Tag is LayoutItemData item) {
+      int currentIndex = GlobalContext.LayoutData.IndexOf(item);
+      if (currentIndex < GlobalContext.LayoutData.Count - 1) {
+        GlobalContext.LayoutData.Move(currentIndex, currentIndex + 1);
       }
     }
   }
@@ -48,7 +48,7 @@ public partial class LayoutEditor : Window {
       List<MenuItem> layoutItemTypes = [];
       var assemblies = AppDomain.CurrentDomain.GetAssemblies();
       foreach (var assembly in assemblies) {
-        IEnumerable<Type> types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(LayoutData)) && !t.IsAbstract);
+        IEnumerable<Type> types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(LayoutItemData)) && !t.IsAbstract);
         foreach (var type in types) {
           var item = new MenuItem() { Header = type.Name, Tag = type };
           item.Click += AddLayoutItem_Clicked;

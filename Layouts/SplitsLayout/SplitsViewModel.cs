@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using LibreSplit.Timing;
 using LibreSplit.UI;
+using LibreSplit.UI.Windows;
 
 namespace LibreSplit.Layouts.SplitsLayout;
 

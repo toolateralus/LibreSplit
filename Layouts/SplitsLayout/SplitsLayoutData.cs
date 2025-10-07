@@ -2,7 +2,7 @@ using Avalonia.Controls;
 
 namespace LibreSplit.Layouts.SplitsLayout;
 
-public class SplitsLayoutData : LayoutData {
+public class SplitsLayoutData : LayoutItemData {
   private string textColor = "White";
   private string activeSplitColor = "Purple";
   private string inactiveSplitColor = "Black";

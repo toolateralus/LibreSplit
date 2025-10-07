@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using Avalonia.Controls;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
 using LibreSplit.UI;
@@ -29,17 +32,46 @@ public class LibreSplitContext : ViewModelBase {
 
   private RunData run = new();
   private SegmentData? activeSegment;
-  private Layout layout = Layout.Default;
-  private bool isEditMode = false;
-  public Timer Timer { get; } = new();
+  private LayoutData? layoutData;
+  public LayoutData LayoutData {
+    get {
+      layoutData ??= [];
+      return layoutData;
+    }
+    set {
+      if (layoutData is not null) {
+        layoutData.CollectionChanged -= LayoutDataCollectionChanged;
+      }
+      layoutData = value;
+      layoutData.CollectionChanged += LayoutDataCollectionChanged;
+      UpdateLayout();
+      OnPropertyChanged();
+    }
+  }
 
-  public Layout Layout {
+  void LayoutDataCollectionChanged(object? o, NotifyCollectionChangedEventArgs e) {
+    UpdateLayout();
+  }
+
+  void UpdateLayout() {
+    Layout.Clear();
+    foreach (var layoutItemData in layoutData!) {
+      if (layoutItemData.Control is not null) {
+        Layout.Add(layoutItemData.Control);
+      }
+    }
+  }
+  private ObservableCollection<Control> layout = [];
+  public ObservableCollection<Control> Layout {
     get => layout;
     set {
       layout = value;
       OnPropertyChanged();
     }
   }
+  private bool isEditMode = false;
+  public Timer Timer { get; } = new();
+
 
   public RunData Run {
     get => run;

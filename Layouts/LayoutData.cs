@@ -1,12 +1,10 @@
-using Avalonia.Controls;
-using LibreSplit.UI;
-using Newtonsoft.Json;
-
+using System.Collections.ObjectModel;
+using LibreSplit.Layouts.SplitsLayout;
+using LibreSplit.Layouts.TimerLayout;
 namespace LibreSplit.Layouts;
-public abstract class LayoutData : ViewModelBase {
-  [JsonIgnore]
-  public abstract Control? Control { get; }
-  [JsonIgnore]
-  public abstract Control? Editor { get; }
-  public abstract string LayoutItemName { get; }
-}
+public class LayoutData : ObservableCollection<LayoutItemData> {
+  public static LayoutData Default { get; } = [
+    new SplitsLayoutData(),
+    new TimerLayoutData()
+  ];
+};

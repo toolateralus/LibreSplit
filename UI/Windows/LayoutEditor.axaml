@@ -8,9 +8,9 @@
   x:DataType="local:LayoutEditor"
   Title="Layout Editor" Width="300" Height="400">
   <StackPanel>
-    <ItemsControl ItemsSource="{Binding GlobalContext.Layout}">
+    <ItemsControl ItemsSource="{Binding GlobalContext.LayoutData}">
       <ItemsControl.ItemTemplate>
-        <DataTemplate x:DataType="layouts:LayoutData">
+        <DataTemplate x:DataType="layouts:LayoutItemData">
           <Expander HorizontalAlignment="Stretch" Margin="0" MinHeight="0">
             <Expander.Header>
               <StackPanel Orientation="Horizontal">

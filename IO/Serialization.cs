@@ -47,7 +47,7 @@ public class Serializer {
   }
 
   public Dictionary<Type, JsonSerializerSettings> Settings = new() {
-    [typeof(Layout)] = new() {
+    [typeof(LayoutData)] = new() {
       TypeNameHandling = TypeNameHandling.Auto,
       Formatting = Formatting.Indented,
     },
