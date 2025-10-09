@@ -6,7 +6,7 @@ namespace LibreSplit.IO;
 
 public static class Logs {
   public const string LOGGER_FILE_PATH = "libresplit/logs.log";
-  private static readonly StreamWriter s_logFileWriter = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), LOGGER_FILE_PATH));
+  private static readonly StreamWriter s_logFileWriter = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), LOGGER_FILE_PATH), append: true);
   private static string FormatSourceLocation(string path, int lineNumber) {
     var fileName = Path.GetFileName(path);
     return $"{fileName}:{lineNumber}";

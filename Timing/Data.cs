@@ -55,22 +55,33 @@ public class RunData {
   /// <param name="timer"></param>
   /// <returns>True if the run still has remaining segments, false if the run is complete.</returns>
   public bool Split(Timer timer) {
-
     if (SegmentIndex > Segments.Count - 1) {
-      Logs.LogError($"Failed to split, SegmentIndex ({SegmentIndex}) was >= Segments.Count - 1 {Segments.Count - 1}");
+      Logs.LogError($"Failed to split: SegmentIndex ({SegmentIndex}) >= Segments.Count - 1 ({Segments.Count - 1})");
       return false;
     }
 
     SegmentData segmentData = Segments[SegmentIndex];
     TimeSpan elapsed = timer.Elapsed;
-    TimeSpan delta = timer.Delta;
+
+    TimeSpan? lastSplitTime;
+    int lastSplitIndex = SegmentIndex - 1;
+
+    if (lastSplitIndex < 0) {
+      lastSplitTime = TimeSpan.Zero;
+    }
+    else {
+      lastSplitTime = Segments[lastSplitIndex].SplitTime;
+    }
+
+    if (lastSplitTime is null) {
+      segmentData.SegmentTime = null;
+    }
+    else {
+      segmentData.SegmentTime = elapsed - lastSplitTime;
+    }
 
     segmentData.SplitTime = elapsed;
-    segmentData.SegmentTime = delta;
-
-
     timer.LastSplitTime = elapsed;
-
     SegmentIndex++;
 
     if (SegmentIndex > Segments.Count - 1) {
@@ -147,7 +158,6 @@ public class RunData {
 /// </summary>
 /// <param name="label"></param>
 public class SegmentData(string label = "New Split") : INotifyPropertyChanged {
-  #region UI Stuff
   private TimeSpan? _segmentTime;
   [JsonIgnore]
   public TimeSpan? SegmentTime {
@@ -159,6 +169,7 @@ public class SegmentData(string label = "New Split") : INotifyPropertyChanged {
       }
     }
   }
+
   private string label = label;
   public string Label {
     get => label;
@@ -180,12 +191,11 @@ public class SegmentData(string label = "New Split") : INotifyPropertyChanged {
       }
     }
   }
-  public event PropertyChangedEventHandler? PropertyChanged;
 
+  public event PropertyChangedEventHandler? PropertyChanged;
   protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
   }
-  #endregion
 
   public List<TimeSpan> SegmentTimeHistory { get; set; } = [];
   public List<TimeSpan> SplitTimeHistory { get; set; } = [];
@@ -234,6 +244,7 @@ public class SegmentData(string label = "New Split") : INotifyPropertyChanged {
     long averageTicks = (long)SegmentTimeHistory.Average(timeSpan => timeSpan.Ticks);
     return new TimeSpan(averageTicks);
   }
+
   public TimeSpan? BestSplitTime() {
     if (SplitTimeHistory.Count == 0) {
       return null;

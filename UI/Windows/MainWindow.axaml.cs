@@ -98,12 +98,17 @@ public partial class MainWindow : Window {
   private void OnClosing(object? sender, WindowClosingEventArgs e) {
     Input.Stop();
   }
-
-  #region Events
   public void NewSplits(object sender, RoutedEventArgs e) {
     GlobalContext.Run = new();
   }
   public async void OpenSplits(object sender, RoutedEventArgs e) {
+    if (GlobalContext.Timer.Running) {
+      GlobalContext.Timer.Stop();
+    }
+    if (GlobalContext.ActiveSegment is not null) {
+      GlobalContext.ActiveSegment = null;
+    }
+
     if (loadedSplitsFile is not null && Path.GetDirectoryName(loadedSplitsFile) is string dir) {
       splitsOpenOptions.SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(dir);
     }
@@ -115,6 +120,7 @@ public partial class MainWindow : Window {
 
     if (loadedSplitsFile != null && serializer.Read<RunData>(loadedSplitsFile, out var run)) {
       configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
+      // TODO: needs mutex or synchronization
       GlobalContext.Run = run;
     }
     else {
@@ -231,5 +237,4 @@ public partial class MainWindow : Window {
   public void CloseWindow(object sender, RoutedEventArgs e) {
     Close();
   }
-  #endregion
 }
