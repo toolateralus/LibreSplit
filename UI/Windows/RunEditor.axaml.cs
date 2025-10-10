@@ -5,7 +5,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using LibreSplit.Timing;
 using System.Windows.Input;
-using LibreSplit.IO;
 namespace LibreSplit.UI.Windows;
 public partial class RunEditor : Window {
   public ICommand ClearFocus => new RelayCommand(_ => {

@@ -7,7 +7,6 @@ using System.IO;
 using System.Threading.Tasks;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
-using Avalonia.Logging;
 
 namespace LibreSplit.UI.Windows;
 

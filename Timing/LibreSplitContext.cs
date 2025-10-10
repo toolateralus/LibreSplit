@@ -30,6 +30,7 @@ public class LibreSplitContext : ViewModelBase {
     {Keybind.Reset, KeyCode.Vc5},
   };
 
+
   private RunData run = new();
   private SegmentData? activeSegment;
   private LayoutData? layoutData;
@@ -71,7 +72,6 @@ public class LibreSplitContext : ViewModelBase {
   }
   private bool isEditMode = false;
   public Timer Timer { get; } = new();
-
 
   public RunData Run {
     get => run;

@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using LibreSplit.Timing;
 
 namespace LibreSplit.Layouts.SplitsLayout;

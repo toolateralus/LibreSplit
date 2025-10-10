@@ -1,5 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Media;
 
 namespace LibreSplit.Layouts.SplitsLayout;
 public partial class SplitsEditor : UserControl {

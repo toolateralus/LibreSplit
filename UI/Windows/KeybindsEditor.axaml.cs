@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -8,7 +7,6 @@ using Avalonia.Threading;
 using LibreSplit.IO;
 using LibreSplit.Timing;
 using SharpHook.Data;
-using SharpHook.Logging;
 
 namespace LibreSplit.UI.Windows;
 

@@ -3,7 +3,8 @@ using LibreSplit.UI;
 using Newtonsoft.Json;
 
 namespace LibreSplit.Layouts;
-public abstract class LayoutItemData : ViewModelBase {
+
+public abstract class LayoutItemData: ViewModelBase {
   [JsonIgnore]
   public abstract Control? Control { get; }
   [JsonIgnore]

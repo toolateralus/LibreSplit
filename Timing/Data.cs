@@ -29,7 +29,6 @@ public class RunData {
   [JsonIgnore]
   public TimeSpan? PersonalBest => Segments.LastOrDefault()?.PBSplitTime;
 
-
   // for binding.
   public TimeSpan StartTime { get; set; } = TimeSpan.Zero;
 

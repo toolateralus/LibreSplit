@@ -7,6 +7,7 @@ using LibreSplit.Layouts;
 using LibreSplit.Timing;
 
 namespace LibreSplit.UI.Windows;
+
 public partial class LayoutEditor : Window {
   public LayoutEditor() {
     DataContext = this;
@@ -45,17 +46,23 @@ public partial class LayoutEditor : Window {
   }
   public List<MenuItem> LayoutItemTypes {
     get {
-      List<MenuItem> layoutItemTypes = [];
+      List<MenuItem> layoutItemMenuItems = [];
       var assemblies = AppDomain.CurrentDomain.GetAssemblies();
       foreach (var assembly in assemblies) {
         IEnumerable<Type> types = assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(LayoutItemData)) && !t.IsAbstract);
         foreach (var type in types) {
-          var item = new MenuItem() { Header = type.Name, Tag = type };
+          LayoutItemData? data = (LayoutItemData?)Activator.CreateInstance(type);
+
+          string header = type.Name;
+          if (data is not null) {
+            header = data.LayoutItemName;
+          }
+          MenuItem item = new() { Header = header, Tag = type };
           item.Click += AddLayoutItem_Clicked;
-          layoutItemTypes.Add(item);
+          layoutItemMenuItems.Add(item);
         }
       }
-      return layoutItemTypes;
+      return layoutItemMenuItems;
     }
   }
   public static LibreSplitContext GlobalContext => MainWindow.GlobalContext;

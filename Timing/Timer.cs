@@ -18,6 +18,9 @@ public class Timer : ViewModelBase {
    = TimeSpan.Zero;
   private TimeSpan startTime = TimeSpan.Zero;
 
+  public event Action<TimeSpan>? OnTick;
+
+
   /// <summary>
   /// The time since this run began.
   /// </summary>
@@ -61,6 +64,7 @@ public class Timer : ViewModelBase {
     }
     updaterTimer = new(delegate {
       Elapsed = stopwatch.Elapsed + startTime;
+      OnTick?.Invoke(Elapsed);
     });
     updaterTimer.Change(0, 16);
   }

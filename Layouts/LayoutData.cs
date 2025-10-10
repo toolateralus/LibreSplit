@@ -5,6 +5,7 @@ namespace LibreSplit.Layouts;
 public class LayoutData : ObservableCollection<LayoutItemData> {
   public static LayoutData Default { get; } = [
     new SplitsLayoutData(),
-    new TimerLayoutData()
+    new TimerLayoutData(),
+    new SumOfBest.LayoutItemData(),
   ];
 };
