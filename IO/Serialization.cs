@@ -46,6 +46,15 @@ public class Serializer {
     return true;
   }
 
+  public bool HasUnsavedChanges<T>(string oldPath, T? current) {
+    if (!File.Exists(oldPath)) {
+      return true;
+    }
+    var oldJson = File.ReadAllText(oldPath);
+    var currentJson = JsonConvert.SerializeObject(current, Settings[typeof(T)]);
+    return !string.Equals(oldJson, currentJson, StringComparison.Ordinal);
+  }
+
   public Dictionary<Type, JsonSerializerSettings> Settings = new() {
     [typeof(LayoutData)] = new() {
       TypeNameHandling = TypeNameHandling.Auto,

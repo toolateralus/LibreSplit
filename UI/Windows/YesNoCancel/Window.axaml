@@ -1,0 +1,25 @@
+<Window xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Class="LibreSplit.UI.Windows.YesNoCancel.Window"
+  xmlns:local="clr-namespace:LibreSplit.UI.Windows.YesNoCancel"
+  Title="Confirmation"
+  SizeToContent="WidthAndHeight"
+  MinWidth="320" MinHeight="160"
+  MaxWidth="600" MaxHeight="480"
+  CanResize="False"
+  WindowStartupLocation="CenterOwner">
+  <Grid x:DataType="local:ViewModel" Margin="16" RowDefinitions="Auto,Auto">
+    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" MaxHeight="320">
+      <TextBlock Text="{Binding Prompt}"
+                 TextWrapping="Wrap"
+                 TextAlignment="Center"
+                 MaxWidth="520"
+                 Margin="0,0,0,12"/>
+    </ScrollViewer>
+    <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10">
+      <Button Content="{Binding YesText}" Command="{Binding OnYes}" IsDefault="True" />
+      <Button Content="{Binding NoText}" Command="{Binding OnNo}" />
+      <Button Content="{Binding CancelText}" Command="{Binding OnCancel}" IsCancel="True" />
+    </StackPanel>
+  </Grid>
+</Window>

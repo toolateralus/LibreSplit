@@ -10,7 +10,7 @@ using LibreSplit.Layouts;
 
 namespace LibreSplit.UI.Windows;
 
-public partial class MainWindow : Window {
+public class MainWindowViewModel {
   IStorageFolder? defaultStartLocation;
   private static FilePickerFileType SplitsFileType { get; } = new("Splits File") {
     Patterns = ["*.lbss"],
@@ -38,22 +38,27 @@ public partial class MainWindow : Window {
     SuggestedFileName = "New LibreSplit Layout",
     FileTypeChoices = [LayoutFileType],
   };
+
   private string? loadedSplitsFile;
   private string? loadedLayoutFile;
   private readonly ConfigLoader configLoader = new();
   private readonly Serializer serializer = new();
   public static LibreSplitContext GlobalContext { get; set; } = new();
-  public MainWindow() {
+
+  private IStorageProvider StorageProvider { get; set; }
+
+  public MainWindowViewModel(IStorageProvider storageProvider) {
+    this.StorageProvider = storageProvider;
     Task.Run(async () => {
-      defaultStartLocation = await StorageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
+      defaultStartLocation = await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
 
       var splitsStartLocation = defaultStartLocation;
       if (loadedSplitsFile is not null && Path.GetDirectoryName(loadedSplitsFile) is string dir) {
-        splitsStartLocation = await StorageProvider.TryGetFolderFromPathAsync(dir);
+        splitsStartLocation = await storageProvider.TryGetFolderFromPathAsync(dir);
       }
       var layoutStartLocation = defaultStartLocation;
       if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string layoutDir) {
-        layoutStartLocation = await StorageProvider.TryGetFolderFromPathAsync(layoutDir);
+        layoutStartLocation = await storageProvider.TryGetFolderFromPathAsync(layoutDir);
       }
 
       splitsOpenOptions.SuggestedStartLocation = splitsStartLocation;
@@ -63,10 +68,7 @@ public partial class MainWindow : Window {
       layoutSaveOptions.SuggestedStartLocation = layoutStartLocation;
     });
 
-    Closing += OnClosing;
-    DataContext = GlobalContext;
 
-    InitializeComponent();
 
     configLoader.LoadOrCreate();
     configLoader.TryLoadSplits(out loadedSplitsFile);
@@ -94,16 +96,20 @@ public partial class MainWindow : Window {
     GlobalContext.Initialize();
     GlobalContext.InitializeInputAndKeymap(configLoader);
   }
-  private void OnClosing(object? sender, WindowClosingEventArgs e) {
-    Input.Stop();
-  }
-  public void NewSplits(object sender, RoutedEventArgs e) {
-    GlobalContext.Run = new();
-  }
-  public async void OpenSplits(object sender, RoutedEventArgs e) {
+
+  internal async void OpenSplits() {
     if (GlobalContext.Timer.Running) {
+      YesNoCancel.Result result = await YesNoCancel.Window.Open(new YesNoCancel.ViewModel() {
+        Prompt = "This run is currently in progress. Are you sure you want to open different splits?",
+      });
+
+      if (result.HasFlag(YesNoCancel.Result.NoOrCancel)) {
+        return;
+      }
+
       GlobalContext.Timer.Stop();
     }
+
     if (GlobalContext.ActiveSegment is not null) {
       GlobalContext.ActiveSegment = null;
     }
@@ -119,27 +125,45 @@ public partial class MainWindow : Window {
 
     if (loadedSplitsFile != null && serializer.Read<RunData>(loadedSplitsFile, out var run)) {
       configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
-      // TODO: needs mutex or synchronization
       GlobalContext.Run = run;
     }
     else {
       configLoader.Set(ConfigKeys.LastLoadedSplits, "");
     }
   }
-  public void SaveSplits(object sender, RoutedEventArgs e) {
+
+  internal static async void NewSplits() {
+    if (GlobalContext.Timer.Running) {
+      YesNoCancel.Result result = await YesNoCancel.Window.Open(new YesNoCancel.ViewModel() {
+        Prompt = "This run is currently in progress. Are you sure you want to open new splits?",
+      });
+      if (result.HasFlag(YesNoCancel.Result.NoOrCancel)) {
+        return;
+      }
+    }
+
+    if (GlobalContext.ActiveSegment is not null) {
+      GlobalContext.ActiveSegment = null;
+    }
+
+    GlobalContext.Run = new();
+  }
+
+  internal void SaveSplits() {
     if (GlobalContext.Run == null) {
       Logs.LogError("Run was null when tried to save.");
       return;
     }
     if (loadedSplitsFile == null) {
-      SaveSplitsAs(sender, e);
+      SaveSplitsAs();
       return;
     }
     if (serializer.Write(loadedSplitsFile, GlobalContext.Run)) {
       configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
     }
   }
-  public async void SaveSplitsAs(object sender, RoutedEventArgs e) {
+
+  internal async void SaveSplitsAs() {
     if (GlobalContext.Run == null) {
       Logs.LogError("Run was null when tried to save.");
       return;
@@ -157,27 +181,31 @@ public partial class MainWindow : Window {
       configLoader.Set(ConfigKeys.LastLoadedSplits, loadedSplitsFile);
     }
   }
-  public async void EditSplits(object sender, RoutedEventArgs e) {
+
+  internal static async void EditSplits(Window ownerWindow) {
     if (GlobalContext.Run == null) {
-      NewSplits(sender, e);
+      NewSplits();
     }
     var window = new RunEditor(GlobalContext.Run);
     GlobalContext.StartEditing();
-    await window.ShowDialog(this);
+    await window.ShowDialog(owner: ownerWindow);
     GlobalContext.StopEditing();
     GlobalContext.Run = window.GetRun() ?? new();
   }
-  public async void EditKeybinds(object sender, RoutedEventArgs e) {
+
+  internal async void EditKeybinds(Window ownerWindow) {
     GlobalContext.StartEditing();
     var win = new KeybindsEditor(GlobalContext);
-    await win.ShowDialog(this);
+    await win.ShowDialog(owner: ownerWindow);
     GlobalContext.StopEditing();
     configLoader.Set("keymap", GlobalContext.keymap);
   }
-  public void NewLayout(object sender, RoutedEventArgs e) {
+
+  internal static void NewLayout() {
     GlobalContext.LayoutData = new();
   }
-  public async void OpenLayout(object sender, RoutedEventArgs e) {
+
+  internal async void OpenLayout() {
     if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string dir) {
       layoutOpenOptions.SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(dir);
     }
@@ -198,16 +226,18 @@ public partial class MainWindow : Window {
       configLoader.Set(ConfigKeys.LastLoadedLayout, "");
     }
   }
-  public void SaveLayout(object sender, RoutedEventArgs e) {
+
+  internal void SaveLayout() {
     if (loadedLayoutFile == null) {
-      SaveLayoutAs(sender, e);
+      SaveLayoutAs();
       return;
     }
     if (serializer.Write(loadedLayoutFile, GlobalContext.LayoutData.Items)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }
   }
-  public async void SaveLayoutAs(object sender, RoutedEventArgs e) {
+
+  internal async void SaveLayoutAs() {
     if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string dir) {
       layoutSaveOptions.SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(dir);
     }
@@ -222,18 +252,109 @@ public partial class MainWindow : Window {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }
   }
-  public async void EditLayout(object sender, RoutedEventArgs e) {
+
+  public static async void EditLayout(Window ownerWindow) {
     var window = new LayoutEditor();
-    void onClosing(object? sender, EventArgs args) {
-      window.Close();
-    }
-    Closing += onClosing;
-    window.Closing += delegate {
-      Closing -= onClosing;
-    };
-    await window.ShowDialog(this);
+    await window.ShowDialog(owner: ownerWindow);
   }
-  public void CloseWindow(object sender, RoutedEventArgs e) {
+
+
+  /// <summary>
+  /// </summary>
+  /// <param name="e"></param>
+  /// <returns>
+  /// true if there are no unsaved changes, or the changes were saved here.
+  /// false if there are unsaved changes, and the user does not want to proceed with whatever operation is requesting this.
+  /// </returns>
+  internal async Task<bool> CheckForUnsavedChangesInSplits() {
+    if (loadedSplitsFile is not null && serializer.HasUnsavedChanges(loadedSplitsFile, GlobalContext.Run)) {
+      var result = await YesNoCancel.Window.Open(new YesNoCancel.ViewModel() {
+        Prompt = "You have unsaved changes in your splits. Do you want to save before closing?",
+      });
+      if (result.HasFlag(YesNoCancel.Result.Yes)) {
+        SaveSplits();
+      }
+      else if (result.HasFlag(YesNoCancel.Result.Cancel)) {
+        return false;
+      }
+    }
+    return true;
+  }
+  /// <summary>
+  /// </summary>
+  /// <param name="e"></param>
+  /// <returns>
+  /// true if there are no unsaved changes, or the changes were saved here.
+  /// false if there are unsaved changes, and the user does not want to proceed with whatever operation is requesting this.
+  /// </returns>
+  internal async Task<bool> CheckForUnsavedChangesInLayout() {
+    if (loadedLayoutFile is not null && serializer.HasUnsavedChanges(loadedLayoutFile, GlobalContext.LayoutData)) {
+      var result = await YesNoCancel.Window.Open(new YesNoCancel.ViewModel() {
+        Prompt = "You have unsaved changes in your layout. Do you want to save before closing?",
+      });
+      if (result.HasFlag(YesNoCancel.Result.Yes)) {
+        SaveLayout();
+      }
+      else if (result.HasFlag(YesNoCancel.Result.Cancel)) {
+        return false;
+      }
+    }
+    return true;
+  }
+}
+
+public partial class MainWindow : Window {
+  private readonly MainWindowViewModel m_viewModel;
+  public static LibreSplitContext GlobalContext => MainWindowViewModel.GlobalContext;
+  public MainWindow() {
+    m_viewModel = new(StorageProvider);
+    Closing += OnClosing;
+    DataContext = GlobalContext;
+    InitializeComponent();
+  }
+  private void OnClosing(object? sender, WindowClosingEventArgs e) {
+    Input.Stop();
+  }
+  public void NewSplitsClicked(object sender, RoutedEventArgs _) {
+    MainWindowViewModel.NewSplits();
+  }
+  public void OpenSplitsClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.OpenSplits();
+  }
+  public void SaveSplitsClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.SaveSplits();
+  }
+  public void SaveSplitsAsClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.SaveSplitsAs();
+  }
+  public void EditSplitsClicked(object sender, RoutedEventArgs _) {
+    MainWindowViewModel.EditSplits(this);
+  }
+  public void EditKeybindsClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.EditKeybinds(this);
+  }
+  public void NewLayoutClicked(object sender, RoutedEventArgs _) {
+    MainWindowViewModel.NewLayout();
+  }
+  public void OpenLayoutClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.OpenLayout();
+  }
+  public void SaveLayoutClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.SaveLayout();
+  }
+  public void SaveLayoutAsClicked(object sender, RoutedEventArgs _) {
+    m_viewModel.SaveLayoutAs();
+  }
+  public void EditLayoutClicked(object sender, RoutedEventArgs _) {
+    MainWindowViewModel.EditLayout(this);
+  }
+  public async void CloseWindowClicked(object sender, RoutedEventArgs _) {
+    if (!await m_viewModel.CheckForUnsavedChangesInSplits()) {
+      return;
+    }
+    if (!await m_viewModel.CheckForUnsavedChangesInLayout()) {
+      return;
+    }
     Close();
   }
 }
