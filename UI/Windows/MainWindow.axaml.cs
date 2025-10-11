@@ -267,7 +267,7 @@ public class MainWindowViewModel {
   /// false if there are unsaved changes, and the user does not want to proceed with whatever operation is requesting this.
   /// </returns>
   internal async Task<bool> CheckForUnsavedChangesInSplits() {
-    if (loadedSplitsFile is not null && serializer.HasUnsavedChanges(loadedSplitsFile, GlobalContext.Run)) {
+    if (loadedSplitsFile is null || serializer.HasUnsavedChanges(loadedSplitsFile, GlobalContext.Run)) {
       var result = await YesNoCancel.Window.Open(new YesNoCancel.ViewModel() {
         Prompt = "You have unsaved changes in your splits. Do you want to save before closing?",
       });
