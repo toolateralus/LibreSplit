@@ -16,23 +16,23 @@
     <Grid.ContextMenu>
       <ContextMenu>
         <MenuItem Header="Splits">
-          <MenuItem Header="New" Click="NewSplits" />
-          <MenuItem Header="Open" Click="OpenSplits" />
-          <MenuItem Header="Save" Click="SaveSplits" />
-          <MenuItem Header="Save As" Click="SaveSplitsAs" />
-          <MenuItem Header="Edit" Click="EditSplits" />
+          <MenuItem Header="New" Click="NewSplitsClicked" />
+          <MenuItem Header="Open" Click="OpenSplitsClicked" />
+          <MenuItem Header="Save" Click="SaveSplitsClicked" />
+          <MenuItem Header="Save As" Click="SaveSplitsAsClicked" />
+          <MenuItem Header="Edit" Click="EditSplitsClicked" />
         </MenuItem>
         <MenuItem Header="Keybinds">
-          <MenuItem Header="Edit" Click="EditKeybinds" />
+          <MenuItem Header="Edit" Click="EditKeybindsClicked" />
         </MenuItem>
         <MenuItem Header="Layout">
-          <MenuItem Header="New" Click="NewLayout" />
-          <MenuItem Header="Open" Click="OpenLayout" />
-          <MenuItem Header="Save" Click="SaveLayout" />
-          <MenuItem Header="Save As" Click="SaveLayoutAs" />
-          <MenuItem Header="Edit" Click="EditLayout" />
+          <MenuItem Header="New" Click="NewLayoutClicked" />
+          <MenuItem Header="Open" Click="OpenLayoutClicked" />
+          <MenuItem Header="Save" Click="SaveLayoutClicked" />
+          <MenuItem Header="Save As" Click="SaveLayoutAsClicked" />
+          <MenuItem Header="Edit" Click="EditLayoutClicked" />
         </MenuItem>
-        <MenuItem Header="Close" Click="CloseWindow" />
+        <MenuItem Header="Close" Click="CloseWindowClicked" />
       </ContextMenu>
     </Grid.ContextMenu>
 
