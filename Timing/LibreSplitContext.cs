@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Avalonia.Controls;
+using Avalonia.Threading;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
 using LibreSplit.UI;
@@ -119,9 +120,7 @@ public class LibreSplitContext : ViewModelBase {
         UpdateActiveSegment();
       }
     }
-    else {
-      Timer.Reset();
-      Run.Reset();
+    else if (Run.SegmentIndex == 0) {
       Run.Start(Timer);
       UpdateActiveSegment();
     }
@@ -137,7 +136,47 @@ public class LibreSplitContext : ViewModelBase {
     UpdateActiveSegment();
   }
 
-  public void Reset() {
+  internal void Reset() {
+    // get the last split time.
+    var lastSplitTime = Run.Segments[^1].SplitTime;
+    bool isPersonalBest = false;
+    bool beatSomeBest = false;
+
+    if (lastSplitTime != null && (lastSplitTime < Run.PersonalBest || Run.PersonalBest == null)) {
+      isPersonalBest = true;
+      beatSomeBest = true;
+    }
+
+    foreach (var seg in Run.Segments) {
+      if (seg.SegmentTime is TimeSpan segmentTime) {
+        if (segmentTime < seg.BestSegmentTime()) {
+          beatSomeBest = true;
+          break;
+        }
+      }
+
+      if (seg.SplitTime is TimeSpan splitTime) {
+        if (splitTime < seg.BestSplitTime()) {
+          beatSomeBest = true;
+          break;
+        }
+      }
+    }
+
+    if (beatSomeBest) {
+      Dispatcher.UIThread.Invoke(() => UI.Windows.YesNoCancel.Window.Open(new UI.Windows.YesNoCancel.ViewModel() {
+        Prompt = "Your have beaten some of your best times. Do you want to update them?",
+        YesClicked = () => { Run.UpdateTimes(isPersonalBest); FinalizeReset(); },
+        NoClicked = FinalizeReset,
+      }));
+    }
+    else {
+      Run.UpdateTimes(isPersonalBest);
+      FinalizeReset();
+    }
+  }
+  
+  public void FinalizeReset() {
     Timer.Reset();
     Run.Reset();
     ClearActiveSegment();

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Newtonsoft.Json;
 using LibreSplit.IO;
+using Avalonia.Threading;
 
 namespace LibreSplit.Timing;
 /// <summary>
@@ -91,17 +92,16 @@ public class RunData {
   }
 
   internal void Reset() {
-    SegmentIndex = 0;
-
-    // get the last split time.
-    var lastSplitTime = Segments[^1].SplitTime;
-    bool isPersonalBest = false;
-
-    if (lastSplitTime != null && (lastSplitTime < PersonalBest || PersonalBest == null)) {
-      isPersonalBest = true;
+    foreach (var seg in Segments) {
+      seg.SegmentTime = null;
+      seg.SplitTime = null;
     }
+    SegmentIndex = 0;
+    AttemptCount++;
+    OnReset?.Invoke();
+  }
 
-
+  public void UpdateTimes(bool isPersonalBest) {
     foreach (var seg in Segments) {
       if (seg.SegmentTime is TimeSpan segmentTime) {
         seg.AddSegmentTime(segmentTime);
@@ -115,13 +115,7 @@ public class RunData {
         seg.PBSegmentTime = seg.SegmentTime;
         seg.PBSplitTime = seg.SplitTime;
       }
-
-      seg.SegmentTime = null;
-      seg.SplitTime = null;
     }
-
-    AttemptCount++;
-    OnReset?.Invoke();
   }
 
   [JsonIgnore]
