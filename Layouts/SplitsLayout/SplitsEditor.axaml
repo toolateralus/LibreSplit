@@ -12,11 +12,6 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
-      <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <TextBlock Text="Active Backgound Color" Grid.Row="0" Grid.Column="0" />
     <colorpicker:ColorButton Grid.Row="0" Grid.Column="1"
@@ -24,20 +19,5 @@
     <TextBlock Text="Inactive Backgound Color" Grid.Row="1" Grid.Column="0" />
     <colorpicker:ColorButton Grid.Row="1" Grid.Column="1"
       Color="{Binding LayoutItem.InactiveSplitColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
-    <TextBlock Text="Ahead Gaining Time Color" Grid.Row="2" Grid.Column="0" />
-    <colorpicker:ColorButton Grid.Row="2" Grid.Column="1"
-      Color="{Binding LayoutItem.AheadGainingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
-    <TextBlock Text="Ahead Losing Time Color" Grid.Row="3" Grid.Column="0" />
-    <colorpicker:ColorButton Grid.Row="3" Grid.Column="1"
-      Color="{Binding LayoutItem.AheadLosingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
-    <TextBlock Text="Behind Gaining Time Color" Grid.Row="4" Grid.Column="0" />
-    <colorpicker:ColorButton Grid.Row="4" Grid.Column="1"
-      Color="{Binding LayoutItem.BehindGainingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
-    <TextBlock Text="Behind Losing Time Color" Grid.Row="5" Grid.Column="0" />
-    <colorpicker:ColorButton Grid.Row="5" Grid.Column="1"
-      Color="{Binding LayoutItem.BehindLosingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
-    <TextBlock Text="Text Color" Grid.Row="6" Grid.Column="0" />
-    <colorpicker:ColorButton Grid.Row="5" Grid.Column="1"
-      Color="{Binding LayoutItem.TextColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
   </Grid>
 </UserControl>

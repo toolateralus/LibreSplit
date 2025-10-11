@@ -8,34 +8,11 @@
   <UserControl.Styles>
     <Style Selector="Grid.Active">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.ActiveSplitColor}" />
+        Value="{Binding $parent[local:SplitsControl].ViewModel.LayoutItem.ActiveSplitColor}" />
     </Style>
     <Style Selector="Grid.Inactive">
       <Setter Property="Background"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.InactiveSplitColor}" />
-    </Style>
-    <Style Selector="TextBlock.Normal">
-      <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.TextColor}" />
-    </Style>
-    <Style Selector="TextBlock.AheadGainingTime">
-      <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.AheadGainingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.AheadLosingTime">
-      <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.AheadLosingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.BehindLosingTime">
-      <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindLosingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.BehindGainingTime">
-      <Setter Property="Foreground"
-        Value="{Binding $parent[UserControl].((local:SplitsViewModel)DataContext).LayoutItem.BehindGainingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.BestSegmentTime">
-      <Setter Property="Foreground" Value="#dfd02eff" />
+        Value="{Binding $parent[local:SplitsControl].ViewModel.LayoutItem.InactiveSplitColor}" />
     </Style>
   </UserControl.Styles>
   <ItemsControl ItemsSource="{Binding SegmentViewModels}">

@@ -29,7 +29,7 @@ public class TimerViewModel : ViewModelBase {
     switch (e.PropertyName) {
       case nameof(Timer.Running):
         if (!Timer.Running) {
-          Classes = "Inactive";
+          Classes = "";
         }
         break;
       case nameof(Timer.Elapsed):
@@ -77,7 +77,7 @@ public class TimerViewModel : ViewModelBase {
       Timer = null;
     }
   }
-  private string classes = "Inactive";
+  private string classes = "";
 
   public TimerViewModel(TimerLayoutData layoutItem) {
     LayoutItem = layoutItem;

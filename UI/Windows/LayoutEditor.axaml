@@ -4,11 +4,48 @@
   xmlns:layouts="clr-namespace:LibreSplit.Layouts"
   xmlns:s="clr-namespace:System"
   xmlns:styles="clr-namespace:Avalonia.Themes.Default.Styles;assembly=Avalonia.Themes.Default"
+  xmlns:c="clr-namespace:AvaloniaColorPicker;assembly=AvaloniaColorPicker"
   x:Class="LibreSplit.UI.Windows.LayoutEditor"
   x:DataType="local:LayoutEditor"
   Title="Layout Editor" Width="300" Height="400">
   <StackPanel>
-    <ItemsControl ItemsSource="{Binding GlobalContext.LayoutData}">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Text Color" />
+      <c:ColorButton Grid.Row="0" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.TextColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+      <TextBlock Grid.Row="1" Grid.Column="0" Text="Ahead (Gaining Time) Color" />
+      <c:ColorButton Grid.Row="1" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.AheadGainingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="Ahead (Losing Time) Color" />
+      <c:ColorButton Grid.Row="2" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.AheadLosingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+      <TextBlock Grid.Row="3" Grid.Column="0" Text="Behind (Gaining Time) Color" />
+      <c:ColorButton Grid.Row="3" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.BehindGainingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+      <TextBlock Grid.Row="4" Grid.Column="0" Text="Behind (Losing Time) Color" />
+      <c:ColorButton Grid.Row="4" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.BehindLosingTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+      <TextBlock Grid.Row="5" Grid.Column="0" Text="Best Segment Time Color" />
+      <c:ColorButton Grid.Row="5" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.BestSegmentTimeColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+      <TextBlock Grid.Row="6" Grid.Column="0" Text="Background Color" />
+      <c:ColorButton Grid.Row="6" Grid.Column="1"
+        Color="{Binding GlobalContext.LayoutData.BackgroundColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+    </Grid>
+    <ItemsControl ItemsSource="{Binding GlobalContext.LayoutData.Items}">
       <ItemsControl.ItemTemplate>
         <DataTemplate x:DataType="layouts:LayoutItemData">
           <Expander HorizontalAlignment="Stretch" Margin="0" MinHeight="0">
@@ -26,7 +63,7 @@
       </ItemsControl.ItemTemplate>
     </ItemsControl>
     <Menu>
-      <MenuItem Header="Add Item" ItemsSource="{Binding LayoutItemTypes}"/>
+      <MenuItem Header="Add Item" ItemsSource="{Binding LayoutItemTypes}" />
     </Menu>
   </StackPanel>
 </Window>

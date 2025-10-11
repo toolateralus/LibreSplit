@@ -11,7 +11,6 @@ using SharpHook.Data;
 namespace LibreSplit.UI.Windows;
 
 public partial class KeybindsEditor : Window, INotifyPropertyChanged {
-
   public new event PropertyChangedEventHandler? PropertyChanged;
   protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
     PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

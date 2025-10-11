@@ -36,15 +36,15 @@ public class LibreSplitContext : ViewModelBase {
   private LayoutData? layoutData;
   public LayoutData LayoutData {
     get {
-      layoutData ??= [];
+      layoutData ??= new();
       return layoutData;
     }
     set {
       if (layoutData is not null) {
-        layoutData.CollectionChanged -= LayoutDataCollectionChanged;
+        layoutData.Items.CollectionChanged -= LayoutDataCollectionChanged;
       }
       layoutData = value;
-      layoutData.CollectionChanged += LayoutDataCollectionChanged;
+      layoutData.Items.CollectionChanged += LayoutDataCollectionChanged;
       UpdateLayout();
       OnPropertyChanged();
     }
@@ -56,7 +56,7 @@ public class LibreSplitContext : ViewModelBase {
 
   void UpdateLayout() {
     Layout.Clear();
-    foreach (var layoutItemData in layoutData!) {
+    foreach (var layoutItemData in layoutData!.Items) {
       if (layoutItemData.Control is not null) {
         Layout.Add(layoutItemData.Control);
       }

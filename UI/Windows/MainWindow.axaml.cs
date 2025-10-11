@@ -81,13 +81,13 @@ public partial class MainWindow : Window {
     configLoader.TryLoadLayout(out loadedLayoutFile);
 
     if (loadedLayoutFile != null && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
-      GlobalContext.LayoutData.Clear();
-      foreach (var layoutItem in layout) {
-        GlobalContext.LayoutData.Add(layoutItem);
+      GlobalContext.LayoutData.Items.Clear();
+      foreach (var layoutItem in layout.Items) {
+        GlobalContext.LayoutData.Items.Add(layoutItem);
       }
     }
     else {
-      GlobalContext.LayoutData = LayoutData.Default;
+      GlobalContext.LayoutData = new();
       configLoader.Set(ConfigKeys.LastLoadedLayout, "");
     }
 
@@ -175,7 +175,7 @@ public partial class MainWindow : Window {
     configLoader.Set("keymap", GlobalContext.keymap);
   }
   public void NewLayout(object sender, RoutedEventArgs e) {
-    GlobalContext.LayoutData = LayoutData.Default;
+    GlobalContext.LayoutData = new();
   }
   public async void OpenLayout(object sender, RoutedEventArgs e) {
     if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string dir) {
@@ -189,9 +189,9 @@ public partial class MainWindow : Window {
 
     if (loadedLayoutFile != null && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
-      GlobalContext.LayoutData.Clear();
-      foreach (var layoutItem in layout) {
-        GlobalContext.LayoutData.Add(layoutItem);
+      GlobalContext.LayoutData.Items.Clear();
+      foreach (var layoutItem in layout.Items) {
+        GlobalContext.LayoutData.Items.Add(layoutItem);
       }
     }
     else {
@@ -203,7 +203,7 @@ public partial class MainWindow : Window {
       SaveLayoutAs(sender, e);
       return;
     }
-    if (serializer.Write(loadedLayoutFile, GlobalContext.LayoutData)) {
+    if (serializer.Write(loadedLayoutFile, GlobalContext.LayoutData.Items)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }
   }
@@ -217,7 +217,7 @@ public partial class MainWindow : Window {
       return;
     }
     var path = file.Path.AbsolutePath;
-    if (serializer.Write(path, GlobalContext.LayoutData)) {
+    if (serializer.Write(path, GlobalContext.LayoutData.Items)) {
       loadedLayoutFile = path;
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }

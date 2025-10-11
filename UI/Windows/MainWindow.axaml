@@ -6,13 +6,14 @@
   xmlns:layouts="clr-namespace:LibreSplit.Layouts"
   xmlns:timing="clr-namespace:LibreSplit.Timing"
   xmlns:controls="clr-namespace:LibreSplit.UI.Controls"
+  xmlns:windows="clr-namespace:LibreSplit.UI.Windows"
   mc:Ignorable="d" Width="300"
   SizeToContent="Height"
   x:Class="LibreSplit.UI.Windows.MainWindow"
   x:DataType="timing:LibreSplitContext"
   SystemDecorations="None"
   Title="LibreSplit">
-  <Grid>
+  <Grid Background="{Binding LayoutData.BackgroundColor}">
     <Grid.ContextMenu>
       <ContextMenu>
         <MenuItem Header="Splits">
@@ -37,7 +38,34 @@
     </Grid.ContextMenu>
 
     <controls:AspectMaintainingViewbox>
-      <ItemsControl ItemsSource="{Binding Layout}" />
+      <ItemsControl ItemsSource="{Binding Layout}">
+        <ItemsControl.Styles>
+          <Style Selector="TextBlock">
+            <Setter Property="Foreground"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.TextColor}" />
+          </Style>
+          <Style Selector="TextBlock.AheadGainingTime">
+            <Setter Property="Foreground"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.AheadGainingTimeColor}" />
+          </Style>
+          <Style Selector="TextBlock.AheadLosingTime">
+            <Setter Property="Foreground"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.AheadLosingTimeColor}" />
+          </Style>
+          <Style Selector="TextBlock.BehindLosingTime">
+            <Setter Property="Foreground"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.BehindLosingTimeColor}" />
+          </Style>
+          <Style Selector="TextBlock.BehindGainingTime">
+            <Setter Property="Foreground"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.BehindGainingTimeColor}" />
+          </Style>
+          <Style Selector="TextBlock.BestSegmentTime">
+            <Setter Property="Foreground"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.BestSegmentTimeColor}" />
+          </Style>
+        </ItemsControl.Styles>
+      </ItemsControl>
     </controls:AspectMaintainingViewbox>
 
     <controls:BorderlessWindowControls />

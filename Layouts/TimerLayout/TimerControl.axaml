@@ -4,23 +4,6 @@
   xmlns:local="clr-namespace:LibreSplit.Layouts.TimerLayout"
   x:Class="LibreSplit.Layouts.TimerLayout.TimerControl"
   x:DataType="local:TimerViewModel">
-  <UserControl.Styles>
-    <Style Selector="TextBlock.Inactive">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.InactiveColor}" />
-    </Style>
-    <Style Selector="TextBlock.AheadGainingTime">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadGainingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.AheadLosingTime">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.AheadLosingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.BehindLosingTime">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindLosingTimeColor}" />
-    </Style>
-    <Style Selector="TextBlock.BehindGainingTime">
-      <Setter Property="Foreground" Value="{Binding LayoutItem.BehindGainingTimeColor}" />
-    </Style>
-  </UserControl.Styles>
   <Grid Background="{Binding LayoutItem.BackgroundColor}">
     <TextBlock
       Text="{Binding Timer.Elapsed, Converter={StaticResource NullableTimeSpanToStringConverter}}"

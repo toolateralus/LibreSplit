@@ -3,46 +3,11 @@ using Avalonia.Controls;
 namespace LibreSplit.Layouts.TimerLayout;
 
 public class TimerLayoutData : LayoutItemData {
-  private string backgroundColor = "Black";
-  private string inactiveColor = "White";
-  private string aheadGainingTimeColor = "Green";
-  private string aheadLosingTimeColor = "LightGreen";
-  private string behindLosingTimeColor = "Red";
-  private string behindGainingTimeColor = "LightCoral";
+  private string backgroundColor = "Transparent";
 
   public string BackgroundColor {
     get => backgroundColor; set {
       backgroundColor = value;
-      OnPropertyChanged();
-    }
-  }
-  public string InactiveColor {
-    get => inactiveColor; set {
-      inactiveColor = value;
-      OnPropertyChanged();
-    }
-  }
-  public string AheadGainingTimeColor {
-    get => aheadGainingTimeColor; set {
-      aheadGainingTimeColor = value;
-      OnPropertyChanged();
-    }
-  }
-  public string AheadLosingTimeColor {
-    get => aheadLosingTimeColor; set {
-      aheadLosingTimeColor = value;
-      OnPropertyChanged();
-    }
-  }
-  public string BehindLosingTimeColor {
-    get => behindLosingTimeColor; set {
-      behindLosingTimeColor = value;
-      OnPropertyChanged();
-    }
-  }
-  public string BehindGainingTimeColor {
-    get => behindGainingTimeColor; set {
-      behindGainingTimeColor = value;
       OnPropertyChanged();
     }
   }

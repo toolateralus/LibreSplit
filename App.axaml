@@ -1,21 +1,21 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="LibreSplit.App"
-             xmlns:ui="clr-namespace:LibreSplit.UI"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
-    <Application.Resources>
-    <ui:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter"/>
-    <ui:StringToColorConverter x:Key="StringToColorConverter"/>
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  x:Class="LibreSplit.App"
+  xmlns:ui="clr-namespace:LibreSplit.UI"
+  RequestedThemeVariant="Default">
+  <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available
+  options. -->
+  <Application.Resources>
+    <ui:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter" />
+    <ui:StringToColorConverter x:Key="StringToColorConverter" />
   </Application.Resources>
-    <Application.Styles>
-        <FluentTheme />
+  <Application.Styles>
+    <FluentTheme />
     <Style Selector="Grid">
-        <Setter Property="Background" Value="#000000ff" />
+      <Setter Property="Background" Value="#000000ff" />
     </Style>
-
     <Style Selector="Label">
-        <Setter Property="Background" Value="#141414ff" />
+      <Setter Property="Background" Value="#141414ff" />
     </Style>
-    </Application.Styles>
+  </Application.Styles>
 </Application>

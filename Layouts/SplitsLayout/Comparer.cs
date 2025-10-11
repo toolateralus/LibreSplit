@@ -20,7 +20,7 @@ public enum ComparisonType {
 public record Comparer(string Label, ComparisonType PassedComparison, ComparisonType UpcomingComparison) {
   public void SetStatus(ComparisonViewModel comparison, SegmentData segment, SegmentStatus status) {
     if (status == SegmentStatus.Current) {
-      comparison.Classes = "Normal";
+      comparison.Classes = "";
       return;
     }
     var comparisonType = status switch {
@@ -70,7 +70,7 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
         comparison.Time = segment.SegmentTime - segment.BestSegmentTime();
         comparison.Signed = true;
         if (segment.SplitTime is null || segment.SegmentTime is null) {
-          comparison.Classes = "Normal";
+          comparison.Classes = "";
         }
         else if (segment.BestSegmentTime() is null) {
           comparison.Classes = "BestSegmentTime";
@@ -89,12 +89,12 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
         break;
     }
     if (status == SegmentStatus.Upcoming) {
-      comparison.Classes = "Normal";
+      comparison.Classes = "";
     }
   }
   private static string DeltaColor(TimeSpan? split, TimeSpan? segment, TimeSpan? comparisonSplit, TimeSpan? comparisonSegment) {
     if (split is null || comparisonSegment is null) {
-      return "Normal";
+      return "";
     }
     else if (split < comparisonSplit) {
       if (comparisonSegment is null || segment < comparisonSegment) {

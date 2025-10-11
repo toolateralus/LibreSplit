@@ -3,19 +3,19 @@ using Avalonia.LogicalTree;
 
 namespace LibreSplit.Layouts.SplitsLayout;
 public partial class SplitsControl : UserControl {
-  SplitsViewModel viewModel;
+  public SplitsViewModel ViewModel { get; set; }
   public SplitsControl(SplitsLayoutData layoutItem) {
-    DataContext = viewModel = new(layoutItem);
+    DataContext = ViewModel = new(layoutItem);
     InitializeComponent();
   }
 
   protected override void OnAttachedToLogicalTree(LogicalTreeAttachmentEventArgs e) {
-    viewModel.OnAttachedToLogicalTree();
+    ViewModel.OnAttachedToLogicalTree();
     base.OnAttachedToLogicalTree(e);
   }
 
   protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e) {
-    viewModel.OnDetachedFromLogicalTree();
+    ViewModel.OnDetachedFromLogicalTree();
     base.OnDetachedFromLogicalTree(e);
   }
 }

@@ -16,31 +16,31 @@ public partial class LayoutEditor : Window {
   public void RemoveItem_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
         button.Tag is LayoutItemData item) {
-      GlobalContext.LayoutData.Remove(item);
+      GlobalContext.LayoutData.Items.Remove(item);
     }
   }
   private void AddLayoutItem_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is MenuItem menuItem &&
         menuItem.Tag is Type layoutItemType &&
         Activator.CreateInstance(layoutItemType) is LayoutItemData layoutItem) {
-      GlobalContext.LayoutData.Add(layoutItem);
+      GlobalContext.LayoutData.Items.Add(layoutItem);
     }
   }
   public void MoveItemUp_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
         button.Tag is LayoutItemData item) {
-      int currentIndex = GlobalContext.LayoutData.IndexOf(item);
+      int currentIndex = GlobalContext.LayoutData.Items.IndexOf(item);
       if (currentIndex > 0) {
-        GlobalContext.LayoutData.Move(currentIndex, currentIndex - 1);
+        GlobalContext.LayoutData.Items.Move(currentIndex, currentIndex - 1);
       }
     }
   }
   public void MoveItemDown_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&
         button.Tag is LayoutItemData item) {
-      int currentIndex = GlobalContext.LayoutData.IndexOf(item);
-      if (currentIndex < GlobalContext.LayoutData.Count - 1) {
-        GlobalContext.LayoutData.Move(currentIndex, currentIndex + 1);
+      int currentIndex = GlobalContext.LayoutData.Items.IndexOf(item);
+      if (currentIndex < GlobalContext.LayoutData.Items.Count - 1) {
+        GlobalContext.LayoutData.Items.Move(currentIndex, currentIndex + 1);
       }
     }
   }
