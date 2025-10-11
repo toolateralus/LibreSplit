@@ -1,0 +1,15 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:media="clr-namespace:Avalonia.Media;assembly=Avalonia.Base"
+  x:Class="LibreSplit.UI.Controls.FontPicker"
+  x:Name="Root">
+  <ComboBox ItemsSource="{Binding Fonts, ElementName=Root}"
+    SelectedItem="{Binding Font, ElementName=Root, Mode=TwoWay}">
+    <ComboBox.ItemTemplate>
+      <DataTemplate x:DataType="media:FontFamily">
+        <TextBlock Width="150" FontFamily="{Binding .}" Text="{Binding Name}"
+          TextTrimming="CharacterEllipsis" FontSize="12" />
+      </DataTemplate>
+    </ComboBox.ItemTemplate>
+  </ComboBox>
+</UserControl>

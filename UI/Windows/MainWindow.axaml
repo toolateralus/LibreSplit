@@ -41,6 +41,10 @@
       <ItemsControl ItemsSource="{Binding Layout}">
         <ItemsControl.Styles>
           <Style Selector="TextBlock">
+            <Setter Property="FontFamily"
+              Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.Font, Converter={StaticResource StringToFontFamilyConverter}}" />
+          </Style>
+          <Style Selector="TextBlock">
             <Setter Property="Foreground"
               Value="{Binding $parent[windows:MainWindow].GlobalContext.LayoutData.TextColor}" />
           </Style>

@@ -8,6 +8,7 @@
   <Application.Resources>
     <ui:NullableTimeSpanToStringConverter x:Key="NullableTimeSpanToStringConverter" />
     <ui:StringToColorConverter x:Key="StringToColorConverter" />
+    <ui:StringToFontFamilyConverter x:Key="StringToFontFamilyConverter" />
   </Application.Resources>
   <Application.Styles>
     <FluentTheme />

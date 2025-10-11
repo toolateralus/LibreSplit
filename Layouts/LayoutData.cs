@@ -11,6 +11,7 @@ public class LayoutData : ViewModelBase {
   private string behindGainingTimeColor = "IndianRed";
   private string behindLosingTimeColor = "Red";
   private string bestSegmentTimeColor = "Gold";
+  private string font = "Adwaita Mono";
 
   public string BackgroundColor {
     get => backgroundColor;
@@ -58,6 +59,13 @@ public class LayoutData : ViewModelBase {
     get => bestSegmentTimeColor;
     set {
       bestSegmentTimeColor = value;
+      OnPropertyChanged();
+    }
+  }
+  public string Font {
+    get => font;
+    set {
+      font = value;
       OnPropertyChanged();
     }
   }

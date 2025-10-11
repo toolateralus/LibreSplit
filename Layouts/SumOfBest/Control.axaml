@@ -17,7 +17,6 @@
       Text="Sum of Best Segments"
       Margin="1,1,10,1"
       HorizontalAlignment="Left"
-      FontFamily="Adwaita Mono, Consolas, Courier New, monospace"
       FontSize="14"/>
 
     <TextBlock
@@ -25,7 +24,6 @@
       Text="{Binding SumOfBest, Converter={StaticResource NullableTimeSpanToStringConverter}}"
       Margin="1,1,10,1"
       HorizontalAlignment="Right"
-      FontFamily="Adwaita Mono, Consolas, Courier New, monospace"
       FontSize="18"/>
   </Grid>
 </UserControl>

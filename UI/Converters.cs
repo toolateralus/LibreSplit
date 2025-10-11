@@ -76,3 +76,21 @@ public class StringToColorConverter : IValueConverter {
     return AvaloniaProperty.UnsetValue;
   }
 }
+
+public class StringToFontFamilyConverter : IValueConverter {
+  public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
+    if (value is string fontFamilyName && !string.IsNullOrWhiteSpace(fontFamilyName)) {
+      try {
+        return new FontFamily(fontFamilyName);
+      }
+      catch {
+        return FontFamily.Default;
+      }
+    }
+    return FontFamily.Default;
+  }
+
+  public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
+    return value is FontFamily ff ? ff.Name : null;
+  }
+}
