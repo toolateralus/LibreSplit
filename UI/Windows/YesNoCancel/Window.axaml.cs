@@ -27,7 +27,7 @@ public enum Result {
   /// This is never present when any of the other flags are present,
   /// and same is true vice-versa.
   /// </summary>
-  Yes = 42069,
+  Yes = 1 << 3,
 }
 
 public partial class Window : Avalonia.Controls.Window {
