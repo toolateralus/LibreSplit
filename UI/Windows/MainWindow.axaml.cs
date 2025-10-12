@@ -54,11 +54,11 @@ public class MainWindowViewModel {
       defaultStartLocation = await storageProvider.TryGetWellKnownFolderAsync(WellKnownFolder.Documents);
 
       var splitsStartLocation = defaultStartLocation;
-      if (loadedSplitsFile is not null && Path.GetDirectoryName(loadedSplitsFile) is string dir) {
+      if (!string.IsNullOrEmpty(loadedSplitsFile) && Path.GetDirectoryName(loadedSplitsFile) is string dir) {
         splitsStartLocation = await storageProvider.TryGetFolderFromPathAsync(dir);
       }
       var layoutStartLocation = defaultStartLocation;
-      if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string layoutDir) {
+      if (!string.IsNullOrEmpty(loadedLayoutFile) && Path.GetDirectoryName(loadedLayoutFile) is string layoutDir) {
         layoutStartLocation = await storageProvider.TryGetFolderFromPathAsync(layoutDir);
       }
 
@@ -70,27 +70,20 @@ public class MainWindowViewModel {
     });
 
 
-
     configLoader.LoadOrCreate();
-    configLoader.TryLoadSplits(out loadedSplitsFile);
 
-    if (loadedSplitsFile != null && serializer.Read<RunData>(loadedSplitsFile, out var run)) {
+    if (configLoader.TryGetLastLoadedSplitsPath(out loadedSplitsFile) && serializer.Read<RunData>(loadedSplitsFile, out var run)) {
       GlobalContext.Run = run;
     }
     else {
       configLoader.Set(ConfigKeys.LastLoadedSplits, "");
     }
 
-    configLoader.TryLoadLayout(out loadedLayoutFile);
-
-    if (loadedLayoutFile != null && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
-      GlobalContext.LayoutData.Items.Clear();
-      foreach (var layoutItem in layout.Items) {
-        GlobalContext.LayoutData.Items.Add(layoutItem);
-      }
+    if (configLoader.TryGetLastLoadedLayoutPath(out loadedLayoutFile) && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
+      GlobalContext.LayoutData = layout;
     }
     else {
-      GlobalContext.LayoutData = new();
+      GlobalContext.LayoutData = LayoutData.Default;
       configLoader.Set(ConfigKeys.LastLoadedLayout, "");
     }
 
@@ -203,7 +196,7 @@ public class MainWindowViewModel {
   }
 
   internal static void NewLayout() {
-    GlobalContext.LayoutData = new();
+    GlobalContext.LayoutData = LayoutData.Default;
   }
 
   internal async void OpenLayout() {
@@ -216,30 +209,28 @@ public class MainWindowViewModel {
     }
     loadedLayoutFile = list[0].Path?.AbsolutePath!;
 
-    if (loadedLayoutFile != null && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
+    if (!string.IsNullOrEmpty(loadedLayoutFile) && serializer.Read<LayoutData>(loadedLayoutFile, out var layout)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
-      GlobalContext.LayoutData.Items.Clear();
-      foreach (var layoutItem in layout.Items) {
-        GlobalContext.LayoutData.Items.Add(layoutItem);
-      }
+      GlobalContext.LayoutData = layout;
     }
     else {
-      configLoader.Set(ConfigKeys.LastLoadedLayout, "");
+      configLoader.Set(ConfigKeys.LastLoadedLayout, string.Empty);
+      GlobalContext.LayoutData = LayoutData.Default;
     }
   }
 
   internal void SaveLayout() {
-    if (loadedLayoutFile == null) {
+    if (string.IsNullOrEmpty(loadedLayoutFile)) {
       SaveLayoutAs();
       return;
     }
-    if (serializer.Write(loadedLayoutFile, GlobalContext.LayoutData.Items)) {
+    if (serializer.Write(loadedLayoutFile, GlobalContext.LayoutData)) {
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }
   }
 
   internal async void SaveLayoutAs() {
-    if (loadedLayoutFile is not null && Path.GetDirectoryName(loadedLayoutFile) is string dir) {
+    if (!string.IsNullOrEmpty(loadedLayoutFile) && Path.GetDirectoryName(loadedLayoutFile) is string dir) {
       layoutSaveOptions.SuggestedStartLocation = await StorageProvider.TryGetFolderFromPathAsync(dir);
     }
     var file = await StorageProvider.SaveFilePickerAsync(layoutSaveOptions);
@@ -248,7 +239,7 @@ public class MainWindowViewModel {
       return;
     }
     var path = file.Path.AbsolutePath;
-    if (serializer.Write(path, GlobalContext.LayoutData.Items)) {
+    if (serializer.Write(path, GlobalContext.LayoutData)) {
       loadedLayoutFile = path;
       configLoader.Set(ConfigKeys.LastLoadedLayout, loadedLayoutFile);
     }
@@ -289,7 +280,7 @@ public class MainWindowViewModel {
   /// false if there are unsaved changes, and the user does not want to proceed with whatever operation is requesting this.
   /// </returns>
   internal async Task<bool> CheckForUnsavedChangesInLayout() {
-    if (loadedLayoutFile is not null && serializer.HasUnsavedChanges(loadedLayoutFile, GlobalContext.LayoutData)) {
+    if (!string.IsNullOrEmpty(loadedLayoutFile) && serializer.HasUnsavedChanges(loadedLayoutFile, GlobalContext.LayoutData)) {
       var result = await YesNoCancel.Window.Open(new YesNoCancel.ViewModel() {
         Prompt = "You have unsaved changes in your layout. Do you want to save before closing?",
       });
@@ -307,7 +298,7 @@ public class MainWindowViewModel {
 public partial class MainWindow : Window {
   private readonly MainWindowViewModel m_viewModel;
   public static LibreSplitContext GlobalContext => MainWindowViewModel.GlobalContext;
-  
+
   public MainWindow() {
     m_viewModel = new(StorageProvider);
     Closing += OnClosing;
@@ -315,6 +306,9 @@ public partial class MainWindow : Window {
     InitializeComponent();
     Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://LibreSplit/Assets/icon.png")));
     Topmost = true;
+    TransparencyLevelHint = [WindowTransparencyLevel.Transparent];
+    Background = Avalonia.Media.Brushes.Transparent;
+
   }
   private void OnClosing(object? sender, WindowClosingEventArgs e) {
     Input.Stop();

@@ -56,7 +56,7 @@ public class LibreSplitContext : ViewModelBase {
   private LayoutData? layoutData;
   public LayoutData LayoutData {
     get {
-      layoutData ??= new();
+      layoutData ??= LayoutData.Default;
       return layoutData;
     }
     set {

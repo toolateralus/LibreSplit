@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -30,23 +31,27 @@ public class ConfigLoader {
     configTable[key] = JToken.FromObject(value);
     Save();
   }
-  public void TryLoadSplits(out string? loadedFile) {
+  public bool TryGetLastLoadedSplitsPath([NotNullWhen(true)] out string? loadedFile) {
     loadedFile = null;
     if (TryGetValue(ConfigKeys.LastLoadedSplits, out var path)) {
       var pathString = path?.ToObject<string>() ?? throw new InvalidDataException("Couldn't read lastLoadedPath from config: it may have been altered externally.");
       if (pathString != "") {
         loadedFile = Path.GetFullPath(pathString);
+        return true;
       }
     }
+    return false;
   }
-  public void TryLoadLayout(out string? loadedFile) {
+  public bool TryGetLastLoadedLayoutPath([NotNullWhen(true)] out string? loadedFile) {
     loadedFile = null;
     if (TryGetValue(ConfigKeys.LastLoadedLayout, out var path)) {
       var pathString = path?.ToObject<string>() ?? throw new InvalidDataException("Couldn't read lastLoadedPath from config: it may have been altered externally.");
       if (pathString != "") {
         loadedFile = Path.GetFullPath(pathString);
+        return true;
       }
     }
+    return false;
   }
   public JObject LoadOrCreate() {
     if (File.Exists(configPath)) {

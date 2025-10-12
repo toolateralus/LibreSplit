@@ -3,6 +3,7 @@ using LibreSplit.Layouts.SplitsLayout;
 using LibreSplit.Layouts.TimerLayout;
 using LibreSplit.UI;
 namespace LibreSplit.Layouts;
+
 public class LayoutData : ViewModelBase {
   private string backgroundColor = "Black";
   private string textColor = "White";
@@ -71,9 +72,12 @@ public class LayoutData : ViewModelBase {
   }
 
 
-  public ObservableCollection<LayoutItemData> Items { get; set; } = [
-    new SplitsLayoutData(),
-    new TimerLayoutData(),
-    new SumOfBest.LayoutItemData(),
-  ];
+  public ObservableCollection<LayoutItemData> Items { get; set; } = [];
+  public static LayoutData Default => new() {
+    Items = [
+      new SplitsLayoutData(),
+      new TimerLayoutData(),
+      new SumOfBest.LayoutItemData(),
+    ]
+  };
 };
