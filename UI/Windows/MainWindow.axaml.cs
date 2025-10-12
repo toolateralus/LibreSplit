@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
+using Avalonia.Platform;
 
 namespace LibreSplit.UI.Windows;
 
@@ -306,11 +307,14 @@ public class MainWindowViewModel {
 public partial class MainWindow : Window {
   private readonly MainWindowViewModel m_viewModel;
   public static LibreSplitContext GlobalContext => MainWindowViewModel.GlobalContext;
+  
   public MainWindow() {
     m_viewModel = new(StorageProvider);
     Closing += OnClosing;
     DataContext = GlobalContext;
     InitializeComponent();
+    Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://LibreSplit/Assets/icon.png")));
+    Topmost = true;
   }
   private void OnClosing(object? sender, WindowClosingEventArgs e) {
     Input.Stop();

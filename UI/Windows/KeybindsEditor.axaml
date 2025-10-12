@@ -69,6 +69,20 @@
         <ColumnDefinition Width="100" />
         <ColumnDefinition Width="60" />
       </Grid.ColumnDefinitions>
+      <TextBlock Text="Toggle Hotkeys" VerticalAlignment="Center" Grid.Column="0" />
+      <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
+        <TextBlock x:Name="ToggleHotkeysBox" VerticalAlignment="Center" Text="{Binding ToggleHotkeys}" />
+      </Border>
+      <Button HorizontalAlignment="Stretch" x:Name="ToggleHotkeysButton" Content="Listen"
+        Click="ListenForBinding" Grid.Column="2" />
+    </Grid>
+
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="100" />
+        <ColumnDefinition Width="60" />
+      </Grid.ColumnDefinitions>
       <TextBlock Text="Reset" VerticalAlignment="Center" Grid.Column="0" />
       <Border Grid.Column="1" BorderBrush="Black" BorderThickness="1" Margin="2" Padding="4">
         <TextBlock x:Name="ResetBox" VerticalAlignment="Center" Text="{Binding Reset}" />

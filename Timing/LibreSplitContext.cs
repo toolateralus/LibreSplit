@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Threading;
 using LibreSplit.IO;
 using LibreSplit.Layouts;
@@ -13,6 +14,7 @@ using SharpHook.Data;
 namespace LibreSplit.Timing;
 
 public enum Keybind {
+  ToggleHotkeys = 0,
   StartOrSplit,
   Pause,
   SkipBack,
@@ -23,7 +25,24 @@ public enum Keybind {
 
 public class LibreSplitContext : ViewModelBase {
 
+  public string HotkeysDisabledText {
+    get {
+      return $"Hotkeys Disabled ({Input.KeyCodeDisplayString(keymap[Keybind.ToggleHotkeys])} to toggle)";
+    }
+  }
+
+  public bool HotkeysDisabled {
+    get => m_hotkeysDisabled;
+    set {
+      m_hotkeysDisabled = value;
+      OnPropertyChanged();
+    }
+  }
+
+  private bool m_hotkeysDisabled = false;
+
   public Dictionary<Keybind, KeyCode> keymap = new() {
+    { Keybind.ToggleHotkeys, KeyCode.VcNumPad9},
     {Keybind.StartOrSplit, KeyCode.Vc1},
     {Keybind.Pause, KeyCode.Vc2},
     {Keybind.SkipBack, KeyCode.Vc3},
@@ -175,7 +194,7 @@ public class LibreSplitContext : ViewModelBase {
       FinalizeReset();
     }
   }
-  
+
   public void FinalizeReset() {
     Timer.Reset();
     Run.Reset();
@@ -205,15 +224,15 @@ public class LibreSplitContext : ViewModelBase {
     isEditMode = false;
   }
 
-  private void RegisterKeyMap() {
+  private void RegisterKeyMap(params List<Keybind> ignored) {
     foreach (var (keybind, keycode) in keymap) {
-      Action action;
-
-      if (keybind == Keybind.Invalid) {
+      if (keybind == Keybind.Invalid || ignored.Contains(keybind)) {
         continue;
       }
+      Action action;
 
       action = keybind switch {
+        Keybind.ToggleHotkeys => ToggleHotkeys,
         Keybind.StartOrSplit => StartOrSplit,
         Keybind.Pause => Timer.Pause,
         Keybind.SkipBack => SkipBack,
@@ -227,8 +246,21 @@ public class LibreSplitContext : ViewModelBase {
     }
   }
 
-  private void UnregisterKeyMap() {
-    foreach (var (_, keycode) in keymap) {
+  private void ToggleHotkeys() {
+    if (!m_hotkeysDisabled) {
+      UnregisterKeyMap(Keybind.ToggleHotkeys);
+      HotkeysDisabled = true;
+      return;
+    }
+    HotkeysDisabled = false;
+    RegisterKeyMap(Keybind.ToggleHotkeys);
+  }
+
+  private void UnregisterKeyMap(params List<Keybind> ignored) {
+    foreach (var (bind, keycode) in keymap) {
+      if (bind == Keybind.Invalid || ignored.Contains(bind)) {
+        continue;
+      }
       Input.UnregisterKeyPressedListener(keycode);
     }
   }

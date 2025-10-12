@@ -26,6 +26,7 @@ public partial class RunEditor : Window {
     Run = run;
     DataContext = this;
     InitializeComponent();
+    Topmost = true;
     KeyDown += delegate (object? o, KeyEventArgs e) {
       if (!e.KeyModifiers.HasFlag(KeyModifiers.Control | KeyModifiers.Shift)) {
         return;

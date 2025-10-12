@@ -12,6 +12,7 @@ public partial class LayoutEditor : Window {
   public LayoutEditor() {
     DataContext = this;
     InitializeComponent();
+    Topmost = true;
   }
   public void RemoveItem_Clicked(object? sender, RoutedEventArgs e) {
     if (sender is Button button &&

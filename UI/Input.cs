@@ -65,4 +65,6 @@ public static partial class Input {
     }
   }
 
+  public static string KeyCodeDisplayString(KeyCode kc) => kc.ToString()[2..];
+
 }

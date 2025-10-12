@@ -7,7 +7,7 @@
   xmlns:timing="clr-namespace:LibreSplit.Timing"
   xmlns:controls="clr-namespace:LibreSplit.UI.Controls"
   xmlns:windows="clr-namespace:LibreSplit.UI.Windows"
-  mc:Ignorable="d" Width="300"
+  mc:Ignorable="d" Width="400"
   SizeToContent="Height"
   x:Class="LibreSplit.UI.Windows.MainWindow"
   x:DataType="timing:LibreSplitContext"
@@ -72,6 +72,22 @@
       </ItemsControl>
     </controls:AspectMaintainingViewbox>
 
+    <Panel IsVisible="{Binding HotkeysDisabled}"
+      Background="#80000000"
+      ZIndex="100"
+      HorizontalAlignment="Stretch"
+      VerticalAlignment="Stretch">
+      <TextBlock Text="{Binding HotkeysDisabledText}"
+            Foreground="Red"
+            FontWeight="Bold"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Background="rgba(128, 0, 0, 0.29)"
+            Margin="0"
+            Padding="20,10"
+            FontSize="18"/>
+    </Panel>
+         
     <controls:BorderlessWindowControls />
   </Grid>
 </Window>

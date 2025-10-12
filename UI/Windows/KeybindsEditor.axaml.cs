@@ -26,6 +26,16 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
       }
     }
   }
+  private string _toggleHotkeys = "NumPad9";
+  public string ToggleHotkeys {
+    get => _toggleHotkeys;
+    set {
+      if (_toggleHotkeys != value) {
+        _toggleHotkeys = value;
+        OnPropertyChanged();
+      }
+    }
+  }
 
   private string _pause = "2";
   public string Pause {
@@ -117,6 +127,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
 
   public void SetControlsEnabled(bool state) {
     StartOrSplitButton.IsEnabled = state;
+    ToggleHotkeysButton.IsEnabled = state;
     PauseButton.IsEnabled = state;
     SkipBackButton.IsEnabled = state;
     SkipForwardButton.IsEnabled = state;
@@ -136,6 +147,7 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
       var key = await AwaitKeyPress(_cancellationSource.Token, button);
       switch (button.Name) {
         case "StartOrSplitButton": StartOrSplit = key; break;
+        case "ToggleHotkeysButton": ToggleHotkeys = key; break;
         case "PauseButton": Pause = key; break;
         case "SkipBackButton": SkipBack = key; break;
         case "SkipForwardButton": SkipForward = key; break;
@@ -157,17 +169,20 @@ public partial class KeybindsEditor : Window, INotifyPropertyChanged {
     InitializeComponent();
     DataContext = this;
 
-    static string keyCodeDisplayString(KeyCode kc) => kc.ToString()[2..];
+    
 
-    StartOrSplit = keyCodeDisplayString(context.keymap[Keybind.StartOrSplit]);
-    Pause = keyCodeDisplayString(context.keymap[Keybind.Pause]);
-    SkipBack = keyCodeDisplayString(context.keymap[Keybind.SkipBack]);
-    SkipForward = keyCodeDisplayString(context.keymap[Keybind.SkipForward]);
-    Reset = keyCodeDisplayString(context.keymap[Keybind.Reset]);
+    ToggleHotkeys = Input.KeyCodeDisplayString(context.keymap[Keybind.ToggleHotkeys]);
+    StartOrSplit = Input.KeyCodeDisplayString(context.keymap[Keybind.StartOrSplit]);
+    Pause = Input.KeyCodeDisplayString(context.keymap[Keybind.Pause]);
+    SkipBack = Input.KeyCodeDisplayString(context.keymap[Keybind.SkipBack]);
+    SkipForward = Input.KeyCodeDisplayString(context.keymap[Keybind.SkipForward]);
+    Reset = Input.KeyCodeDisplayString(context.keymap[Keybind.Reset]);
 
+    Topmost = true;
     Closing += delegate {
       context.keymap = new()
       {
+        {Keybind.ToggleHotkeys, Input.StringToKeyCode(ToggleHotkeys)},
         {Keybind.StartOrSplit, Input.StringToKeyCode(StartOrSplit)},
         {Keybind.Pause, Input.StringToKeyCode(Pause)},
         {Keybind.SkipBack, Input.StringToKeyCode(SkipBack)},
