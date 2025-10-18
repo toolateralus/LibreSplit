@@ -18,6 +18,10 @@ public partial class Control : UserControl {
       if (segment.BestSegmentTime() is TimeSpan bestTime) {
         sumOfBest += bestTime;
       }
+      else {
+        m_viewModel.SumOfBest = null;
+        return;
+      }
     }
     m_viewModel.SumOfBest = sumOfBest;
   }
@@ -29,7 +33,7 @@ public partial class Control : UserControl {
   }
 
   private void OnTimerTick(TimeSpan span) {
-    CalculateSumOfBest();    
+    CalculateSumOfBest();
   }
 
   protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e) {
