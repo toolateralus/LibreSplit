@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using SharpHook;
 using SharpHook.Data;
 using LibreSplit.IO;
+using System.Collections.Generic;
 namespace LibreSplit.UI;
 
 public static partial class Input {
-  private static EventLoopGlobalHook _globalEventHook = new();
-
-  private readonly static ConcurrentDictionary<KeyCode, Action> _keyPressedHandlers = [];
+  private static readonly EventLoopGlobalHook _globalEventHook = new();
+  private static readonly Dictionary<KeyCode, bool> _keyPressedStates = [];
+  private static readonly ConcurrentDictionary<KeyCode, Action> _keyPressedHandlers = [];
 
   public static event Action<KeyCode>? AnyKeyPressed;
 
@@ -20,15 +21,24 @@ public static partial class Input {
     }
     return KeyCode.VcUndefined;
   }
+  private static void KeyReleased(object? _, KeyboardHookEventArgs e) {
+    _keyPressedStates.Remove(e.Data.KeyCode);
+  }
 
   private static void KeyPressed(object? _, KeyboardHookEventArgs e) {
     if (_keyPressedHandlers.TryGetValue(e.Data.KeyCode, out var handler)) {
+      // Ignore double presses / repeats, TODO: implement some kind of timer here for 
+      // 'double press' protection or whatever livesplit has, and put it under some option 
+      if (_keyPressedStates.ContainsKey(e.Data.KeyCode)) {
+        return;
+      }
       try {
         handler?.Invoke();
       }
       catch (Exception ex) {
         Logs.LogError($"An exception occured when handling a KeyPressed event: {ex}");
       }
+      _keyPressedStates[e.Data.KeyCode] = true;
     }
 
     try {
@@ -49,6 +59,7 @@ public static partial class Input {
 
   public static async Task Start() {
     _globalEventHook.KeyPressed += KeyPressed;
+    _globalEventHook.KeyReleased += KeyReleased;
     await _globalEventHook.RunAsync();
   }
 

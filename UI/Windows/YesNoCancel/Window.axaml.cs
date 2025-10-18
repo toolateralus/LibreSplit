@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Data.Converters;
 using LibreSplit.IO;
@@ -41,9 +42,22 @@ public partial class Window : Avalonia.Controls.Window {
     Topmost = true;
   }
 
+  private static bool WindowInstanceIsOpen = false;
+
   public static async Task<Result> Open(ViewModel viewModel) {
     var window = new Window() {
-      DataContext = viewModel
+      DataContext = viewModel,
+      Topmost = true,
+      SystemDecorations = Avalonia.Controls.SystemDecorations.BorderOnly, // TODO make this nicer so you can move it, or X returns cancel.
+    };
+
+    if (WindowInstanceIsOpen) {
+      return Result.Cancel;
+    }
+
+    WindowInstanceIsOpen = true;
+    window.Closed += (_, _) => {
+      WindowInstanceIsOpen = false;
     };
 
     viewModel.SetWindow(window);
