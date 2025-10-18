@@ -51,7 +51,7 @@ public class LibreSplitContext : ViewModelBase {
   };
 
 
-  private RunData run = new();
+  private RunData run = RunData.Default;
   private SegmentData? activeSegment;
   private LayoutData? layoutData;
   public LayoutData LayoutData {

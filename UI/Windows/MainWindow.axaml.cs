@@ -140,7 +140,7 @@ public class MainWindowViewModel {
       GlobalContext.ActiveSegment = null;
     }
 
-    GlobalContext.Run = new();
+    GlobalContext.Run = new([new()]);
   }
 
   internal void SaveSplits() {
@@ -184,7 +184,7 @@ public class MainWindowViewModel {
     GlobalContext.StartEditing();
     await window.ShowDialog(owner: ownerWindow);
     GlobalContext.StopEditing();
-    GlobalContext.Run = window.GetRun() ?? new();
+    GlobalContext.Run = window.Run ?? new([new()]);
   }
 
   internal async void EditKeybinds(Window ownerWindow) {

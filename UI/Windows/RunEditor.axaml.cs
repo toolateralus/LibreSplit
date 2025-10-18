@@ -6,13 +6,14 @@ using Avalonia.Interactivity;
 using LibreSplit.Timing;
 using System.Windows.Input;
 namespace LibreSplit.UI.Windows;
+
 public partial class RunEditor : Window {
   public ICommand ClearFocus => new RelayCommand(_ => {
     FocusManager?.ClearFocus();
   });
-
   public object? SelectedItem { get; set; }
   public RunData Run { get; set; }
+
   public RunEditor() {
     // This should never be used.
     // It is just here to get the compiler to stop complaining
@@ -21,8 +22,9 @@ public partial class RunEditor : Window {
     DataContext = this;
     throw new NotImplementedException("Do not use RunEditor in your axaml code.");
   }
+
   public RunEditor(RunData? run) {
-    run ??= new();
+    run ??= RunData.Default;
     Run = run;
     DataContext = this;
     InitializeComponent();
@@ -60,7 +62,6 @@ public partial class RunEditor : Window {
       split.PBSplitTime = null;
       split.PBSegmentTime = null;
     }
-    
   }
 
   private void AddSplit() {
@@ -87,9 +88,5 @@ public partial class RunEditor : Window {
     if (Run.Segments.Count == 0) {
       AddSplit();
     }
-  }
-
-  internal RunData? GetRun() {
-    return Run;
   }
 }
