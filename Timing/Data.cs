@@ -13,6 +13,7 @@ namespace LibreSplit.Timing;
 /// This class represents a group of segments which make up a splittable timeable 'Run'.
 /// </summary>
 public class RunData {
+  public TimeSpan? GetLastSplitTime() => SegmentIndex <= 0 ? TimeSpan.Zero : Segments[SegmentIndex - 1].SplitTime;
   public RunData() {
     Segments = [new()];
   }
@@ -63,15 +64,7 @@ public class RunData {
     SegmentData segmentData = Segments[SegmentIndex];
     TimeSpan elapsed = timer.Elapsed;
 
-    TimeSpan? lastSplitTime;
-    int lastSplitIndex = SegmentIndex - 1;
-
-    if (lastSplitIndex < 0) {
-      lastSplitTime = TimeSpan.Zero;
-    }
-    else {
-      lastSplitTime = Segments[lastSplitIndex].SplitTime;
-    }
+    var lastSplitTime = GetLastSplitTime();
 
     if (lastSplitTime is null) {
       segmentData.SegmentTime = null;

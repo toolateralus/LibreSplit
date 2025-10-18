@@ -115,32 +115,23 @@ public record Comparer(string Label, ComparisonType PassedComparison, Comparison
   }
 
   public void Update(ComparisonViewModel comparison, SegmentData segment, Timer? timer) {
+    if (timer is null) {
+      return;
+    }
     switch (PassedComparison) {
       case ComparisonType.PBSegmentDelta:
-        if (timer is null) {
-          return;
-        }
         comparison.Signed = true;
         comparison.Time = timer.Delta - segment.PBSegmentTime;
         break;
       case ComparisonType.PBSplitDelta:
-        if (timer is null) {
-          return;
-        }
         comparison.Signed = true;
         comparison.Time = timer.Elapsed - segment.PBSplitTime;
         break;
       case ComparisonType.BestSegmentDelta:
-        if (timer is null) {
-          return;
-        }
         comparison.Signed = true;
         comparison.Time = timer.Delta - segment.BestSegmentTime();
         break;
       case ComparisonType.BestSplitDelta:
-        if (timer is null) {
-          return;
-        }
         comparison.Signed = true;
         comparison.Time = timer.Elapsed - segment.BestSplitTime();
         break;
