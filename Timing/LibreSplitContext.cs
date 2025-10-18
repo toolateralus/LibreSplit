@@ -147,11 +147,13 @@ public class LibreSplitContext : ViewModelBase {
 
   public void SkipBack() {
     Run.SkipBack();
+    Timer.LastSplitTime = Run.GetLastSplitTime();
     UpdateActiveSegment();
   }
 
   public void SkipForward() {
     Run.SkipForward();
+    Timer.LastSplitTime = Run.GetLastSplitTime();
     UpdateActiveSegment();
   }
 

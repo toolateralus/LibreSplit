@@ -12,7 +12,6 @@ namespace LibreSplit.Timing;
 /// </summary>
 [method: JsonConstructor]
 public class RunData(ObservableCollection<SegmentData> segments) {
-
   [JsonIgnore]
   public Action? OnReset;
 
@@ -43,6 +42,8 @@ public class RunData(ObservableCollection<SegmentData> segments) {
   [JsonIgnore]
   public int SegmentIndex { get; private set; } = 0;
 
+  public TimeSpan? GetLastSplitTime() => SegmentIndex <= 0 ? TimeSpan.Zero : Segments[SegmentIndex - 1].SplitTime;
+
   public void Start(Timer timer) {
     SegmentIndex = 0;
     timer.Start(StartTime);
@@ -62,15 +63,7 @@ public class RunData(ObservableCollection<SegmentData> segments) {
     SegmentData segmentData = Segments[SegmentIndex];
     TimeSpan elapsed = timer.Elapsed;
 
-    TimeSpan? lastSplitTime;
-    int lastSplitIndex = SegmentIndex - 1;
-
-    if (lastSplitIndex < 0) {
-      lastSplitTime = TimeSpan.Zero;
-    }
-    else {
-      lastSplitTime = Segments[lastSplitIndex].SplitTime;
-    }
+    var lastSplitTime = GetLastSplitTime();
 
     if (lastSplitTime is null) {
       segmentData.SegmentTime = null;

@@ -14,8 +14,7 @@ public class Timer : ViewModelBase {
   /// The last time a split was made, either at the start of the run
   /// or the end of the last segment
   /// </summary>
-  public TimeSpan LastSplitTime { get; set; }
-   = TimeSpan.Zero;
+  public TimeSpan? LastSplitTime { get; set; } = null;
   private TimeSpan startTime = TimeSpan.Zero;
 
   public event Action<TimeSpan>? OnTick;
@@ -35,7 +34,7 @@ public class Timer : ViewModelBase {
   /// <summary>
   /// The time since the last split time.
   /// </summary>
-  public TimeSpan Delta {
+  public TimeSpan? Delta {
     get { return Elapsed - LastSplitTime; }
   }
 
