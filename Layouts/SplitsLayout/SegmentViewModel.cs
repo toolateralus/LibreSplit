@@ -4,8 +4,8 @@ using LibreSplit.Timing;
 using LibreSplit.UI;
 
 namespace LibreSplit.Layouts.SplitsLayout;
-
-public class SegmentViewModel : ViewModelBase {
+public class SegmentViewModelBase : ViewModelBase;
+public class SegmentViewModel : SegmentViewModelBase {
   public SegmentData Segment { get; }
   private bool isActive = false;
   public bool IsActive {
@@ -31,3 +31,5 @@ public class SegmentViewModel : ViewModelBase {
     }
   }
 }
+
+public class EmptySegmentViewModel : SegmentViewModelBase;

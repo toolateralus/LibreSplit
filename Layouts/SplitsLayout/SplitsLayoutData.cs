@@ -3,17 +3,27 @@ using Avalonia.Controls;
 namespace LibreSplit.Layouts.SplitsLayout;
 
 public class SplitsLayoutData : LayoutItemData {
+  private int visibleRows = 10;
   private string activeSplitColor = "DodgerBlue";
   private string inactiveSplitColor = "Transparent";
+  public int VisibleRows {
+    get => visibleRows;
+    set {
+      visibleRows = value;
+      OnPropertyChanged();
+    }
+  }
   public string ActiveSplitColor {
-    get => activeSplitColor; set {
+    get => activeSplitColor;
+    set {
       activeSplitColor = value;
       OnPropertyChanged();
     }
   }
 
   public string InactiveSplitColor {
-    get => inactiveSplitColor; set {
+    get => inactiveSplitColor;
+    set {
       inactiveSplitColor = value;
       OnPropertyChanged();
     }

@@ -12,6 +12,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="*" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="*" />
     </Grid.RowDefinitions>
     <TextBlock Text="Active Backgound Color" Grid.Row="0" Grid.Column="0" />
     <colorpicker:ColorButton Grid.Row="0" Grid.Column="1"
@@ -19,5 +20,10 @@
     <TextBlock Text="Inactive Backgound Color" Grid.Row="1" Grid.Column="0" />
     <colorpicker:ColorButton Grid.Row="1" Grid.Column="1"
       Color="{Binding LayoutItem.InactiveSplitColor, Mode=TwoWay, Converter={StaticResource StringToColorConverter}}" />
+    <TextBlock Text="Visible Rows" Grid.Row="2" Grid.Column="0" />
+    <NumericUpDown Grid.Row="2" Grid.Column="1"
+      Minimum="1"
+      Maximum="100"
+      Value="{Binding LayoutItem.VisibleRows, Mode=TwoWay}" />
   </Grid>
 </UserControl>

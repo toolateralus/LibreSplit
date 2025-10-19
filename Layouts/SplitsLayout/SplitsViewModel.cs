@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using LibreSplit.IO;
 using LibreSplit.Timing;
 using LibreSplit.UI;
 using LibreSplit.UI.Windows;
@@ -11,7 +12,7 @@ namespace LibreSplit.Layouts.SplitsLayout;
 
 public class SplitsViewModel : ViewModelBase {
   public SplitsLayoutData LayoutItem { get; }
-  public ObservableCollection<SegmentViewModel> SegmentViewModels { get; } = [];
+  public ObservableCollection<SegmentViewModelBase> SegmentViewModels { get; } = [];
 
   private readonly Dictionary<SegmentData, SegmentViewModel> segmentToViewModels = [];
   private LibreSplitContext ctx = null!;
@@ -30,7 +31,7 @@ public class SplitsViewModel : ViewModelBase {
     ];
     ctxChangedActions = new() {
       [nameof(ctx.Run)] = () => {
-        SyncSegmentViewModels();
+        BuildViewModelList();
         run.Segments.CollectionChanged -= RunCollectionChanged;
         run.OnReset -= OnReset;
         run = ctx.Run;
@@ -38,18 +39,21 @@ public class SplitsViewModel : ViewModelBase {
         run.OnReset += OnReset;
       },
       [nameof(ctx.ActiveSegment)] = () => {
-        if (activeSegment != null) {
-          if (ctx.Run.Segments.IndexOf(activeSegment) < ctx.Run.SegmentIndex) {
-            segmentToViewModels[activeSegment].SetStatus(SegmentStatus.Passed, comparers);
+        Avalonia.Threading.Dispatcher.UIThread.Post(() => {
+          SyncSegmentViewModels();
+          if (activeSegment != null) {
+            if (ctx.Run.Segments.IndexOf(activeSegment) < ctx.Run.SegmentIndex) {
+              segmentToViewModels[activeSegment].SetStatus(SegmentStatus.Passed, comparers);
+            }
+            else {
+              segmentToViewModels[activeSegment].SetStatus(SegmentStatus.Upcoming, comparers);
+            }
           }
-          else {
-            segmentToViewModels[activeSegment].SetStatus(SegmentStatus.Upcoming, comparers);
+          if (ctx.ActiveSegment is not null) {
+            segmentToViewModels[ctx.ActiveSegment].SetStatus(SegmentStatus.Current, comparers);
           }
-        }
-        if (ctx.ActiveSegment is not null) {
-          segmentToViewModels[ctx.ActiveSegment].SetStatus(SegmentStatus.Current, comparers);
-        }
-        activeSegment = ctx.ActiveSegment;
+          activeSegment = ctx.ActiveSegment;
+        }, Avalonia.Threading.DispatcherPriority.Input);
       },
     };
   }
@@ -66,6 +70,7 @@ public class SplitsViewModel : ViewModelBase {
   public void OnAttachedToLogicalTree() {
     ctx = MainWindow.GlobalContext;
     run = ctx.Run;
+    LayoutItem.PropertyChanged += LayoutItemPropertyChanged;
     run.Segments.CollectionChanged += RunCollectionChanged;
     run.OnReset += OnReset;
     ctx.PropertyChanged += CtxPropertyChanged;
@@ -76,15 +81,29 @@ public class SplitsViewModel : ViewModelBase {
     }
   }
 
+  private void LayoutItemPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    switch (e.PropertyName) {
+      case nameof(SplitsLayoutData.VisibleRows):
+        SyncSegmentViewModels();
+        break;
+      default:
+        break;
+    }
+  }
+
   private void TimerPropertyChanged(object? sender, PropertyChangedEventArgs e) {
     if (e.PropertyName == nameof(Timer.Elapsed) && ctx.ActiveSegment is not null) {
-      UpdateComparer(segmentToViewModels[ctx.ActiveSegment]);
+      if (segmentToViewModels.TryGetValue(ctx.ActiveSegment, out var segmentViewModel)) {
+        UpdateComparer(segmentViewModel);
+      }
     }
   }
 
   private void OnReset() {
     foreach (var segmentViewModel in SegmentViewModels) {
-      segmentViewModel.SetStatus(SegmentStatus.Upcoming, comparers);
+      if (segmentViewModel is SegmentViewModel svm) {
+        svm.SetStatus(SegmentStatus.Upcoming, comparers);
+      }
     }
   }
 
@@ -111,17 +130,30 @@ public class SplitsViewModel : ViewModelBase {
   }
 
   private void SyncSegmentViewModels() {
-    segmentToViewModels.Clear();
+    var viewStartIndex = ctx.Run.SegmentIndex - (LayoutItem.VisibleRows - 1);
+    if (viewStartIndex < 0)
+      viewStartIndex = 0;
+
     SegmentViewModels.Clear();
-    foreach (var segment in ctx.Run.Segments) {
-      SegmentViewModel segViewModel = new(segment);
-      for (int i = 0; i < comparers.Count; i++) {
-        segViewModel.Comparisons.Add(new());
+
+    for (int i = viewStartIndex; i < viewStartIndex + LayoutItem.VisibleRows; i++) {
+      if (i < ctx.Run.Segments.Count) {
+        SegmentViewModels.Add(segmentToViewModels[ctx.Run.Segments[i]]);
       }
-      segViewModel.SetStatus(SegmentStatus.Upcoming, comparers);
-      segmentToViewModels.Add(segment, segViewModel);
-      SegmentViewModels.Add(segViewModel);
+      else {
+        SegmentViewModels.Add(new EmptySegmentViewModel());
+      }
     }
-    OnPropertyChanged(nameof(SegmentViewModels));
   }
+  private void BuildViewModelList() {
+    segmentToViewModels.Clear();
+    foreach (var segment in ctx.Run.Segments) {
+      var svm = new SegmentViewModel(segment);
+      for (int i = 0; i < comparers.Count; i++)
+        svm.Comparisons.Add(new());
+      svm.SetStatus(SegmentStatus.Upcoming, comparers);
+      segmentToViewModels[segment] = svm;
+    }
+  }
+
 }
