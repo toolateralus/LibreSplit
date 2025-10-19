@@ -65,11 +65,12 @@ public partial class RunEditor : Window {
   }
 
   private void AddSplit() {
+    var name = $"New Split {Run.Segments.Count + 1}";
     if (SelectedItem is SegmentData selectedSegment) {
-      Run.Segments.Insert(Run.Segments.IndexOf(selectedSegment) + 1, new());
+      Run.Segments.Insert(Run.Segments.IndexOf(selectedSegment) + 1, new(name));
     }
     else {
-      Run.Segments.Add(new());
+      Run.Segments.Add(new(name));
     }
   }
 
